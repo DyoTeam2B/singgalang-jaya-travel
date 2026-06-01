@@ -8,15 +8,33 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
+// Route::get('/dashboard', function () {
 
-    if(Auth::user()->role == 'admin'){
-        return view('admin.dashboard');
-    }
+//     if(Auth::user()->role == 'admin'){
+//         return view('admin.dashboard');
+//     }
 
-    return view('driver.dashboard');
+//     return view('driver.dashboard');
 
-})->middleware(['auth'])->name('dashboard');
+// })->middleware(['auth'])->name('dashboard');
+
+Route::middleware(['auth', 'role:admin'])
+     ->prefix('admin')
+     ->name('admin.')
+     ->group(function(){
+        Route::get('/dashboard', function(){
+            return view('admin.dashboard');
+        })->name('dashboard');
+     });
+
+Route::middleware(['auth', 'role:driver'])
+     ->prefix('driver')
+     ->name('driver.')
+     ->group(function(){
+        Route::get('/dashboard', function(){
+            return view('driver.dashboard');
+        })->name('dashboard');
+     });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
