@@ -1,0 +1,950 @@
+# Singgalang Jaya Travel — AI Agent Rules
+
+> Dokumen ini berisi aturan yang WAJIB diikuti oleh semua AI agent (Copilot, Cursor, Antigravity, dll) saat mengerjakan project ini. Tujuannya agar seluruh development konsisten antar anggota tim.
+
+---
+
+## 0. Tech Stack Yang Sudah Terpasang
+
+> ⚠️ JANGAN install ulang atau ganti package berikut. Sudah terpasang dan terkonfigurasi.
+
+| Package | Versi | Status |
+|---------|-------|--------|
+| Laravel | 13.x | ✅ |
+| Livewire | 4.3 | ✅ |
+| Laravel Breeze (Blade) | 2.4 | ✅ |
+| Alpine.js | 3.x | ✅ |
+| TailwindCSS | 3.x | ✅ |
+| @tailwindcss/forms | 0.5.x | ✅ |
+| Vite | 8.x | ✅ |
+| Axios | 1.16.x | ✅ |
+
+---
+
+## 1. Bahasa
+
+| Aspek | Bahasa | Contoh |
+|-------|--------|--------|
+| Kode (variabel, function, class) | **English** | `$totalPrice`, `getAvailableSchedules()` |
+| Nama tabel & kolom database | **Bahasa Indonesia** (sesuai ERD) | `pelanggan`, `jadwal`, `kode_booking` |
+| Nama kolom tabel users | **English** (Breeze default) | `name`, `email`, `password`, `role` |
+| Route URI | **Bahasa Indonesia** untuk resource utama | `/admin/jadwal`, `/admin/pembayaran` |
+| Route name | **English pattern** | `admin.jadwal.index`, `driver.trips.show` |
+| UI Label & Text | **Bahasa Indonesia** | "Nama Lengkap", "Kode Booking" |
+| Komentar kode | **English** | `// Check if schedule has available quota` |
+| Commit message | **English** | `feat: add booking form with map picker` |
+| Validation message | **Bahasa Indonesia** | `'nama.required' => 'Nama wajib diisi.'` |
+
+---
+
+## 2. Struktur File & Folder
+
+### Controllers
+
+```
+app/Http/Controllers/
+├── Auth/                              ← ✅ SUDAH ADA (Breeze)
+│   ├── AuthenticatedSessionController.php
+│   ├── ConfirmablePasswordController.php
+│   ├── EmailVerificationNotificationController.php
+│   ├── EmailVerificationPromptController.php
+│   ├── NewPasswordController.php
+│   ├── PasswordController.php
+│   ├── PasswordResetLinkController.php
+│   ├── RegisteredUserController.php
+│   └── VerifyEmailController.php
+├── Admin/                             ← 🔲 BUAT BARU
+│   ├── DashboardController.php
+│   ├── RuteController.php
+│   ├── JadwalController.php
+│   ├── BookingController.php
+│   ├── PembayaranController.php
+│   ├── DriverController.php
+│   ├── TripController.php
+│   └── LaporanController.php
+├── Driver/                            ← 🔲 BUAT BARU
+│   ├── DashboardController.php
+│   └── TripController.php
+├── Api/                               ← 🔲 BUAT BARU
+│   └── JadwalController.php
+├── Controller.php                     ← ✅ SUDAH ADA
+├── ProfileController.php              ← ✅ SUDAH ADA (Breeze)
+├── HomeController.php                 ← 🔲 BUAT BARU
+├── BookingController.php              ← 🔲 BUAT BARU
+├── PembayaranController.php           ← 🔲 BUAT BARU
+├── CekBookingController.php           ← 🔲 BUAT BARU
+└── JadwalPublicController.php         ← 🔲 BUAT BARU
+```
+
+### Livewire Components
+
+```
+app/Livewire/                          ← ✅ DIRECTORY ADA (kosong)
+├── BookingForm.php                    ← 🔲 Optional: form booking interaktif
+├── Admin/
+│   ├── BookingTable.php               ← 🔲 Optional: tabel dengan search/filter
+│   ├── PembayaranTable.php
+│   ├── JadwalTable.php
+│   ├── DriverTable.php
+│   └── TripTable.php
+└── Driver/
+    └── TripManifest.php               ← 🔲 Optional: manifest interaktif
+```
+
+### Views (Blade)
+
+```
+resources/views/
+├── layouts/
+│   ├── app.blade.php                  ← ✅ SUDAH ADA (Breeze, slot-based)
+│   ├── guest.blade.php                ← ✅ SUDAH ADA (Breeze)
+│   ├── navigation.blade.php           ← ✅ SUDAH ADA (Breeze)
+│   ├── public.blade.php               ← 🔲 BUAT BARU (landing page layout)
+│   ├── admin.blade.php                ← 🔲 BUAT BARU (sidebar layout)
+│   └── driver.blade.php               ← 🔲 BUAT BARU (sidebar layout)
+├── components/                        ← ✅ 13 komponen Breeze sudah ada
+│   ├── sidebar-admin.blade.php        ← 🔲 BUAT BARU
+│   ├── sidebar-driver.blade.php       ← 🔲 BUAT BARU
+│   ├── status-badge.blade.php         ← 🔲 BUAT BARU
+│   ├── map-picker.blade.php           ← 🔲 BUAT BARU
+│   ├── map-viewer.blade.php           ← 🔲 BUAT BARU
+│   ├── alert.blade.php                ← 🔲 BUAT BARU
+│   └── card.blade.php                 ← 🔲 BUAT BARU
+├── livewire/                          ← ✅ DIRECTORY ADA (kosong)
+├── auth/                              ← ✅ SUDAH ADA (6 views Breeze)
+├── profile/                           ← ✅ SUDAH ADA
+├── admin/
+│   └── dashboard.blade.php            ← ✅ ADA (placeholder)
+├── driver/
+│   └── dashboard.blade.php            ← ✅ ADA (placeholder)
+├── public/                            ← 🔲 BUAT BARU
+├── dashboard.blade.php                ← ✅ SUDAH ADA (Breeze default)
+└── welcome.blade.php                  ← ✅ SUDAH ADA (Laravel default)
+```
+
+### Models
+
+```
+app/Models/
+├── User.php                           ← ✅ SUDAH ADA
+├── Driver.php                         ← 🔲 BUAT BARU
+├── Rute.php                           ← 🔲 BUAT BARU
+├── Pelanggan.php                      ← 🔲 BUAT BARU
+├── Jadwal.php                         ← 🔲 BUAT BARU
+├── Booking.php                        ← 🔲 BUAT BARU
+├── Pembayaran.php                     ← 🔲 BUAT BARU
+├── Trip.php                           ← 🔲 BUAT BARU
+└── DetailTrip.php                     ← 🔲 BUAT BARU
+```
+
+### Middleware
+
+```
+app/Http/Middleware/
+└── RoleMiddleware.php                 ← ✅ SUDAH ADA
+```
+
+---
+
+## 3. Existing Code — JANGAN UBAH
+
+File berikut sudah ada dan berfungsi. **Jangan modify kecuali ada alasan kuat:**
+
+| File | Alasan |
+|------|--------|
+| `bootstrap/app.php` | RoleMiddleware sudah terdaftar: `'role' => RoleMiddleware::class` |
+| `app/Http/Middleware/RoleMiddleware.php` | Cek `...$roles` dari `in_array($request->user()->role, $roles)` |
+| `app/Models/User.php` | Pakai `#[Fillable]` attribute. Field = `name`, `email`, `password`, `role` |
+| `routes/auth.php` | Breeze auth routes lengkap |
+| `app/Http/Controllers/Auth/*` | 9 controller Breeze |
+| `app/Http/Controllers/ProfileController.php` | Profile edit/update/destroy |
+| `resources/views/auth/*` | 6 auth views |
+| `resources/views/layouts/app.blade.php` | Layout slot-based `{{ $slot }}` |
+| `resources/views/layouts/guest.blade.php` | Layout guest |
+| `resources/views/components/*` | 13 Breeze components |
+| `database/seeders/UserSeeder.php` | Admin + Driver seed |
+
+---
+
+## 4. Auth Pattern (Sudah Implementasi)
+
+### Login Redirect by Role
+
+```php
+// Di AuthenticatedSessionController@store:
+if ($user->role === 'admin') {
+    return redirect()->intended(route('admin.dashboard'));
+}
+if ($user->role === 'driver') {
+    return redirect()->intended(route('driver.dashboard'));
+}
+```
+
+### Route Group Pattern
+
+```php
+// Admin routes — sudah ada di web.php
+Route::middleware(['auth', 'role:admin'])
+     ->prefix('admin')
+     ->name('admin.')
+     ->group(function() {
+         // tambah route di sini
+     });
+
+// Driver routes — sudah ada di web.php
+Route::middleware(['auth', 'role:driver'])
+     ->prefix('driver')
+     ->name('driver.')
+     ->group(function() {
+         // tambah route di sini
+     });
+```
+
+> ⚠️ Saat menambah route admin/driver, tambahkan di dalam group yang sudah ada. **Jangan buat group baru.**
+
+---
+
+## 5. Naming Conventions
+
+### Route Naming
+
+```php
+// Public
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/jadwal', [JadwalPublicController::class, 'index'])->name('jadwal.index');
+
+// Admin — pakai resource atau manual di dalam group yang sudah ada:
+Route::resource('jadwal', Admin\JadwalController::class);
+// → admin.jadwal.index, admin.jadwal.create, admin.jadwal.store, dll
+
+// Driver — di dalam group yang sudah ada:
+Route::get('trips', [Driver\TripController::class, 'index'])->name('trips.index');
+```
+
+### Controller Method Naming
+
+| Method | Kegunaan | HTTP |
+|--------|----------|------|
+| `index` | List semua data | GET |
+| `create` | Form tambah | GET |
+| `store` | Simpan data baru | POST |
+| `show` | Detail satu data | GET |
+| `edit` | Form edit | GET |
+| `update` | Update data | PUT/PATCH |
+| `destroy` | Hapus data | DELETE |
+
+Custom methods:
+
+| Method | Kegunaan | HTTP |
+|--------|----------|------|
+| `verify` | Verifikasi pembayaran | PUT |
+| `reject` | Tolak pembayaran | PUT |
+| `cancel` | Batalkan booking | PUT |
+| `toggleStatus` | Toggle jadwal aktif/nonaktif | PUT |
+| `assignBooking` | Masukkan booking ke trip | POST |
+| `removeBooking` | Keluarkan booking dari trip | DELETE |
+| `start` | Mulai trip | PUT |
+| `pickup` | Tandai dijemput | PUT |
+| `dropoff` | Tandai diantar | PUT |
+| `complete` | Selesaikan trip | PUT |
+| `export` | Export laporan | GET |
+
+### Model Naming
+
+| Model | Tabel | Override `$table` |
+|-------|-------|:------------------:|
+| `User` | `users` | Tidak perlu |
+| `Driver` | `drivers` | Tidak perlu |
+| `Rute` | `rute` | ✅ `$table = 'rute'` |
+| `Pelanggan` | `pelanggan` | ✅ `$table = 'pelanggan'` |
+| `Jadwal` | `jadwal` | ✅ `$table = 'jadwal'` |
+| `Booking` | `bookings` | Tidak perlu |
+| `Pembayaran` | `pembayaran` | ✅ `$table = 'pembayaran'` |
+| `Trip` | `trips` | Tidak perlu |
+| `DetailTrip` | `detail_trip` | ✅ `$table = 'detail_trip'` |
+
+---
+
+## 6. Livewire Rules
+
+### Kapan Pakai Livewire vs Blade Biasa
+
+| Gunakan Livewire | Gunakan Blade Biasa |
+|------------------|---------------------|
+| Tabel dengan search/filter/pagination realtime | Halaman statis (landing, detail view) |
+| Form multi-step | Form CRUD sederhana |
+| Auto-calculate (hitung tarif otomatis) | Form yang cuma submit + redirect |
+| Interaksi tanpa full page reload | Halaman yang tidak butuh reactivity |
+| Map picker dengan update alamat | Halaman info/read-only |
+
+### Livewire Component Pattern
+
+```php
+// app/Livewire/Admin/BookingTable.php
+namespace App\Livewire\Admin;
+
+use Livewire\Component;
+use Livewire\WithPagination;
+
+class BookingTable extends Component
+{
+    use WithPagination;
+
+    public string $search = '';
+    public string $statusFilter = '';
+
+    public function render()
+    {
+        $bookings = Booking::query()
+            ->when($this->search, fn($q) => $q->where('kode_booking', 'like', "%{$this->search}%"))
+            ->when($this->statusFilter, fn($q) => $q->where('status_booking', $this->statusFilter))
+            ->latest()
+            ->paginate(10);
+
+        return view('livewire.admin.booking-table', compact('bookings'));
+    }
+}
+```
+
+### Livewire View Pattern
+
+```blade
+{{-- resources/views/livewire/admin/booking-table.blade.php --}}
+<div>
+    <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari kode booking...">
+    {{-- table here --}}
+</div>
+```
+
+### Embed Livewire di Blade Page
+
+```blade
+{{-- di views/admin/bookings/index.blade.php --}}
+<x-app-layout>
+    <livewire:admin.booking-table />
+</x-app-layout>
+```
+
+---
+
+## 7. Layout Rules
+
+### Admin & Driver — Pakai Custom Layout
+
+Admin dan driver **perlu layout baru** dengan sidebar. Jangan pakai `layouts.app` (Breeze navbar) untuk admin/driver panel.
+
+```blade
+{{-- layouts/admin.blade.php — BUAT BARU --}}
+<!DOCTYPE html>
+<html>
+<head>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
+</head>
+<body>
+    <div class="flex min-h-screen">
+        <x-sidebar-admin />
+        <main class="flex-1">
+            {{ $slot }}
+        </main>
+    </div>
+    @livewireScripts
+</body>
+</html>
+```
+
+### Public — Pakai Layout Terpisah
+
+```blade
+{{-- layouts/public.blade.php — BUAT BARU --}}
+{{-- Tidak perlu auth, tidak perlu sidebar --}}
+```
+
+### Penting: @livewireStyles & @livewireScripts
+
+Semua layout HARUS include Livewire directives jika halaman menggunakan Livewire:
+
+```blade
+<head>
+    @livewireStyles
+</head>
+<body>
+    ...
+    @livewireScripts
+</body>
+```
+
+---
+
+## 8. Controller Rules
+
+```php
+// WAJIB: Satu controller per resource
+// WAJIB: Gunakan Form Request untuk validasi
+// WAJIB: Gunakan Eloquent, bukan raw query
+// WAJIB: Return redirect dengan flash message untuk POST/PUT/DELETE
+
+// Contoh pattern:
+public function store(StoreJadwalRequest $request)
+{
+    Jadwal::create($request->validated());
+    return redirect()
+        ->route('admin.jadwal.index')
+        ->with('success', 'Jadwal berhasil ditambahkan.');
+}
+```
+
+### Form Request Location
+
+```
+app/Http/Requests/
+├── Auth/
+│   └── LoginRequest.php               ← ✅ SUDAH ADA (Breeze)
+├── Admin/
+│   ├── StoreRuteRequest.php
+│   ├── UpdateRuteRequest.php
+│   ├── StoreJadwalRequest.php
+│   ├── UpdateJadwalRequest.php
+│   ├── StoreDriverRequest.php
+│   ├── UpdateDriverRequest.php
+│   ├── StoreTripRequest.php
+│   └── AssignBookingRequest.php
+├── StoreBookingRequest.php
+├── StorePembayaranRequest.php
+└── CekBookingRequest.php
+```
+
+---
+
+## 9. UI Design Rules
+
+### Font
+
+```css
+font-family: 'Poppins', sans-serif;
+```
+
+> ⚠️ Breeze default pakai Figtree. Ganti ke Poppins di layout baru (admin, driver, public). Layout Breeze (`app.blade.php`, `guest.blade.php`) boleh tetap Figtree atau diganti — konsisten saja.
+
+Load via Google Fonts di layout:
+
+```html
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+```
+
+### Color Palette
+
+```css
+:root {
+    --primary: #1E3A8A;
+    --secondary: #2563EB;
+    --background: #FFFFFF;
+    --surface: #F8FAFC;
+    --border: #E2E8F0;
+    --success: #16A34A;
+    --warning: #F59E0B;
+    --danger: #DC2626;
+}
+```
+
+### Tailwind Classes Standard
+
+| Element | Classes |
+|---------|---------|
+| Card | `bg-white rounded-2xl border border-gray-200 shadow-sm p-6` |
+| Primary Button | `bg-blue-800 hover:bg-blue-900 text-white font-semibold px-6 py-3 rounded-xl` |
+| Secondary Button | `bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium px-6 py-3 rounded-xl` |
+| Danger Button | `bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-xl` |
+| Input | `w-full border border-gray-300 rounded-xl h-12 px-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500` |
+| Label | `block text-sm font-medium text-gray-700 mb-1` |
+| Table Header | `bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider` |
+| Badge Success | `inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800` |
+| Badge Warning | `inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800` |
+| Badge Danger | `inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800` |
+| Badge Info | `inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800` |
+
+### DILARANG
+
+- ❌ Glassmorphism
+- ❌ Neon effects
+- ❌ Heavy/dramatic shadows
+- ❌ Gradient background berlebihan
+- ❌ Redesign dari scratch
+- ❌ Ubah urutan section landing page
+- ❌ Skip step di booking flow
+
+---
+
+## 10. Status Values (ENUM)
+
+### Booking Status
+
+| Value | Label (ID) |
+|-------|------------|
+| `menunggu_pembayaran` | Menunggu Pembayaran |
+| `menunggu_verifikasi` | Menunggu Verifikasi |
+| `dikonfirmasi` | Dikonfirmasi |
+| `masuk_trip` | Masuk Trip |
+| `dalam_perjalanan` | Dalam Perjalanan |
+| `selesai` | Selesai |
+| `dibatalkan` | Dibatalkan |
+
+### Payment Status
+
+| Value | Label (ID) |
+|-------|------------|
+| `menunggu` | Menunggu |
+| `terverifikasi` | Terverifikasi |
+| `ditolak` | Ditolak |
+
+### Trip Status
+
+| Value | Label (ID) |
+|-------|------------|
+| `ready` | Ready |
+| `berjalan` | Berjalan |
+| `selesai` | Selesai |
+
+### Schedule Status
+
+| Value | Label (ID) |
+|-------|------------|
+| `aktif` | Aktif |
+| `nonaktif` | Nonaktif |
+| `penuh` | Penuh |
+
+### Driver Status
+
+| Value | Label (ID) |
+|-------|------------|
+| `aktif` | Aktif |
+| `nonaktif` | Nonaktif |
+
+### Pickup Status
+
+| Value | Label (ID) |
+|-------|------------|
+| `belum` | Belum Dijemput |
+| `sudah_dijemput` | Sudah Dijemput |
+
+### Dropoff Status
+
+| Value | Label (ID) |
+|-------|------------|
+| `belum` | Belum Diantar |
+| `sudah_diantar` | Sudah Diantar |
+
+---
+
+## 11. Kode Booking Format
+
+```
+SJT-{YYYYMMDD}-{RANDOM5}
+```
+
+Contoh: `SJT-20260605-A3X7K`
+
+```php
+$kode = 'SJT-' . now()->format('Ymd') . '-' . strtoupper(Str::random(5));
+```
+
+---
+
+## 12. File Upload Rules
+
+| Aspek | Aturan |
+|-------|--------|
+| Disk | `public` |
+| Path | `bukti-pembayaran/` |
+| Naming | `{kode_booking}_{timestamp}.{ext}` |
+| Max Size | 2MB |
+| Allowed Types | `jpg, jpeg, png, pdf` |
+| Access | Via `Storage::url()` |
+
+---
+
+## 13. Flash Message Convention
+
+```php
+return redirect()->back()->with('success', 'Data berhasil disimpan.');
+return redirect()->back()->with('error', 'Terjadi kesalahan.');
+return redirect()->back()->with('warning', 'Perhatian: kuota hampir penuh.');
+return redirect()->back()->with('info', 'Booking telah dimasukkan ke trip.');
+```
+
+---
+
+## 14. Validation Messages (Bahasa Indonesia)
+
+```php
+public function messages(): array
+{
+    return [
+        'nama.required' => 'Nama wajib diisi.',
+        'no_hp.required' => 'Nomor HP wajib diisi.',
+        'jadwal_id.required' => 'Jadwal keberangkatan wajib dipilih.',
+        'bukti_pembayaran.required' => 'Bukti pembayaran wajib diupload.',
+        'bukti_pembayaran.max' => 'Ukuran file maksimal 2MB.',
+    ];
+}
+```
+
+---
+
+## 15. Maps Integration (Leaflet)
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+```
+
+Default center: Padang Panjang `[-0.4669, 100.3986]`
+
+---
+
+## 16. WhatsApp Integration
+
+```
+https://wa.me/628xxxxxxxxxx?text={encoded_message}
+```
+
+---
+
+## 17. Git Rules
+
+### Branch Naming
+
+```
+feature/{modul}-{deskripsi}
+```
+
+### Commit Message
+
+```
+{type}: {description}
+type = feat | fix | refactor | style | docs | test | chore
+```
+
+---
+
+## 18. Responsive Breakpoints
+
+| Breakpoint | Behavior |
+|------------|----------|
+| Mobile (< 768px) | Sidebar → hamburger drawer. Tables → horizontal scroll. |
+| Tablet (768-1023px) | Sidebar → collapsed. 2-column grid. |
+| Desktop (≥ 1024px) | Full sidebar. Multi-column layout. |
+
+---
+
+## 19. Task Isolation Rules (Pembagian Tim)
+
+> ⚠️ **CRITICAL**: Saat user mengatakan "kerjakan sprint X bagian [NAMA]", AI **HANYA BOLEH** mengerjakan file milik orang tersebut. **JANGAN sentuh file milik anggota lain**.
+
+### Cara Membaca Perintah
+
+| Perintah User | Yang Dikerjakan |
+|---------------|-----------------|
+| "kerjakan sprint 0 bagian Rayhan" | HANYA file milik Rayhan di Sprint 0 |
+| "kerjakan sprint 1 bagian Rayfo" | HANYA file milik Rayfo di Sprint 1 |
+| "kerjakan sprint 0 semua" | Semua file Sprint 0 (semua anggota) |
+| "kerjakan bagian Nayasha" | Semua task Nayasha di sprint yang sedang aktif |
+
+### Ownership Per Anggota
+
+#### Rayhan (RYH) — Customer Interface
+
+**Controllers milik Rayhan:**
+- `app/Http/Controllers/HomeController.php`
+- `app/Http/Controllers/BookingController.php`
+- `app/Http/Controllers/PembayaranController.php`
+- `app/Http/Controllers/CekBookingController.php`
+- `app/Http/Controllers/JadwalPublicController.php`
+- `app/Http/Controllers/Api/JadwalController.php`
+
+**Views milik Rayhan:**
+- `resources/views/layouts/public.blade.php`
+- `resources/views/public/**` (semua file di folder public)
+- `resources/views/components/map-picker.blade.php`
+
+**Livewire milik Rayhan:**
+- `app/Livewire/BookingForm.php`
+- `resources/views/livewire/booking-form.blade.php`
+
+**Migrations milik Rayhan:**
+- `create_pelanggan_table`
+- `create_bookings_table`
+- `create_pembayaran_table`
+
+**Models milik Rayhan:**
+- `app/Models/Pelanggan.php`
+- `app/Models/Booking.php`
+- `app/Models/Pembayaran.php`
+
+**Form Requests milik Rayhan:**
+- `app/Http/Requests/StoreBookingRequest.php`
+- `app/Http/Requests/StorePembayaranRequest.php`
+- `app/Http/Requests/CekBookingRequest.php`
+
+**Routes milik Rayhan** (di `routes/web.php` — public section):
+- `GET /` → `home`
+- `GET /jadwal` → `jadwal.index`
+- `GET /booking/create` → `booking.create`
+- `POST /booking` → `booking.store`
+- `GET /booking/{kode}/review` → `booking.review`
+- `GET /booking/{kode}/pembayaran` → `booking.pembayaran`
+- `POST /booking/{kode}/pembayaran` → `booking.pembayaran.store`
+- `GET /cek-booking` → `cek-booking.index`
+- `POST /cek-booking` → `cek-booking.show`
+- `GET /api/jadwal/available`
+- `GET /api/jadwal/{id}/check-kuota`
+
+---
+
+#### Rayfo (RYF) — Admin Core
+
+**Controllers milik Rayfo:**
+- `app/Http/Controllers/Admin/DashboardController.php`
+- `app/Http/Controllers/Admin/RuteController.php`
+- `app/Http/Controllers/Admin/JadwalController.php`
+- `app/Http/Controllers/Admin/LaporanController.php`
+
+**Views milik Rayfo:**
+- `resources/views/layouts/admin.blade.php`
+- `resources/views/components/sidebar-admin.blade.php`
+- `resources/views/components/card.blade.php`
+- `resources/views/admin/dashboard.blade.php`
+- `resources/views/admin/rute/**`
+- `resources/views/admin/jadwal/**`
+- `resources/views/admin/laporan/**`
+
+**Livewire milik Rayfo:**
+- `app/Livewire/Admin/JadwalTable.php`
+- `resources/views/livewire/admin/jadwal-table.blade.php`
+
+**Migrations milik Rayfo:**
+- `create_rute_table`
+- `create_jadwal_table`
+
+**Models milik Rayfo:**
+- `app/Models/Rute.php`
+- `app/Models/Jadwal.php`
+
+**Seeders milik Rayfo:**
+- `database/seeders/RuteSeeder.php`
+
+**Form Requests milik Rayfo:**
+- `app/Http/Requests/Admin/StoreRuteRequest.php`
+- `app/Http/Requests/Admin/UpdateRuteRequest.php`
+- `app/Http/Requests/Admin/StoreJadwalRequest.php`
+- `app/Http/Requests/Admin/UpdateJadwalRequest.php`
+
+**Routes milik Rayfo** (di `routes/web.php` — admin group):
+- `GET /admin/dashboard` → `admin.dashboard`
+- Resource `admin/rute` → `admin.rute.*`
+- Resource `admin/jadwal` → `admin.jadwal.*`
+- `PUT /admin/jadwal/{id}/toggle` → `admin.jadwal.toggle`
+- `GET /admin/laporan` → `admin.laporan.index`
+- `GET /admin/laporan/export` → `admin.laporan.export`
+
+---
+
+#### Nayasha (NYS) — Auth + Admin Operasional
+
+**Controllers milik Nayasha:**
+- `app/Http/Controllers/Admin/BookingController.php`
+- `app/Http/Controllers/Admin/PembayaranController.php`
+- `app/Http/Controllers/Admin/DriverController.php`
+
+**Views milik Nayasha:**
+- `resources/views/components/status-badge.blade.php`
+- `resources/views/components/alert.blade.php`
+- `resources/views/admin/bookings/**`
+- `resources/views/admin/pembayaran/**`
+- `resources/views/admin/drivers/**`
+
+**Livewire milik Nayasha:**
+- `app/Livewire/Admin/BookingTable.php`
+- `app/Livewire/Admin/PembayaranTable.php`
+- `app/Livewire/Admin/DriverTable.php`
+- `resources/views/livewire/admin/booking-table.blade.php`
+- `resources/views/livewire/admin/pembayaran-table.blade.php`
+- `resources/views/livewire/admin/driver-table.blade.php`
+
+**Migrations milik Nayasha:**
+- `create_drivers_table`
+
+**Models milik Nayasha:**
+- `app/Models/Driver.php`
+
+**Seeders milik Nayasha:**
+- `database/seeders/DriverSeeder.php`
+
+**Form Requests milik Nayasha:**
+- `app/Http/Requests/Admin/StoreDriverRequest.php`
+- `app/Http/Requests/Admin/UpdateDriverRequest.php`
+
+**Routes milik Nayasha** (di `routes/web.php` — admin group):
+- `GET /admin/bookings` → `admin.bookings.index`
+- `GET /admin/bookings/{id}` → `admin.bookings.show`
+- `PUT /admin/bookings/{id}/cancel` → `admin.bookings.cancel`
+- `GET /admin/pembayaran` → `admin.pembayaran.index`
+- `GET /admin/pembayaran/{id}` → `admin.pembayaran.show`
+- `PUT /admin/pembayaran/{id}/verify` → `admin.pembayaran.verify`
+- `PUT /admin/pembayaran/{id}/reject` → `admin.pembayaran.reject`
+- Resource `admin/drivers` → `admin.drivers.*`
+
+> Auth sudah selesai (Breeze). Nayasha **TIDAK perlu** sentuh file di `Auth/`, `routes/auth.php`, `resources/views/auth/`.
+
+---
+
+#### Kevin (KVN) — Trip & Driver Operations
+
+**Controllers milik Kevin:**
+- `app/Http/Controllers/Admin/TripController.php`
+- `app/Http/Controllers/Driver/DashboardController.php`
+- `app/Http/Controllers/Driver/TripController.php`
+
+**Views milik Kevin:**
+- `resources/views/layouts/driver.blade.php`
+- `resources/views/components/sidebar-driver.blade.php`
+- `resources/views/components/map-viewer.blade.php`
+- `resources/views/admin/trips/**`
+- `resources/views/driver/**` (semua file di folder driver)
+
+**Livewire milik Kevin:**
+- `app/Livewire/Admin/TripTable.php`
+- `app/Livewire/Driver/TripManifest.php`
+- `resources/views/livewire/admin/trip-table.blade.php`
+- `resources/views/livewire/driver/trip-manifest.blade.php`
+
+**Migrations milik Kevin:**
+- `create_trips_table`
+- `create_detail_trip_table`
+
+**Models milik Kevin:**
+- `app/Models/Trip.php`
+- `app/Models/DetailTrip.php`
+
+**Form Requests milik Kevin:**
+- `app/Http/Requests/Admin/StoreTripRequest.php`
+- `app/Http/Requests/Admin/AssignBookingRequest.php`
+
+**Routes milik Kevin** (di `routes/web.php`):
+
+Admin group:
+- `GET /admin/trips` → `admin.trips.index`
+- `GET /admin/trips/create` → `admin.trips.create`
+- `POST /admin/trips` → `admin.trips.store`
+- `GET /admin/trips/{id}` → `admin.trips.show`
+- `PUT /admin/trips/{id}` → `admin.trips.update`
+- `POST /admin/trips/{id}/assign` → `admin.trips.assign`
+- `DELETE /admin/trips/{id}/remove/{detailId}` → `admin.trips.remove`
+- `DELETE /admin/trips/{id}` → `admin.trips.destroy`
+
+Driver group:
+- `GET /driver/dashboard` → `driver.dashboard`
+- `GET /driver/trips` → `driver.trips.index`
+- `GET /driver/trips/{id}` → `driver.trips.show`
+- `PUT /driver/trips/{id}/start` → `driver.trips.start`
+- `PUT /driver/trips/{id}/pickup/{detailId}` → `driver.trips.pickup`
+- `PUT /driver/trips/{id}/dropoff/{detailId}` → `driver.trips.dropoff`
+- `PUT /driver/trips/{id}/complete` → `driver.trips.complete`
+
+---
+
+### Shared Files (Semua Boleh Edit)
+
+File berikut boleh diedit oleh **siapa saja** karena bersifat shared:
+
+| File | Keterangan |
+|------|------------|
+| `routes/web.php` | Tambah route di section masing-masing |
+| `database/seeders/DatabaseSeeder.php` | Tambah seeder call |
+| `app/Models/User.php` | Tambah relationship (hasOne Driver) |
+| `resources/css/app.css` | Custom CSS shared |
+| `tailwind.config.js` | Config Tailwind shared |
+
+> ⚠️ Saat edit shared file, **HANYA tambah bagian milik sendiri**. Jangan hapus/ubah bagian orang lain.
+
+### routes/web.php — Section Markers
+
+Gunakan comment markers untuk memisahkan route per anggota:
+
+```php
+// ============================================
+// PUBLIC ROUTES — Rayhan
+// ============================================
+Route::get('/', [HomeController::class, 'index'])->name('home');
+// ... route Rayhan lainnya
+
+// ============================================
+// ADMIN ROUTES
+// ============================================
+Route::middleware(['auth', 'role:admin'])
+     ->prefix('admin')
+     ->name('admin.')
+     ->group(function() {
+
+    // --- Dashboard & Core (Rayfo) ---
+    Route::get('/dashboard', [Admin\DashboardController::class, 'index'])->name('dashboard');
+    // ... route Rayfo lainnya
+
+    // --- Booking & Payment Management (Nayasha) ---
+    // ... route Nayasha
+
+    // --- Driver Management (Nayasha) ---
+    // ... route Nayasha
+
+    // --- Trip Management (Kevin) ---
+    // ... route Kevin
+});
+
+// ============================================
+// DRIVER ROUTES — Kevin
+// ============================================
+Route::middleware(['auth', 'role:driver'])
+     ->prefix('driver')
+     ->name('driver.')
+     ->group(function() {
+    // ... route Kevin
+});
+```
+
+---
+
+### Isolation Checklist
+
+Sebelum commit, pastikan:
+
+- [ ] Hanya file milik saya yang berubah
+- [ ] Tidak menghapus/mengubah code milik anggota lain
+- [ ] Route ditambah di section marker yang benar
+- [ ] Shared files hanya ditambah, bukan diubah
+- [ ] Model relationship yang ditambah tidak conflict
+
+---
+
+## 20. DO NOT
+
+- ❌ Mengubah business flow yang sudah ditentukan
+- ❌ Menambah fitur di luar scope tanpa persetujuan
+- ❌ Menggunakan raw SQL query (gunakan Eloquent)
+- ❌ Hardcode value (gunakan config/constant)
+- ❌ Skip form validation
+- ❌ Mengubah struktur tabel tanpa update `context/database.md`
+- ❌ Membuat route tanpa name
+- ❌ Menggunakan inline style (gunakan Tailwind)
+- ❌ Menghapus komentar/docstring tanpa alasan
+- ❌ Mengubah urutan section landing page
+- ❌ Skip step di booking flow
+- ❌ Mengubah format kode booking
+- ❌ Mengubah status enum values
+- ❌ Membuat controller untuk multiple resources
+- ❌ Modify file Breeze yang sudah ada tanpa alasan kuat
+- ❌ Buat route group admin/driver baru (pakai yang sudah ada di `web.php`)
+- ❌ Install package baru tanpa diskusi tim
+- ❌ Ganti User model field `name` jadi `nama`
+- ❌ **Mengerjakan file milik anggota lain saat ditugaskan untuk satu anggota**
+- ❌ **Menghapus/mengubah route section milik anggota lain di `web.php`**
+- ❌ **Mengubah migration/model/controller milik anggota lain**
