@@ -2,6 +2,20 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-07] - Kevin - Sprint 0
+
+### Added
+* Migration `2026_06_07_000007_create_trips_table` untuk tabel `trips`
+* Migration `2026_06_07_000008_create_detail_trip_table` untuk tabel `detail_trip`
+* Eloquent model `App\Models\Trip` dengan relasi `driver`, `jadwal`, dan `detailTrips`
+* Eloquent model `App\Models\DetailTrip` dengan relasi `trip` dan `booking`
+* Component sidebar driver `resources/views/components/sidebar-driver.blade.php` untuk navigasi driver
+* Layout driver `resources/views/layouts/driver.blade.php` terintegrasi dengan header, profil dropdown, dan menu mobile
+* Component class `App\View\Components\DriverLayout` untuk mempermudah binding `<x-driver-layout>`
+
+### Changed
+* View dashboard driver `resources/views/driver/dashboard.blade.php` dari placeholder ke layout driver proper
+
 ## [2026-06-07] - Rayfo - Sprint 0
 
 ### Added
