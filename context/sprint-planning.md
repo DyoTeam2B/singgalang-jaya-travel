@@ -115,24 +115,24 @@ Yang sudah selesai: Setup project, Breeze auth, RoleMiddleware, route groups, se
 
 | Task | PIC | Keterangan |
 |------|-----|------------|
-| Migrations (semua tabel baru) | Semua bagi rata | 8 tabel baru |
-| Models + Relationships | Semua bagi rata | 8 model baru |
+| Migrations (semua tabel baru) | Semua bagi rata | 8 tabel baru (RYH: pelanggan, bookings, pembayaran ✅) |
+| Models + Relationships | Semua bagi rata | 8 model baru (RYH: Pelanggan, Booking, Pembayaran ✅) |
 | Seeders (rute, driver sample) | RYF + NYS | RuteSeeder, DriverSeeder |
 | Layout admin (sidebar) | RYF | `layouts.admin` + `components.sidebar-admin` |
 | Layout driver (sidebar) | KVN | `layouts.driver` + `components.sidebar-driver` |
-| Layout public | RYH | `layouts.public` |
+| Layout public | RYH | `layouts.public` (Selesai ✅) |
 | Custom components | NYS + RYH | status-badge, alert, card |
 | Upgrade admin dashboard | RYF | Dari placeholder ke layout proper |
 | Upgrade driver dashboard | KVN | Dari placeholder ke layout proper |
 
 **Pembagian Migration**:
 
-| PIC | Migration |
-|-----|-----------|
-| NYS | `create_drivers_table` |
-| RYF | `create_rute_table`, `create_jadwal_table` |
-| RYH | `create_pelanggan_table`, `create_bookings_table`, `create_pembayaran_table` |
-| KVN | `create_trips_table`, `create_detail_trip_table` |
+| PIC | Migration | Status |
+|-----|-----------|--------|
+| NYS | `create_drivers_table` | 🔲 |
+| RYF | `create_rute_table`, `create_jadwal_table` | 🔲 |
+| RYH | `create_pelanggan_table`, `create_bookings_table`, `create_pembayaran_table` | ✅ Selesai |
+| KVN | `create_trips_table`, `create_detail_trip_table` | 🔲 |
 
 ---
 
