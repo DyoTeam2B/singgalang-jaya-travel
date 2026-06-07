@@ -2,6 +2,18 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-07] - Rayhan - Sprint 1
+
+### Added
+* Controller `App\Http\Controllers\HomeController` untuk menangani halaman landing page publik.
+* Controller `App\Http\Controllers\JadwalPublicController` untuk menangani halaman pencarian dan daftar jadwal publik.
+* View `resources/views/public/home.blade.php` sebagai landing page dengan layout responsif (Hero, Features, Schedules, Fleet, Charter, Contact, CTA).
+* View `resources/views/public/jadwal/index.blade.php` sebagai halaman khusus daftar jadwal publik dengan filter pencarian asal, tujuan, dan tanggal.
+* Class view component `App\View\Components\PublicLayout` untuk binding `<x-public-layout>`.
+
+### Changed
+* Modifikasi `routes/web.php` untuk mendaftarkan route landing page (`/` -> `home`) dan jadwal publik (`/jadwal` -> `jadwal.index`).
+
 ## [2026-06-07] - Kevin - Sprint 0
 
 ### Added

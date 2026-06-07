@@ -146,8 +146,8 @@ Yang sudah selesai: Setup project, Breeze auth, RoleMiddleware, route groups, se
 | Admin Rute CRUD | RYF | 6 routes |
 | Admin Jadwal CRUD + toggle | RYF | 7 routes |
 | Admin Driver CRUD + user account | NYS | 7 routes |
-| Landing Page (semua section) | RYH | `home` |
-| Jadwal Public View | RYH | `jadwal.index` |
+| Landing Page (semua section) | RYH | `home` (Selesai ✅) |
+| Jadwal Public View | RYH | `jadwal.index` (Selesai ✅) |
 | Admin Trip — Index + Create | KVN | 3 routes |
 
 **Livewire**: `JadwalTable`, `DriverTable` (optional search/filter)

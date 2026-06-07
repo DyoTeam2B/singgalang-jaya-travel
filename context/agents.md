@@ -65,8 +65,7 @@ app/Http/Controllers/
 ├── Driver/                            ← 🔲 BUAT BARU
 │   ├── DashboardController.php
 │   └── TripController.php
-├── Api/                               ← 🔲 BUAT BARU
-│   └── JadwalController.php
+
 ├── Controller.php                     ← ✅ SUDAH ADA
 ├── ProfileController.php              ← ✅ SUDAH ADA (Breeze)
 ├── HomeController.php                 ← 🔲 BUAT BARU
@@ -660,7 +659,7 @@ type = feat | fix | refactor | style | docs | test | chore
 - `app/Http/Controllers/PembayaranController.php`
 - `app/Http/Controllers/CekBookingController.php`
 - `app/Http/Controllers/JadwalPublicController.php`
-- `app/Http/Controllers/Api/JadwalController.php`
+
 
 **Views milik Rayhan:**
 - `resources/views/layouts/public.blade.php`
@@ -696,8 +695,8 @@ type = feat | fix | refactor | style | docs | test | chore
 - `POST /booking/{kode}/pembayaran` → `booking.pembayaran.store`
 - `GET /cek-booking` → `cek-booking.index`
 - `POST /cek-booking` → `cek-booking.show`
-- `GET /api/jadwal/available`
-- `GET /api/jadwal/{id}/check-kuota`
+- `GET /jadwal/available` → `jadwal.available`
+- `GET /jadwal/{id}/check-kuota` → `jadwal.checkKuota`
 
 ---
 

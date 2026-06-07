@@ -67,12 +67,12 @@
 | 8 | GET | `/cek-booking` | `cek-booking.index` | `CekBookingController@index` | `public.cek-booking.index` |
 | 9 | POST | `/cek-booking` | `cek-booking.show` | `CekBookingController@show` | `public.cek-booking.show` |
 
-#### A6. API (AJAX Support)
+#### A6. AJAX Support (via JadwalPublicController)
 
 | # | Method | URI | Name | Controller/Livewire | View |
 |---|--------|-----|------|---------------------|------|
-| 10 | GET | `/api/jadwal/available` | — | `Api\JadwalController@available` | — (JSON) |
-| 11 | GET | `/api/jadwal/{id}/check-kuota` | — | `Api\JadwalController@checkKuota` | — (JSON) |
+| 10 | GET | `/jadwal/available` | `jadwal.available` | `JadwalPublicController@available` | — (JSON) |
+| 11 | GET | `/jadwal/{id}/check-kuota` | `jadwal.checkKuota` | `JadwalPublicController@checkKuota` | — (JSON) |
 
 > **Total Rayhan: 11 routes**
 
