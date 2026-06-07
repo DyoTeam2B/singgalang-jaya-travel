@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+#[Fillable([
+    'user_id',
+    'nama_driver',
+    'no_hp',
+    'nama_mobil',
+    'nomor_plat',
+    'kapasitas_mobil',
+    'status_driver',
+])]
+class Driver extends Model
+{
+    use HasFactory;
+
+    /**
+     * Get the user that owns the driver.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Get the trips for the driver.
+     */
+    public function trips(): HasMany
+    {
+        return $this->hasMany(Trip::class, 'driver_id');
+    }
+}

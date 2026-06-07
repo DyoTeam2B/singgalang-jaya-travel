@@ -2,6 +2,22 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-07] - Nayasha - Sprint 0
+
+### Added
+* Migration `2026_06_07_000004_create_drivers_table` untuk tabel `drivers`
+* Eloquent model `App\Models\Driver` dengan relasi `user` dan `trips`
+* Seeder `Database\Seeders\DriverSeeder` untuk menyuntikkan 3 sample driver
+* Component status-badge `resources/views/components/status-badge.blade.php` untuk memetakan status di seluruh panel
+* Component alert `resources/views/components/alert.blade.php` untuk menampilkan flash message terpadu
+
+### Changed
+* Modifikasi `App\Models\User` untuk menambahkan relasi 1:1 `driver()`
+* Modifikasi `Database\Seeders\DatabaseSeeder` untuk memanggil `DriverSeeder`
+
+### Notes
+* Pengecekan database seeding (`php artisan migrate:fresh --seed`) telah sukses dijalankan.
+
 ## [2026-06-07] - Rayhan - Sprint 0
 
 ### Added

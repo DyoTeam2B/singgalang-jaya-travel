@@ -18,6 +18,14 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
+     * Get the driver profile associated with the user.
+     */
+    public function driver(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Driver::class, 'user_id');
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
