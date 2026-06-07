@@ -2,6 +2,29 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-07] - Rayfo - Sprint 0
+
+### Added
+* Migration `2026_06_07_000001_create_rute_table` untuk tabel `rute`
+* Migration `2026_06_07_000002_create_jadwal_table` untuk tabel `jadwal`
+* Eloquent model `App\Models\Rute` dengan relasi `jadwal`
+* Eloquent model `App\Models\Jadwal` dengan relasi `rute`, `bookings`, dan `trips`
+* Seeder `Database\Seeders\RuteSeeder` untuk menyuntikkan data rute perjalanan default
+* Component card `resources/views/components/card.blade.php` sebagai kartu reusable
+* Component sidebar admin `resources/views/components/sidebar-admin.blade.php` untuk menu navigasi admin
+* Layout admin `resources/views/layouts/admin.blade.php` terintegrasi dengan mobile drawer dan modal logout
+* Component class `App\View\Components\AdminLayout` untuk mempermudah binding `<x-admin-layout>`
+* Controller `App\Http/Controllers/Admin/DashboardController` untuk mengontrol dashboard admin
+
+### Changed
+* Modifikasi migration `2026_06_07_000005_create_bookings_table` untuk menambahkan foreign key constraint `jadwal_id` ke tabel `jadwal`
+* Modifikasi `Database\Seeders\DatabaseSeeder` untuk menjalankan `RuteSeeder`
+* Modifikasi dashboard view `resources/views/admin/dashboard.blade.php` dengan layout proper premium yang dinamis dan responsif
+* Modifikasi `routes/web.php` untuk mengarahkan route dashboard admin ke `DashboardController@index`
+
+### Notes
+* Database seeding (`php artisan migrate:fresh --seed`) telah sukses dijalankan secara lokal.
+
 ## [2026-06-07] - Nayasha - Sprint 0
 
 ### Added

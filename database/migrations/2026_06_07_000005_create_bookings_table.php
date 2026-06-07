@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pelanggan_id')->constrained('pelanggan');
-            $table->unsignedBigInteger('jadwal_id'); // Defer constraint until Rayfo creates jadwal table
+            $table->foreignId('jadwal_id')->constrained('jadwal')->onDelete('cascade');
             $table->string('kode_booking', 20)->unique();
             $table->string('alamat_jemput', 500);
             $table->decimal('latitude_jemput', 10, 8)->nullable();

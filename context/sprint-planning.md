@@ -115,14 +115,14 @@ Yang sudah selesai: Setup project, Breeze auth, RoleMiddleware, route groups, se
 
 | Task | PIC | Keterangan |
 |------|-----|------------|
-| Migrations (semua tabel baru) | Semua bagi rata | 8 tabel baru (RYH: pelanggan, bookings, pembayaran ✅, NYS: drivers ✅) |
-| Models + Relationships | Semua bagi rata | 8 model baru (RYH: Pelanggan, Booking, Pembayaran ✅, NYS: Driver ✅) |
-| Seeders (rute, driver sample) | RYF + NYS | RuteSeeder, DriverSeeder (NYS: DriverSeeder ✅) |
-| Layout admin (sidebar) | RYF | `layouts.admin` + `components.sidebar-admin` |
+| Migrations (semua tabel baru) | Semua bagi rata | 8 tabel baru (RYH: pelanggan, bookings, pembayaran ✅, NYS: drivers ✅, RYF: rute, jadwal ✅) |
+| Models + Relationships | Semua bagi rata | 8 model baru (RYH: Pelanggan, Booking, Pembayaran ✅, NYS: Driver ✅, RYF: Rute, Jadwal ✅) |
+| Seeders (rute, driver sample) | RYF + NYS | RuteSeeder, DriverSeeder (NYS: DriverSeeder ✅, RYF: RuteSeeder ✅) |
+| Layout admin (sidebar) | RYF | `layouts.admin` + `components.sidebar-admin` (Selesai ✅) |
 | Layout driver (sidebar) | KVN | `layouts.driver` + `components.sidebar-driver` |
 | Layout public | RYH | `layouts.public` (Selesai ✅) |
-| Custom components | NYS + RYH | status-badge, alert, card (NYS: status-badge ✅, alert ✅) |
-| Upgrade admin dashboard | RYF | Dari placeholder ke layout proper |
+| Custom components | NYS + RYH | status-badge, alert, card (NYS: status-badge ✅, alert ✅, RYF: card ✅) |
+| Upgrade admin dashboard | RYF | Dari placeholder ke layout proper (Selesai ✅) |
 | Upgrade driver dashboard | KVN | Dari placeholder ke layout proper |
 
 **Pembagian Migration**:
@@ -130,7 +130,7 @@ Yang sudah selesai: Setup project, Breeze auth, RoleMiddleware, route groups, se
 | PIC | Migration | Status |
 |-----|-----------|--------|
 | NYS | `create_drivers_table` | ✅ Selesai |
-| RYF | `create_rute_table`, `create_jadwal_table` | 🔲 |
+| RYF | `create_rute_table`, `create_jadwal_table` | ✅ Selesai |
 | RYH | `create_pelanggan_table`, `create_bookings_table`, `create_pembayaran_table` | ✅ Selesai |
 | KVN | `create_trips_table`, `create_detail_trip_table` | 🔲 |
 
