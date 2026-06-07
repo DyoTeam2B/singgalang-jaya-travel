@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Jadwal extends Model
+{
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'jadwal';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'rute_id',
+        'tanggal_keberangkatan',
+        'shift',
+        'jam_berangkat',
+        'kuota',
+        'status_jadwal',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'tanggal_keberangkatan' => 'date',
+        'kuota' => 'integer',
+    ];
+
+    /**
+     * Get the route that this schedule belongs to.
+     */
+    public function rute(): BelongsTo
+    {
+        return $this->belongsTo(Rute::class, 'rute_id');
+    }
+
+    /**
+     * Get the bookings for this schedule.
+     */
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class, 'jadwal_id');
+    }
+
+    /**
+     * Get the trips for this schedule.
+     */
+    public function trips(): HasMany
+    {
+        return $this->hasMany(Trip::class, 'jadwal_id');
+    }
+}

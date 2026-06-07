@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +17,27 @@ Route::get('/dashboard', function () {
 
     return view('driver.dashboard');
 
+<<<<<<< Updated upstream
 })->middleware(['auth'])->name('dashboard');
+=======
+// })->middleware(['auth'])->name('dashboard');
+
+Route::middleware(['auth', 'role:admin'])
+     ->prefix('admin')
+     ->name('admin.')
+     ->group(function(){
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+     });
+
+Route::middleware(['auth', 'role:driver'])
+     ->prefix('driver')
+     ->name('driver.')
+     ->group(function(){
+        Route::get('/dashboard', function(){
+            return view('driver.dashboard');
+        })->name('dashboard');
+     });
+>>>>>>> Stashed changes
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
