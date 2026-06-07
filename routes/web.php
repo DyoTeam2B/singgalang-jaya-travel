@@ -10,6 +10,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
 
+<<<<<<< Updated upstream
     if(Auth::user()->role == 'admin'){
         return view('admin.dashboard');
     }
@@ -17,6 +18,32 @@ Route::get('/dashboard', function () {
     return view('driver.dashboard');
 
 })->middleware(['auth'])->name('dashboard');
+=======
+//     if(Auth::user()->role == 'admin'){
+//         return view('admin.dashboard');
+//     }
+
+//     return view('driver.dashboard');
+
+// })->middleware(['auth'])->name('dashboard');
+
+Route::middleware(['auth', 'role:admin'])
+     ->prefix('admin')
+     ->name('admin.')
+     ->group(function(){
+        Route::get('/dashboard', function(){
+            return view('admin.dashboard');
+        })->name('dashboard');
+     });
+Route::middleware(['auth', 'role:driver'])
+     ->prefix('driver')
+     ->name('driver.')
+     ->group(function(){
+        Route::get('/dashboard', function(){
+            return view('driver.dashboard');
+        })->name('dashboard');
+     });
+>>>>>>> Stashed changes
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

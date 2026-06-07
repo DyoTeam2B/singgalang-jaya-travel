@@ -1,0 +1,20 @@
+html {
+  scroll-behavior: smooth;
+}
+
+/* Offset for sticky navbar (h-20 = 80px) so anchor scrolls don't hide section heading */
+section[id] {
+  scroll-margin-top: 96px;
+}
+
+body {
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Consistent focus ring (navy) */
+*:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
