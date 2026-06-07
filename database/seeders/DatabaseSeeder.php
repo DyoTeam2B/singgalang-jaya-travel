@@ -14,35 +14,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-<<<<<<< Updated upstream
-        // User::factory(10)->create();
-
-<<<<<<< Updated upstream
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-=======
         $this->call([
             UserSeeder::class,
             DriverSeeder::class,
             RuteSeeder::class,
->>>>>>> Stashed changes
-=======
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-
-        $this->call([
-            UserSeeder::class,
-            DriverSeeder::class,
-            RuteSeeder::class,
->>>>>>> Stashed changes
-        // ]);
-
-        $this->call([
-            UserSeeder::class,
-            DriverSeeder::class,
         ]);
     }
 }
