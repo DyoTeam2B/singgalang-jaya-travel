@@ -8,6 +8,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Jadwal extends Model
 {
+    // Status Jadwal Constants
+    public const STATUS_AKTIF = 'aktif';
+    public const STATUS_NONAKTIF = 'nonaktif';
+    public const STATUS_PENUH = 'penuh';
+
     /**
      * The table associated with the model.
      *
@@ -36,8 +41,17 @@ class Jadwal extends Model
      */
     protected $casts = [
         'tanggal_keberangkatan' => 'date',
+        'jam_berangkat' => 'datetime:H:i',
         'kuota' => 'integer',
     ];
+
+    /**
+     * Scope a query to only include active schedules.
+     */
+    public function scopeAktif($query)
+    {
+        return $query->where('status_jadwal', self::STATUS_AKTIF);
+    }
 
     /**
      * Get the route that this schedule belongs to.

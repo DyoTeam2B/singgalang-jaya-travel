@@ -1,4 +1,6 @@
-<x-admin-layout>
+@extends('layouts.admin')
+
+@section('content')
     <div class="font-poppins">
         <!-- Header Section -->
         <div class="mb-8">
@@ -260,4 +262,4 @@
             </div>
         </div>
     </div>
-</x-admin-layout>
+@endsection

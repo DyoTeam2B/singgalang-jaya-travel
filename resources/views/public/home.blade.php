@@ -1,4 +1,6 @@
-<x-public-layout>
+@extends('layouts.public')
+
+@section('content')
     <!-- HERO SECTION -->
     <section id="home" class="relative pt-16 pb-24 md:pt-24 md:pb-32 bg-slate-50 overflow-hidden">
         <!-- Subtle Background Pattern -->
@@ -192,7 +194,7 @@
                 <div class="grid lg:grid-cols-2 gap-10">
                     @foreach ($schedules as $schedule)
                         @php
-                            $bookedSeats = $schedule->bookings()->where('status_booking', '!=', 'dibatalkan')->sum('jumlah_penumpang');
+                            $bookedSeats = (int) ($schedule->booked_seats ?? 0);
                             $sisaKursi = max(0, $schedule->kuota - $bookedSeats);
                             $fillPercentage = ($schedule->kuota > 0) ? (($schedule->kuota - $sisaKursi) / $schedule->kuota) * 100 : 0;
                             $isMorning = Str::lower($schedule->shift) === 'pagi';
@@ -236,7 +238,7 @@
                                     <div>
                                         <p class="text-slate-500 text-sm font-semibold mb-1 uppercase tracking-wider">Keberangkatan</p>
                                         <h3 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tighter">
-                                            {{ \Carbon\Carbon::parse($schedule->jam_berangkat)->format('H.i') }}
+                                            {{ $schedule->jam_berangkat->format('H.i') }}
                                         </h3>
                                         <p class="text-slate-400 text-xs font-medium mt-1">
                                             Tanggal: {{ $schedule->tanggal_keberangkatan->format('d M Y') }}
@@ -539,4 +541,4 @@
             </a>
         </div>
     </section>
-</x-public-layout>
+@endsection

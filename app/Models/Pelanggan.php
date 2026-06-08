@@ -2,12 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['nama', 'no_hp'])]
 class Pelanggan extends Model
 {
     use HasFactory;
@@ -16,6 +14,16 @@ class Pelanggan extends Model
      * Override table name since it is singular in Indonesian
      */
     protected $table = 'pelanggan';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'nama',
+        'no_hp',
+    ];
 
     /**
      * Get the bookings for the pelanggan.

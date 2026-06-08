@@ -233,27 +233,22 @@ flowchart TD
 | Auth controllers | Breeze: Login, Register, Password, Profile, dll |
 | Login redirect by role | Admin → `/admin/dashboard`, Driver → `/driver/dashboard` |
 | Route groups | `admin.*` (role:admin), `driver.*` (role:driver) |
-| Seeders | Admin: `admin@gmail.com` / `admin12345`, Driver: `driver@gmail.com` / `driver12345` |
-| Layouts | `layouts.app` (slot-based), `layouts.guest`, `layouts.navigation` |
-| Blade Components | 13 komponen Breeze (button, input, dropdown, modal, dll) |
-| View Component Classes | `AppLayout`, `GuestLayout` |
-| Admin dashboard | Placeholder `<h1>dashboard admin</h1>` |
-| Driver dashboard | Placeholder `<h1>dashboard driver</h1>` |
+| Seeders | Admin: `admin@gmail.com`/`admin12345`, Driver: `driver@gmail.com`/`driver12345`, DriverSeeder, RuteSeeder |
+| Custom Layouts | `layouts.public`, `layouts.admin`, `layouts.driver` (Template Inheritance) |
+| Blade Components | 13 Breeze components + custom components (sidebar-admin, sidebar-driver, status-badge, alert, card) |
+| Models & Migrations | 8 tabel baru + model & relationships lengkap (User, Driver, Rute, Pelanggan, Jadwal, Booking, Pembayaran, Trip, DetailTrip) |
+| Admin Dashboard | Dashboard utama dengan Sidebar layout kustom |
+| Driver Dashboard | Dashboard utama dengan Sidebar layout kustom |
 | Profile | Edit profile page + partials |
-| Livewire directory | `app/Livewire/` (kosong), `resources/views/livewire/` (kosong) |
+| Livewire directory | `app/Livewire/` (terstruktur), `resources/views/livewire/` |
 
 ### 🔲 Belum Dikerjakan
 
-- Models (Driver, Rute, Pelanggan, Jadwal, Booking, Pembayaran, Trip, DetailTrip)
-- Migrations (semua tabel selain users)
-- Admin layout (sidebar)
-- Driver layout (sidebar)
-- Public layout (landing page)
-- Semua CRUD module
-- Booking flow
-- Trip management
-- Maps integration
-- Laporan
+- Semua CRUD module (Rute, Jadwal, Driver)
+- Booking flow (Form, Review, Pembayaran Page, Cek Status)
+- Trip management (Admin Trip, Driver Panel & Operations)
+- Maps integration (Leaflet picker & viewer)
+- Laporan & Export
 
 ---
 

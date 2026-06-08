@@ -95,30 +95,73 @@ app/Livewire/                          ← ✅ DIRECTORY ADA (kosong)
 ```
 resources/views/
 ├── layouts/
-│   ├── app.blade.php                  ← ✅ SUDAH ADA (Breeze, slot-based)
-│   ├── guest.blade.php                ← ✅ SUDAH ADA (Breeze)
-│   ├── navigation.blade.php           ← ✅ SUDAH ADA (Breeze)
-│   ├── public.blade.php               ← 🔲 BUAT BARU (landing page layout)
-│   ├── admin.blade.php                ← 🔲 BUAT BARU (sidebar layout)
-│   └── driver.blade.php               ← 🔲 BUAT BARU (sidebar layout)
-├── components/                        ← ✅ 13 komponen Breeze sudah ada
-│   ├── sidebar-admin.blade.php        ← 🔲 BUAT BARU
-│   ├── sidebar-driver.blade.php       ← 🔲 BUAT BARU
-│   ├── status-badge.blade.php         ← 🔲 BUAT BARU
-│   ├── map-picker.blade.php           ← 🔲 BUAT BARU
-│   ├── map-viewer.blade.php           ← 🔲 BUAT BARU
-│   ├── alert.blade.php                ← 🔲 BUAT BARU
-│   └── card.blade.php                 ← 🔲 BUAT BARU
+│   ├── public.blade.php               ← ✅ SUDAH ADA (Layout utama Public)
+│   ├── admin.blade.php                ← ✅ SUDAH ADA (Layout utama Admin)
+│   ├── driver.blade.php               ← ✅ SUDAH ADA (Layout utama Driver)
+│   ├── guest.blade.php                ← ✅ SUDAH ADA (Breeze default guest layout)
+│   ├── app.blade.php                  ← ⚠️ LEGACY / BREEZE DEFAULT (JANGAN GUNAKAN)
+│   ├── navigation.blade.php           ← ⚠️ LEGACY / BREEZE DEFAULT (JANGAN GUNAKAN)
+│   └── partials/                      ← 🔲 Rencana dipindahkan dari layouts/public
+│       ├── public-navbar.blade.php
+│       └── public-footer.blade.php
+├── components/                        ← ✅ Reusable UI elements
+│   ├── sidebar-admin.blade.php        ← ✅ SUDAH ADA
+│   ├── sidebar-driver.blade.php       ← ✅ SUDAH ADA
+│   ├── status-badge.blade.php         ← ✅ SUDAH ADA
+│   ├── alert.blade.php                ← ✅ SUDAH ADA
+│   ├── card.blade.php                 ← ✅ SUDAH ADA
+│   ├── map-picker.blade.php           ← 🔲 BUAT BARU (Leaflet picker)
+│   ├── map-viewer.blade.php           ← 🔲 BUAT BARU (Leaflet viewer)
+│   └── [Breeze Components...]         ← ✅ 13 komponen Breeze
 ├── livewire/                          ← ✅ DIRECTORY ADA (kosong)
 ├── auth/                              ← ✅ SUDAH ADA (6 views Breeze)
-├── profile/                           ← ✅ SUDAH ADA
-├── admin/
-│   └── dashboard.blade.php            ← ✅ ADA (placeholder)
-├── driver/
-│   └── dashboard.blade.php            ← ✅ ADA (placeholder)
-├── public/                            ← 🔲 BUAT BARU
-├── dashboard.blade.php                ← ✅ SUDAH ADA (Breeze default)
-└── welcome.blade.php                  ← ✅ SUDAH ADA (Laravel default)
+├── profile/                           ← ✅ SUDAH ADA (Breeze profile)
+├── public/                            ← Halaman Pelanggan (Guest)
+│   ├── home.blade.php                 ← ✅ SUDAH ADA (Landing Page)
+│   ├── jadwal/
+│   │   └── index.blade.php            ← ✅ SUDAH ADA (Daftar jadwal)
+│   ├── booking/
+│   │   ├── create.blade.php           ← 🔲 BUAT BARU
+│   │   └── review.blade.php           ← 🔲 BUAT BARU
+│   ├── pembayaran/
+│   │   └── show.blade.php             ← 🔲 BUAT BARU
+│   └── cek-booking/
+│       ├── index.blade.php            ← 🔲 BUAT BARU
+│       └── show.blade.php             ← 🔲 BUAT BARU
+├── admin/                             ← Halaman Admin
+│   ├── dashboard.blade.php            ← ✅ SUDAH ADA (Dashboard panel)
+│   ├── rute/
+│   │   ├── index.blade.php            ← 🔲 BUAT BARU
+│   │   ├── create.blade.php           ← 🔲 BUAT BARU
+│   │   └── edit.blade.php             ← 🔲 BUAT BARU
+│   ├── jadwal/
+│   │   ├── index.blade.php            ← 🔲 BUAT BARU
+│   │   ├── create.blade.php           ← 🔲 BUAT BARU
+│   │   └── edit.blade.php             ← 🔲 BUAT BARU
+│   ├── bookings/
+│   │   ├── index.blade.php            ← 🔲 BUAT BARU
+│   │   └── show.blade.php             ← 🔲 BUAT BARU
+│   ├── pembayaran/
+│   │   ├── index.blade.php            ← 🔲 BUAT BARU
+│   │   └── show.blade.php             ← 🔲 BUAT BARU
+│   ├── drivers/
+│   │   ├── index.blade.php            ← 🔲 BUAT BARU
+│   │   ├── create.blade.php           ← 🔲 BUAT BARU
+│   │   ├── edit.blade.php             ← 🔲 BUAT BARU
+│   │   └── show.blade.php             ← 🔲 BUAT BARU
+│   ├── trips/
+│   │   ├── index.blade.php            ← 🔲 BUAT BARU
+│   │   ├── create.blade.php           ← 🔲 BUAT BARU
+│   │   └── show.blade.php             ← 🔲 BUAT BARU
+│   └── laporan/
+│       └── index.blade.php            ← 🔲 BUAT BARU
+├── driver/                            ← Halaman Driver
+│   ├── dashboard.blade.php            ← ✅ SUDAH ADA (Dashboard panel)
+│   └── trips/
+│       ├── index.blade.php            ← 🔲 BUAT BARU
+│       └── show.blade.php             ← 🔲 BUAT BARU
+├── dashboard.blade.php                ← ❌ AKAN DIHAPUS (Breeze default)
+└── welcome.blade.php                  ← ❌ AKAN DIHAPUS (Laravel default)
 ```
 
 ### Models
@@ -319,21 +362,144 @@ class BookingTable extends Component
 
 ```blade
 {{-- di views/admin/bookings/index.blade.php --}}
-<x-app-layout>
+@extends('layouts.admin')
+
+@section('content')
     <livewire:admin.booking-table />
-</x-app-layout>
+@endsection
 ```
 
 ---
 
-## 7. Layout Rules
+## 7. Blade Layout Standard
 
-### Admin & Driver — Pakai Custom Layout
+Project Singgalang Jaya Travel menggunakan Blade Template Inheritance sebagai standar utama.
 
-Admin dan driver **perlu layout baru** dengan sidebar. Jangan pakai `layouts.app` (Breeze navbar) untuk admin/driver panel.
+Gunakan:
 
 ```blade
-{{-- layouts/admin.blade.php — BUAT BARU --}}
+@extends('layouts.public')
+
+@section('content')
+@endsection
+```
+
+dan
+
+```blade
+@yield('content')
+```
+
+untuk layout halaman.
+
+### Layout yang digunakan
+
+```text
+resources/views/layouts/public.blade.php
+resources/views/layouts/admin.blade.php
+resources/views/layouts/driver.blade.php
+```
+
+### Aturan
+
+Untuk halaman utama:
+
+Gunakan:
+
+```blade
+@extends(...)
+@section(...)
+@endsection
+```
+
+Jangan gunakan:
+
+```blade
+<x-public-layout>
+    ...
+</x-public-layout>
+```
+
+untuk layout utama halaman.
+
+### Blade Component
+
+Blade Component hanya digunakan untuk elemen reusable seperti:
+
+* Navbar
+* Footer
+* Button
+* Card
+* Badge
+* Modal
+* Alert
+* Table
+
+Contoh:
+
+```blade
+<x-button />
+<x-card />
+```
+
+Diperbolehkan.
+
+Namun:
+
+```blade
+<x-public-layout />
+<x-admin-layout />
+<x-driver-layout />
+```
+
+Tidak digunakan pada project ini.
+
+### Alasan
+
+* Lebih mudah dipahami mahasiswa.
+* Lebih umum digunakan pada tutorial Laravel.
+* Lebih mudah dijelaskan saat sidang.
+* Konsisten dengan Laravel Breeze.
+* Mengurangi kompleksitas project.
+
+### Saat AI membuat view baru
+
+Gunakan pola:
+
+```blade
+@extends('layouts.public')
+
+@section('content')
+
+@endsection
+```
+
+atau
+
+```blade
+@extends('layouts.admin')
+
+@section('content')
+
+@endsection
+```
+
+atau
+
+```blade
+@extends('layouts.driver')
+
+@section('content')
+
+@endsection
+```
+
+sesuai kebutuhan.
+
+### Custom Layout Reference with Blade Template Inheritance
+
+#### Admin Layout (`layouts/admin.blade.php`):
+```blade
 <!DOCTYPE html>
 <html>
 <head>
@@ -344,7 +510,7 @@ Admin dan driver **perlu layout baru** dengan sidebar. Jangan pakai `layouts.app
     <div class="flex min-h-screen">
         <x-sidebar-admin />
         <main class="flex-1">
-            {{ $slot }}
+            @yield('content')
         </main>
     </div>
     @livewireScripts
@@ -352,11 +518,20 @@ Admin dan driver **perlu layout baru** dengan sidebar. Jangan pakai `layouts.app
 </html>
 ```
 
-### Public — Pakai Layout Terpisah
-
+#### Public Layout (`layouts/public.blade.php`):
+Tidak perlu auth, tidak perlu sidebar.
 ```blade
-{{-- layouts/public.blade.php — BUAT BARU --}}
-{{-- Tidak perlu auth, tidak perlu sidebar --}}
+<!DOCTYPE html>
+<html>
+<head>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
+</head>
+<body>
+    @yield('content')
+    @livewireScripts
+</body>
+</html>
 ```
 
 ### Penting: @livewireStyles & @livewireScripts

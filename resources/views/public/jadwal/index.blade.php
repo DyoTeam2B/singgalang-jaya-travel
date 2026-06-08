@@ -1,4 +1,6 @@
-<x-public-layout>
+@extends('layouts.public')
+
+@section('content')
     <section class="py-12 bg-slate-50 min-h-screen">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             
@@ -88,7 +90,7 @@
                     <p class="text-slate-500 text-sm font-medium mb-6">Maaf, jadwal dengan kriteria pencarian Anda belum tersedia saat ini.</p>
                     <a href="{{ route('jadwal.index') }}" class="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors">
                         Tampilkan Semua Jadwal
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
                         </svg>
                     </a>
@@ -97,7 +99,7 @@
                 <div class="grid md:grid-cols-2 gap-8">
                     @foreach ($schedules as $schedule)
                         @php
-                            $bookedSeats = $schedule->bookings()->where('status_booking', '!=', 'dibatalkan')->sum('jumlah_penumpang');
+                            $bookedSeats = (int) ($schedule->booked_seats ?? 0);
                             $sisaKursi = max(0, $schedule->kuota - $bookedSeats);
                             $fillPercentage = ($schedule->kuota > 0) ? (($schedule->kuota - $sisaKursi) / $schedule->kuota) * 100 : 0;
                             $isMorning = Str::lower($schedule->shift) === 'pagi';
@@ -141,7 +143,7 @@
                                     <div>
                                         <p class="text-slate-500 text-xs font-semibold mb-1 uppercase tracking-wider">Jam Keberangkatan</p>
                                         <h3 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tighter">
-                                            {{ \Carbon\Carbon::parse($schedule->jam_berangkat)->format('H.i') }}
+                                            {{ $schedule->jam_berangkat->format('H.i') }}
                                         </h3>
                                         <p class="text-slate-400 text-xs font-bold mt-1">
                                             {{ $schedule->tanggal_keberangkatan->format('d M Y') }}
@@ -208,4 +210,4 @@
             @endif
         </div>
     </section>
-</x-public-layout>
+@endsection

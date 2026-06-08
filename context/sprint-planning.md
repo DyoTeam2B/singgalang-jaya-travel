@@ -13,7 +13,7 @@
 
 ## Status Saat Ini
 
-### ✅ Sudah Selesai (Sprint 0 — Sebagian)
+### ✅ Sudah Selesai (Sprint 0 — Foundation)
 
 | Item | Status |
 |------|--------|
@@ -22,35 +22,26 @@
 | Install Laravel Breeze (Blade) | ✅ |
 | TailwindCSS + Vite + Alpine.js | ✅ |
 | Database MySQL config | ✅ |
-| Migration: `users` | ✅ |
-| Migration: `add_role_to_users` | ✅ |
-| Migration: `cache`, `jobs` | ✅ |
-| User model + `#[Fillable]` | ✅ |
-| RoleMiddleware | ✅ |
-| Middleware registration (`bootstrap/app.php`) | ✅ |
-| Auth controllers (Breeze — 9 controllers) | ✅ |
+| Migration: `users` + 8 tabel operasional baru | ✅ |
+| User model + 8 model operasional baru | ✅ |
+| RoleMiddleware & registration | ✅ |
+| Auth controllers & views (Breeze) | ✅ |
 | Login redirect by role | ✅ |
 | Route groups (admin.*, driver.*) | ✅ |
-| UserSeeder (admin + driver) | ✅ |
-| Auth views (login, register, etc.) | ✅ |
+| Seeders (Admin, Driver, Rute) | ✅ |
 | Profile page + edit | ✅ |
-| Breeze layouts (app, guest, navigation) | ✅ |
-| Breeze components (13 komponen) | ✅ |
-| Admin dashboard (placeholder) | ✅ |
-| Driver dashboard (placeholder) | ✅ |
+| Custom layouts (`layouts.public`, `layouts.admin`, `layouts.driver`) | ✅ |
+| Custom components (sidebar-admin, sidebar-driver, status-badge, alert, card) | ✅ |
+| Upgrade admin dashboard (proper layout) | ✅ |
+| Upgrade driver dashboard (proper layout) | ✅ |
 
 ### 🔲 Belum Dikerjakan
 
-- Migrations (7 tabel: drivers, rute, pelanggan, jadwal, bookings, pembayaran, trips, detail_trip)
-- Models (8 model baru)
-- Custom layouts (admin sidebar, driver sidebar, public)
-- Custom components (status-badge, map-picker, alert, card, sidebar)
-- Semua CRUD module
-- Livewire components
-- Booking flow
-- Trip management
-- Maps integration
-- Laporan
+- Semua CRUD module (Rute, Jadwal, Driver)
+- Booking flow (Form, Review, Pembayaran Page, Cek Status)
+- Trip management (Admin Trip, Driver Panel & Operations)
+- Maps integration (Leaflet picker & viewer)
+- Laporan & Export
 
 ---
 
@@ -107,23 +98,9 @@
 
 ## Sprint Planning (Updated)
 
-### Sprint 0 — Foundation ✅ SELESAI (Sebagian)
+### Sprint 0 — Foundation ✅ SELESAI
 
-Yang sudah selesai: Setup project, Breeze auth, RoleMiddleware, route groups, seeders.
-
-**Sisa Sprint 0** (perlu dikerjakan):
-
-| Task | PIC | Keterangan |
-|------|-----|------------|
-| Migrations (semua tabel baru) | Semua bagi rata | 8 tabel baru (RYH: pelanggan, bookings, pembayaran ✅, NYS: drivers ✅, RYF: rute, jadwal ✅, KVN: trips, detail_trip ✅) |
-| Models + Relationships | Semua bagi rata | 8 model baru (RYH: Pelanggan, Booking, Pembayaran ✅, NYS: Driver ✅, RYF: Rute, Jadwal ✅, KVN: Trip, DetailTrip ✅) |
-| Seeders (rute, driver sample) | RYF + NYS | RuteSeeder, DriverSeeder (NYS: DriverSeeder ✅, RYF: RuteSeeder ✅) |
-| Layout admin (sidebar) | RYF | `layouts.admin` + `components.sidebar-admin` (Selesai ✅) |
-| Layout driver (sidebar) | KVN | `layouts.driver` + `components.sidebar-driver` (Selesai ✅) |
-| Layout public | RYH | `layouts.public` (Selesai ✅) |
-| Custom components | NYS + RYH | status-badge, alert, card (NYS: status-badge ✅, alert ✅, RYF: card ✅) |
-| Upgrade admin dashboard | RYF | Dari placeholder ke layout proper (Selesai ✅) |
-| Upgrade driver dashboard | KVN | Dari placeholder ke layout proper (Selesai ✅) |
+Semua tugas fondasi telah diselesaikan dengan sukses: Setup project, Breeze auth, RoleMiddleware, route groups, migrations, models, seeders, layouts, custom components, serta dashboard admin & driver.
 
 **Pembagian Migration**:
 

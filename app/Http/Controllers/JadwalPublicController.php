@@ -3,31 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\Jadwal;
-use Illuminate\Http\Request;
+use App\Models\Booking;
+use App\Http\Requests\SearchJadwalRequest;
 
 class JadwalPublicController extends Controller
 {
     /**
      * Display public schedules with optional filtering.
      */
-    public function index(Request $request)
+    public function index(SearchJadwalRequest $request)
     {
-        $query = Jadwal::with('rute')->where('status_jadwal', 'aktif');
+        $validated = $request->validated();
 
-        if ($request->filled('asal')) {
-            $query->whereHas('rute', function ($q) use ($request) {
-                $q->where('asal', 'like', '%' . $request->asal . '%');
+        $query = Jadwal::with('rute')
+            ->withSum(['bookings as booked_seats' => function ($q) {
+                $q->where('status_booking', '!=', Booking::STATUS_DIBATALKAN);
+            }], 'jumlah_penumpang')
+            ->aktif();
+
+        if (!empty($validated['asal'])) {
+            $query->whereHas('rute', function ($q) use ($validated) {
+                $q->where('asal', 'like', '%' . $validated['asal'] . '%');
             });
         }
 
-        if ($request->filled('tujuan')) {
-            $query->whereHas('rute', function ($q) use ($request) {
-                $q->where('tujuan', 'like', '%' . $request->tujuan . '%');
+        if (!empty($validated['tujuan'])) {
+            $query->whereHas('rute', function ($q) use ($validated) {
+                $q->where('tujuan', 'like', '%' . $validated['tujuan'] . '%');
             });
         }
 
-        if ($request->filled('tanggal')) {
-            $query->whereDate('tanggal_keberangkatan', $request->tanggal);
+        if (!empty($validated['tanggal'])) {
+            $query->whereDate('tanggal_keberangkatan', $validated['tanggal']);
         }
 
         $schedules = $query->orderBy('tanggal_keberangkatan', 'asc')

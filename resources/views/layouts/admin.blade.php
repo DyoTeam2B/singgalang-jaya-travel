@@ -166,7 +166,7 @@
 
             <!-- Page Content -->
             <main class="flex-1 p-4 sm:p-6 lg:p-10 max-w-[1600px] mx-auto w-full">
-                {{ $slot }}
+                @yield('content')
             </main>
         </div>
 

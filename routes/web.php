@@ -10,27 +10,39 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/jadwal', [JadwalPublicController::class, 'index'])->name('jadwal.index');
 
-Route::middleware(['auth', 'role:admin'])
-     ->prefix('admin')
-     ->name('admin.')
-     ->group(function(){
-        Route::get('/dashboard', function(){
-            return view('admin.dashboard');
-        })->name('dashboard');
-     });
-Route::middleware(['auth', 'role:driver'])
-     ->prefix('driver')
-     ->name('driver.')
-     ->group(function(){
-        Route::get('/dashboard', function(){
-            return view('driver.dashboard');
-        })->name('dashboard');
-     });
-
 Route::middleware('auth')->group(function () {
+    // Redirection Dashboard (Breeze Default)
+    Route::get('/dashboard', function () {
+        if (Auth::user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        }
+        return redirect()->route('driver.dashboard');
+    })->name('dashboard');
+
+    // Profile Routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Admin Routes
+    Route::middleware('role:admin')
+         ->prefix('admin')
+         ->name('admin.')
+         ->group(function () {
+             Route::get('/dashboard', function () {
+                 return view('admin.dashboard');
+             })->name('dashboard');
+         });
+
+    // Driver Routes
+    Route::middleware('role:driver')
+         ->prefix('driver')
+         ->name('driver.')
+         ->group(function () {
+             Route::get('/dashboard', function () {
+                 return view('driver.dashboard');
+             })->name('dashboard');
+         });
 });
 
 

@@ -28,7 +28,7 @@
                         ['name' => 'Jadwal', 'href' => $isHome ? '#jadwal' : route('home') . '#jadwal', 'active' => false],
                         ['name' => 'Armada', 'href' => $isHome ? '#armada' : route('home') . '#armada', 'active' => false],
                         ['name' => 'Charter', 'href' => $isHome ? '#charter' : route('home') . '#charter', 'active' => false],
-                        ['name' => 'Cek Status', 'href' => route('cek-booking.index'), 'active' => Request::is('cek-booking*')],
+                        ['name' => 'Cek Status', 'href' => Route::has('cek-booking.index') ? route('cek-booking.index') : '#', 'active' => Request::is('cek-booking*')],
                         ['name' => 'Kontak', 'href' => $isHome ? '#kontak' : route('home') . '#kontak', 'active' => false],
                     ];
                 @endphp

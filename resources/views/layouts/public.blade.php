@@ -20,15 +20,15 @@
     </head>
     <body class="font-poppins antialiased min-h-screen bg-slate-50 flex flex-col">
         <!-- Public Navbar -->
-        @include('layouts.public.navbar')
+        @include('layouts.partials.public-navbar')
 
         <!-- Page Content -->
         <main class="flex-1 flex flex-col">
-            {{ $slot }}
+            @yield('content')
         </main>
 
         <!-- Public Footer -->
-        @include('layouts.public.footer')
+        @include('layouts.partials.public-footer')
 
         @livewireScripts
     </body>
