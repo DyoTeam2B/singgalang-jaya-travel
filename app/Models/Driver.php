@@ -36,4 +36,20 @@ class Driver extends Model
     {
         return $this->hasMany(Trip::class, 'driver_id');
     }
+
+    /**
+     * Get the dynamic status of the driver based on DB status and active trips.
+     */
+    public function getDynamicStatusAttribute(): string
+    {
+        if ($this->status_driver === 'nonaktif') {
+            return 'tidak_aktif';
+        }
+
+        $hasActiveTrip = $this->trips()
+            ->whereIn('status_trip', ['ready', 'berjalan'])
+            ->exists();
+
+        return $hasActiveTrip ? 'sedang_bertugas' : 'tersedia';
+    }
 }

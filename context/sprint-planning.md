@@ -122,7 +122,7 @@ Semua tugas fondasi telah diselesaikan dengan sukses: Setup project, Breeze auth
 | Admin Dashboard (statistik widget) | RYF | `admin.dashboard` (Selesai ✅) |
 | Admin Rute CRUD | RYF | 6 routes (Selesai ✅) |
 | Admin Jadwal CRUD + toggle | RYF | 7 routes (Selesai ✅) |
-| Admin Driver CRUD + user account | NYS | 7 routes |
+| Admin Driver CRUD + user account | NYS | 7 routes (Selesai ✅) |
 | Landing Page (semua section) | RYH | `home` (Selesai ✅) |
 | Jadwal Public View | RYH | `jadwal.index` (Selesai ✅) |
 | Admin Trip — Index + Create | KVN | 3 routes |

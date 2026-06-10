@@ -2,6 +2,25 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-10] - Nayasha - Sprint 1
+
+### Added
+
+* Controller `App\Http\Controllers\Admin\DriverController` untuk menangani CRUD Driver dan relasi akun login user.
+* Form request `App\Http\Requests\Driver\StoreDriverRequest` & `UpdateDriverRequest` untuk memvalidasi form input tambah/edit driver.
+* Berkas view `resources/views/admin/drivers/index.blade.php` untuk menampilkan antarmuka manajemen driver dengan layout dua kolom (tabel dan detail panel), pencarian, penyaringan status, serta modal input.
+* Tes fitur `Tests\Feature\Admin\DriverTest` untuk menjamin validitas alur CRUD driver secara otomatis.
+
+### Changed
+
+* Modifikasi `routes/web.php` untuk mendaftarkan resource route `drivers` di bawah admin group.
+* Modifikasi `resources/views/components/status-badge.blade.php` untuk memetakan status driver dinamis (`tersedia`, `sedang_bertugas`, `tidak_aktif`) dengan warna badge yang sesuai.
+* Modifikasi model `App\Models\Driver` untuk menambahkan dynamic accessor `getDynamicStatusAttribute()`.
+
+### Notes
+
+* Implementasi menggunakan database transactions (`DB::transaction`) untuk menjaga integritas data relasi 1:1 antara driver dan user login.
+
 ## [2026-06-10] - Rayfo - Sprint 1
 
 ### Added

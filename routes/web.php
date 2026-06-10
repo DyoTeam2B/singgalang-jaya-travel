@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
              Route::resource('rute', \App\Http\Controllers\Admin\RuteController::class);
              Route::resource('jadwal', \App\Http\Controllers\Admin\JadwalController::class);
              Route::put('jadwal/{jadwal}/toggle', [\App\Http\Controllers\Admin\JadwalController::class, 'toggleStatus'])->name('jadwal.toggle');
+             Route::resource('drivers', \App\Http\Controllers\Admin\DriverController::class);
          });
 
     // Driver Routes
