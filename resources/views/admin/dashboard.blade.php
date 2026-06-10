@@ -19,12 +19,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
                         </svg>
                     </div>
-                    <span class="text-xs font-bold text-emerald-600 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-100">
-                        +12%
-                    </span>
                 </div>
                 <div>
-                    <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-1">1,242</h3>
+                    <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-1">{{ number_format($totalBookings) }}</h3>
                     <p class="text-sm font-semibold text-slate-500">Total Booking</p>
                 </div>
             </div>
@@ -43,7 +40,7 @@
                     </span>
                 </div>
                 <div>
-                    <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-1">18</h3>
+                    <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-1">{{ number_format($pendingVerification) }}</h3>
                     <p class="text-sm font-semibold text-slate-500">Pending Verifikasi</p>
                 </div>
             </div>
@@ -62,7 +59,7 @@
                     </span>
                 </div>
                 <div>
-                    <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-1">12</h3>
+                    <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-1">{{ number_format($activeTrips) }}</h3>
                     <p class="text-sm font-semibold text-slate-500">Trip Aktif</p>
                 </div>
             </div>
@@ -76,13 +73,10 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
                         </svg>
                     </div>
-                    <span class="text-xs font-bold text-emerald-600 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-100">
-                        +8.4%
-                    </span>
                 </div>
                 <div>
-                    <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-1">Rp 125.8M</h3>
-                    <p class="text-sm font-semibold text-slate-500">Total Revenue</p>
+                    <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-1">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</h3>
+                    <p class="text-sm font-semibold text-slate-500">Total Pendapatan</p>
                 </div>
             </div>
         </div>
@@ -115,66 +109,31 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
-                            <!-- BKG-1029 -->
-                            <tr class="hover:bg-slate-50/50 transition-colors">
-                                <td class="p-4 text-sm font-bold text-slate-900 whitespace-nowrap">SJT-20260607-A3X7K</td>
-                                <td class="p-4 text-sm font-semibold text-slate-600 whitespace-nowrap">Budi Santoso</td>
-                                <td class="p-4 text-sm font-medium text-slate-500 whitespace-nowrap">Padang Panjang → Pekanbaru</td>
-                                <td class="p-4 text-sm font-semibold text-slate-600 whitespace-nowrap">Pagi</td>
-                                <td class="p-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border bg-green-50 text-green-700 border-green-200">
-                                        Lunas
-                                    </span>
-                                </td>
-                            </tr>
-                            <!-- BKG-1028 -->
-                            <tr class="hover:bg-slate-50/50 transition-colors">
-                                <td class="p-4 text-sm font-bold text-slate-900 whitespace-nowrap">SJT-20260607-K7B2N</td>
-                                <td class="p-4 text-sm font-semibold text-slate-600 whitespace-nowrap">Siti Rahma</td>
-                                <td class="p-4 text-sm font-medium text-slate-500 whitespace-nowrap">Pekanbaru → Padang Panjang</td>
-                                <td class="p-4 text-sm font-semibold text-slate-600 whitespace-nowrap">Malam</td>
-                                <td class="p-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border bg-yellow-50 text-yellow-700 border-yellow-200">
-                                        Pending Verifikasi
-                                    </span>
-                                </td>
-                            </tr>
-                            <!-- BKG-1027 -->
-                            <tr class="hover:bg-slate-50/50 transition-colors">
-                                <td class="p-4 text-sm font-bold text-slate-900 whitespace-nowrap">SJT-20260607-P9W3X</td>
-                                <td class="p-4 text-sm font-semibold text-slate-600 whitespace-nowrap">Ahmad Fauzi</td>
-                                <td class="p-4 text-sm font-medium text-slate-500 whitespace-nowrap">Padang Panjang → Pekanbaru</td>
-                                <td class="p-4 text-sm font-semibold text-slate-600 whitespace-nowrap">Pagi</td>
-                                <td class="p-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border bg-green-50 text-green-700 border-green-200">
-                                        Lunas
-                                    </span>
-                                </td>
-                            </tr>
-                            <!-- BKG-1026 -->
-                            <tr class="hover:bg-slate-50/50 transition-colors">
-                                <td class="p-4 text-sm font-bold text-slate-900 whitespace-nowrap">SJT-20260607-F1Q8M</td>
-                                <td class="p-4 text-sm font-semibold text-slate-600 whitespace-nowrap">Dina Mariana</td>
-                                <td class="p-4 text-sm font-medium text-slate-500 whitespace-nowrap">Padang Panjang → Pekanbaru</td>
-                                <td class="p-4 text-sm font-semibold text-slate-600 whitespace-nowrap">Malam</td>
-                                <td class="p-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border bg-blue-50 text-blue-700 border-blue-200">
-                                        Dikonfirmasi
-                                    </span>
-                                </td>
-                            </tr>
-                            <!-- BKG-1025 -->
-                            <tr class="hover:bg-slate-50/50 transition-colors">
-                                <td class="p-4 text-sm font-bold text-slate-900 whitespace-nowrap">SJT-20260607-Z4R2T</td>
-                                <td class="p-4 text-sm font-semibold text-slate-600 whitespace-nowrap">Reza Pratama</td>
-                                <td class="p-4 text-sm font-medium text-slate-500 whitespace-nowrap">Pekanbaru → Padang Panjang</td>
-                                <td class="p-4 text-sm font-semibold text-slate-600 whitespace-nowrap">Pagi</td>
-                                <td class="p-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border bg-green-50 text-green-700 border-green-200">
-                                        Lunas
-                                    </span>
-                                </td>
-                            </tr>
+                            @forelse($recentBookings as $booking)
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="p-4 text-sm font-bold text-slate-900 whitespace-nowrap">{{ $booking->kode_booking }}</td>
+                                    <td class="p-4 text-sm font-semibold text-slate-600 whitespace-nowrap">{{ $booking->pelanggan->nama }}</td>
+                                    <td class="p-4 text-sm font-medium text-slate-500 whitespace-nowrap">
+                                        @if($booking->jadwal && $booking->jadwal->rute)
+                                            {{ $booking->jadwal->rute->asal }} → {{ $booking->jadwal->rute->tujuan }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td class="p-4 text-sm font-semibold text-slate-600 whitespace-nowrap capitalize">
+                                        {{ $booking->jadwal ? $booking->jadwal->shift : '-' }}
+                                    </td>
+                                    <td class="p-4 whitespace-nowrap">
+                                        <x-status-badge status="{{ $booking->status_booking }}" />
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="p-8 text-center text-slate-400 font-medium">
+                                        Belum ada booking terbaru.
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>

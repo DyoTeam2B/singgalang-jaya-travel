@@ -2,6 +2,32 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-10] - Rayfo - Sprint 1
+
+### Added
+
+* Controller `App\Http\Controllers\Admin\RuteController` untuk menangani operasi CRUD Rute perjalanan.
+* Controller `App\Http\Controllers\Admin\JadwalController` untuk menangani operasi CRUD & toggle status Jadwal keberangkatan.
+* Form request `App\Http\Requests\Admin\StoreRuteRequest` & `UpdateRuteRequest` untuk validasi form Rute.
+* Form request `App\Http\Requests\Admin\StoreJadwalRequest` & `UpdateJadwalRequest` untuk validasi form Jadwal.
+* View CRUD Rute: `index.blade.php`, `create.blade.php`, `edit.blade.php` di bawah folder `resources/views/admin/rute/`.
+* View CRUD Jadwal: `index.blade.php`, `create.blade.php`, `edit.blade.php` di bawah folder `resources/views/admin/jadwal/`.
+
+### Changed
+
+* Modifikasi `routes/web.php` untuk mendaftarkan resource route Rute & Jadwal, custom route toggle status jadwal, serta mengarahkan dashboard ke `DashboardController`.
+* Modifikasi `App\Http\Controllers\Admin\DashboardController` untuk menghitung statistik widget secara dinamis dari database dan memuat daftar booking terbaru.
+* Modifikasi `resources/views/admin/dashboard.blade.php` untuk menampilkan statistik dinamis dan loop data booking terbaru dari database.
+* Modifikasi `resources/views/components/sidebar-admin.blade.php` untuk menambahkan tautan menu navigasi Rute.
+
+### Fixed
+
+* Mengatasi error autoloading composer PSR-4 dengan melakukan regenerasi file optimized classmap autoload.
+
+### Notes
+
+* Modul Rute, Jadwal, dan Dashboard admin berjalan sepenuhnya secara dinamis dan siap diintegrasikan dengan modul operasional lain.
+
 ## [2026-06-07] - Rayhan - Sprint 1
 
 ### Added

@@ -60,6 +60,18 @@
             Pembayaran
         </a>
 
+        <!-- Rute Link -->
+        @php
+            $ruteActive = request()->routeIs('admin.rute.*');
+            $ruteUrl = Route::has('admin.rute.index') ? route('admin.rute.index') : '#';
+        @endphp
+        <a href="{{ $ruteUrl }}" class="flex items-center gap-4 px-5 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 group {{ $ruteActive ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+            <svg class="w-5 h-5 transition-transform duration-300 group-hover:scale-110 {{ $ruteActive ? 'text-white' : 'text-slate-500 group-hover:text-blue-400' }}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+            </svg>
+            Rute
+        </a>
+
         <!-- Jadwal Link -->
         @php
             $jadwalActive = request()->routeIs('admin.jadwal.*');

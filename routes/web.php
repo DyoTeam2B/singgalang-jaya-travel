@@ -29,9 +29,10 @@ Route::middleware('auth')->group(function () {
          ->prefix('admin')
          ->name('admin.')
          ->group(function () {
-             Route::get('/dashboard', function () {
-                 return view('admin.dashboard');
-             })->name('dashboard');
+             Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+             Route::resource('rute', \App\Http\Controllers\Admin\RuteController::class);
+             Route::resource('jadwal', \App\Http\Controllers\Admin\JadwalController::class);
+             Route::put('jadwal/{jadwal}/toggle', [\App\Http\Controllers\Admin\JadwalController::class, 'toggleStatus'])->name('jadwal.toggle');
          });
 
     // Driver Routes
