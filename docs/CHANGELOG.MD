@@ -2,6 +2,23 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-11] - Kevin - Sprint 1
+
+### Added
+
+* Controller `App\Http\Controllers\Admin\TripController` untuk menangani modul Admin Trip (Index & Create).
+* Form Request `App\Http\Requests\Admin\StoreTripRequest` untuk memvalidasi pembuatan data trip baru.
+* View daftar trip `resources/views/admin/trips/index.blade.php` dengan grid trip berdasarkan status dan sidebar antrean booking.
+* View form pembuatan trip `resources/views/admin/trips/create.blade.php` dengan dropdown jadwal & driver aktif serta panel preview interaktif (Alpine.js).
+
+### Changed
+
+* Modifikasi `routes/web.php` untuk mendaftarkan resource route `trips` admin.
+
+### Notes
+
+* Modul trips admin berjalan secara dinamis dan memiliki safeguard/placeholder untuk fitur show, edit, update, dan destroy yang akan diimplementasikan pada Sprint 2 & 4.
+
 ## [2026-06-10] - Rayfo - Sprint 1
 
 ### Added
