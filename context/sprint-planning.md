@@ -125,7 +125,7 @@ Semua tugas fondasi telah diselesaikan dengan sukses: Setup project, Breeze auth
 | Admin Driver CRUD + user account | NYS | 7 routes (Selesai ✅) |
 | Landing Page (semua section) | RYH | `home` (Selesai ✅) |
 | Jadwal Public View | RYH | `jadwal.index` (Selesai ✅) |
-| Admin Trip — Index + Create | KVN | 3 routes |
+| Admin Trip — Index + Create | KVN | 3 routes (Selesai ✅) |
 
 **Livewire**: `JadwalTable`, `DriverTable` (optional search/filter)
 

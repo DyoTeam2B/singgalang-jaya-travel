@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function () {
              Route::resource('jadwal', \App\Http\Controllers\Admin\JadwalController::class);
              Route::put('jadwal/{jadwal}/toggle', [\App\Http\Controllers\Admin\JadwalController::class, 'toggleStatus'])->name('jadwal.toggle');
              Route::resource('drivers', \App\Http\Controllers\Admin\DriverController::class);
+             Route::resource('trips', \App\Http\Controllers\Admin\TripController::class);
          });
 
     // Driver Routes
