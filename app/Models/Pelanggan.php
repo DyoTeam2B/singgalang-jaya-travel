@@ -21,9 +21,18 @@ class Pelanggan extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'user_id',
         'nama',
         'no_hp',
     ];
+
+    /**
+     * Get the user account for the pelanggan.
+     */
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     /**
      * Get the bookings for the pelanggan.

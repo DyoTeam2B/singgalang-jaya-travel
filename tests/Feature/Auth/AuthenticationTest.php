@@ -27,7 +27,11 @@ class AuthenticationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $expectedRoute = $user->role === 'admin' ? 'admin.dashboard' : 'driver.dashboard';
+        $expectedRoute = match ($user->role) {
+            'admin' => 'admin.dashboard',
+            'driver' => 'driver.dashboard',
+            default => 'dashboard',
+        };
         $response->assertRedirect(route($expectedRoute, absolute: false));
     }
 

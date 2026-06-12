@@ -26,6 +26,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the pelanggan profile associated with the user.
+     */
+    public function pelanggan(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Pelanggan::class, 'user_id');
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

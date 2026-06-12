@@ -26,5 +26,16 @@ class UserSeeder extends Seeder
             'password' => Hash::make('driver12345'),
             'role' => 'driver',
         ]);
+        $pelangganUser = User::create([
+            'name' => 'Pelanggan Singgalang',
+            'email' => 'pelanggan@gmail.com',
+            'password' => Hash::make('pelanggan12345'),
+            'role' => 'pelanggan',
+        ]);
+        \App\Models\Pelanggan::create([
+            'user_id' => $pelangganUser->id,
+            'nama' => 'Pelanggan Singgalang',
+            'no_hp' => '081234567890',
+        ]);
     }
 }
