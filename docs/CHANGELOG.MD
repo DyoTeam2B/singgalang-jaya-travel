@@ -2,6 +2,23 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-12] - Rayhan - Sprint 1 (Alignment)
+
+### Added
+
+* Migration `2026_06_07_000009_create_whatsapp_notifications_table.php` untuk tabel `whatsapp_notifications`.
+* Eloquent model `App\Models\WhatsappNotification` dengan relasi `booking`.
+* Service `App\Services\FonnteService` untuk mengirimkan notifikasi WhatsApp via FonnteAPI dengan auto-logging.
+
+### Changed
+
+* Modifikasi migration `2026_06_07_000005_create_bookings_table` untuk memperbarui status booking enum (9 nilai) dan menambahkan kolom `batas_bayar_at` dan `alasan_pembatalan`.
+* Modifikasi migration `2026_06_07_000007_create_trips_table` untuk memperbarui status trip enum (new, ready, on_trip, completed, cancelled).
+* Modifikasi model `App\Models\Booking` untuk menyesuaikan konstanta status, fillable, casts, helper functions, dan relasi `whatsappNotifications()`.
+* Modifikasi model `App\Models\Trip` untuk menyesuaikan konstanta status trip baru.
+* Modifikasi controller `App\Http\Controllers\Admin\DashboardController`, `DriverController`, dan `TripController` agar selaras dengan nama status booking dan status trip baru (`on_trip`, `completed`).
+* Modifikasi component `resources/views/components/status-badge.blade.php` untuk memetakan nama status booking dan trip yang baru ke style Tailwind.
+
 ## [2026-06-10] - Nayasha - Sprint 1
 
 ### Added

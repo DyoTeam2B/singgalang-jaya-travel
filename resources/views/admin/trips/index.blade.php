@@ -34,18 +34,18 @@
                     {{ $counts['ready'] }}
                 </span>
             </a>
-            <a href="{{ route('admin.trips.index', ['status' => 'berjalan', 'search' => $search]) }}"
-               class="px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ $status === 'berjalan' ? 'bg-white text-slate-900 shadow-sm border border-slate-200' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50' }}">
+            <a href="{{ route('admin.trips.index', ['status' => 'on_trip', 'search' => $search]) }}"
+               class="px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ $status === 'on_trip' ? 'bg-white text-slate-900 shadow-sm border border-slate-200' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50' }}">
                 Dalam Perjalanan
-                <span class="ml-3 px-2 py-0.5 rounded-lg text-[9px] {{ $status === 'berjalan' ? 'bg-slate-900 text-white' : 'bg-slate-200 text-slate-500' }}">
-                    {{ $counts['berjalan'] }}
+                <span class="ml-3 px-2 py-0.5 rounded-lg text-[9px] {{ $status === 'on_trip' ? 'bg-slate-900 text-white' : 'bg-slate-200 text-slate-500' }}">
+                    {{ $counts['on_trip'] }}
                 </span>
             </a>
-            <a href="{{ route('admin.trips.index', ['status' => 'selesai', 'search' => $search]) }}"
-               class="px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ $status === 'selesai' ? 'bg-white text-slate-900 shadow-sm border border-slate-200' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50' }}">
+            <a href="{{ route('admin.trips.index', ['status' => 'completed', 'search' => $search]) }}"
+               class="px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ $status === 'completed' ? 'bg-white text-slate-900 shadow-sm border border-slate-200' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50' }}">
                 Selesai
-                <span class="ml-3 px-2 py-0.5 rounded-lg text-[9px] {{ $status === 'selesai' ? 'bg-slate-900 text-white' : 'bg-slate-200 text-slate-500' }}">
-                    {{ $counts['selesai'] }}
+                <span class="ml-3 px-2 py-0.5 rounded-lg text-[9px] {{ $status === 'completed' ? 'bg-slate-900 text-white' : 'bg-slate-200 text-slate-500' }}">
+                    {{ $counts['completed'] }}
                 </span>
             </a>
         </div>

@@ -4,13 +4,15 @@
     $status = strtolower($status);
     $config = match ($status) {
         // Booking Status
+        'booking_dibuat' => ['label' => 'Booking Dibuat', 'classes' => 'bg-yellow-100 text-yellow-800 border-yellow-200'],
         'menunggu_pembayaran' => ['label' => 'Menunggu Pembayaran', 'classes' => 'bg-yellow-100 text-yellow-800 border-yellow-200'],
         'menunggu_verifikasi' => ['label' => 'Menunggu Verifikasi', 'classes' => 'bg-yellow-100 text-yellow-800 border-yellow-200'],
         'dikonfirmasi' => ['label' => 'Dikonfirmasi', 'classes' => 'bg-blue-100 text-blue-800 border-blue-200'],
-        'masuk_trip' => ['label' => 'Masuk Trip', 'classes' => 'bg-blue-100 text-blue-800 border-blue-200'],
-        'dalam_perjalanan' => ['label' => 'Dalam Perjalanan', 'classes' => 'bg-blue-100 text-blue-800 border-blue-200'],
-        'selesai' => ['label' => 'Selesai', 'classes' => 'bg-green-100 text-green-800 border-green-200'],
-        'dibatalkan' => ['label' => 'Dibatalkan', 'classes' => 'bg-red-100 text-red-800 border-red-200'],
+        'assigned_to_trip' => ['label' => 'Assigned To Trip', 'classes' => 'bg-blue-100 text-blue-800 border-blue-200'],
+        'on_trip' => ['label' => 'On Trip', 'classes' => 'bg-blue-100 text-blue-800 border-blue-200'],
+        'completed' => ['label' => 'Completed', 'classes' => 'bg-green-100 text-green-800 border-green-200'],
+        'cancelled' => ['label' => 'Cancelled', 'classes' => 'bg-red-100 text-red-800 border-red-200'],
+        'expired' => ['label' => 'Expired', 'classes' => 'bg-red-100 text-red-800 border-red-200'],
 
         // Payment Status
         'menunggu' => ['label' => 'Menunggu', 'classes' => 'bg-yellow-100 text-yellow-800 border-yellow-200'],
@@ -18,8 +20,11 @@
         'ditolak' => ['label' => 'Ditolak', 'classes' => 'bg-red-100 text-red-800 border-red-200'],
 
         // Trip Status
+        'new' => ['label' => 'New', 'classes' => 'bg-slate-100 text-slate-600 border-slate-200'],
         'ready' => ['label' => 'Ready', 'classes' => 'bg-green-100 text-green-800 border-green-200'],
-        'berjalan' => ['label' => 'Berjalan', 'classes' => 'bg-blue-100 text-blue-800 border-blue-200'],
+        'on_trip' => ['label' => 'On Trip', 'classes' => 'bg-blue-100 text-blue-800 border-blue-200'],
+        'completed' => ['label' => 'Completed', 'classes' => 'bg-green-100 text-green-800 border-green-200'],
+        'cancelled' => ['label' => 'Cancelled', 'classes' => 'bg-red-100 text-red-800 border-red-200'],
 
         // Driver & Schedule Status
         'aktif' => ['label' => 'Aktif', 'classes' => 'bg-green-100 text-green-800 border-green-200'],

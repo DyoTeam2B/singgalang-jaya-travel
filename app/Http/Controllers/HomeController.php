@@ -15,7 +15,7 @@ class HomeController extends Controller
     {
         $schedules = Jadwal::with('rute')
             ->withSum(['bookings as booked_seats' => function ($query) {
-                $query->where('status_booking', '!=', Booking::STATUS_DIBATALKAN);
+                $query->whereNotIn('status_booking', [Booking::STATUS_CANCELLED, Booking::STATUS_EXPIRED]);
             }], 'jumlah_penumpang')
             ->aktif()
             ->orderBy('tanggal_keberangkatan', 'asc')

@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Trip extends Model
 {
+    // Status Trip Constants
+    public const STATUS_NEW = 'new';
+    public const STATUS_READY = 'ready';
+    public const STATUS_ON_TRIP = 'on_trip';
+    public const STATUS_COMPLETED = 'completed';
+    public const STATUS_CANCELLED = 'cancelled';
+
     protected $fillable = [
         'jadwal_id',
         'driver_id',

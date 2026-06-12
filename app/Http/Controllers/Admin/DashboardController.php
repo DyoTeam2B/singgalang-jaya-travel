@@ -14,8 +14,8 @@ class DashboardController extends Controller
     {
         $totalBookings = \App\Models\Booking::count();
         $pendingVerification = \App\Models\Booking::where('status_booking', \App\Models\Booking::STATUS_MENUNGGU_VERIFIKASI)->count();
-        $activeTrips = \App\Models\Trip::where('status_trip', 'berjalan')->count();
-        $totalRevenue = \App\Models\Booking::where('status_booking', \App\Models\Booking::STATUS_SELESAI)->sum('total_harga');
+        $activeTrips = \App\Models\Trip::where('status_trip', \App\Models\Trip::STATUS_ON_TRIP)->count();
+        $totalRevenue = \App\Models\Booking::where('status_booking', \App\Models\Booking::STATUS_COMPLETED)->sum('total_harga');
         
         $recentBookings = \App\Models\Booking::with(['pelanggan', 'jadwal.rute'])
             ->latest()

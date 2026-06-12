@@ -12,13 +12,15 @@ class Booking extends Model
     use HasFactory;
 
     // Status Booking Constants
+    public const STATUS_BOOKING_DIBUAT = 'booking_dibuat';
     public const STATUS_MENUNGGU_PEMBAYARAN = 'menunggu_pembayaran';
     public const STATUS_MENUNGGU_VERIFIKASI = 'menunggu_verifikasi';
     public const STATUS_DIKONFIRMASI = 'dikonfirmasi';
-    public const STATUS_MASUK_TRIP = 'masuk_trip';
-    public const STATUS_DALAM_PERJALANAN = 'dalam_perjalanan';
-    public const STATUS_SELESAI = 'selesai';
-    public const STATUS_DIBATALKAN = 'dibatalkan';
+    public const STATUS_ASSIGNED_TO_TRIP = 'assigned_to_trip';
+    public const STATUS_ON_TRIP = 'on_trip';
+    public const STATUS_COMPLETED = 'completed';
+    public const STATUS_CANCELLED = 'cancelled';
+    public const STATUS_EXPIRED = 'expired';
 
     /**
      * The attributes that are mass assignable.
@@ -38,6 +40,8 @@ class Booking extends Model
         'jumlah_penumpang',
         'total_harga',
         'status_booking',
+        'batas_bayar_at',
+        'alasan_pembatalan',
     ];
 
     /**
@@ -52,6 +56,7 @@ class Booking extends Model
         'longitude_tujuan' => 'float',
         'jumlah_penumpang' => 'integer',
         'total_harga' => 'integer',
+        'batas_bayar_at' => 'datetime',
     ];
 
     /**
@@ -99,7 +104,15 @@ class Booking extends Model
      */
     public function isDibatalkan(): bool
     {
-        return $this->status_booking === self::STATUS_DIBATALKAN;
+        return $this->status_booking === self::STATUS_CANCELLED;
+    }
+
+    /**
+     * Helper to check if booking is expired.
+     */
+    public function isExpired(): bool
+    {
+        return $this->status_booking === self::STATUS_EXPIRED;
     }
 
     /**
@@ -132,5 +145,13 @@ class Booking extends Model
     public function detailTrips(): HasMany
     {
         return $this->hasMany(DetailTrip::class, 'booking_id');
+    }
+
+    /**
+     * Get the whatsapp notification logs for the booking.
+     */
+    public function whatsappNotifications(): HasMany
+    {
+        return $this->hasMany(WhatsappNotification::class, 'booking_id');
     }
 }

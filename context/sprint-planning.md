@@ -112,6 +112,7 @@ Semua tugas fondasi telah diselesaikan dengan sukses: Setup project, Breeze auth
 | RYF | `create_rute_table`, `create_jadwal_table` | ✅ Selesai |
 | RYH | `create_pelanggan_table`, `create_bookings_table`, `create_pembayaran_table` | ✅ Selesai |
 | KVN | `create_trips_table`, `create_detail_trip_table` | ✅ Selesai |
+| RYH | `create_whatsapp_notifications_table` | ✅ Selesai |
 
 ---
 

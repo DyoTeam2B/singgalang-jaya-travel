@@ -47,7 +47,7 @@ class Driver extends Model
         }
 
         $hasActiveTrip = $this->trips()
-            ->whereIn('status_trip', ['ready', 'berjalan'])
+            ->whereIn('status_trip', ['ready', 'on_trip'])
             ->exists();
 
         return $hasActiveTrip ? 'sedang_bertugas' : 'tersedia';

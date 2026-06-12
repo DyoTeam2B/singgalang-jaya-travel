@@ -79,7 +79,7 @@
     <div class="flex flex-col xl:flex-row gap-8 items-start min-h-[500px]">
         
         <!-- Left Column: Data Table -->
-        <div class="flex-1 w-full bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-900/5 flex flex-col overflow-hidden">
+        <div class="flex-1 w-full bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -96,7 +96,7 @@
                             @php
                                 $isSelected = $selectedDriver && $selectedDriver->id === $driver->id;
                                 $dynamicStatus = $driver->dynamic_status;
-                                $activeTrip = $driver->trips()->whereIn('status_trip', ['ready', 'berjalan'])->first();
+                                $activeTrip = $driver->trips()->whereIn('status_trip', ['ready', 'on_trip'])->first();
                             @endphp
                             <tr 
                                 onclick="window.location.href='{{ route('admin.drivers.index', ['selected_id' => $driver->id, 'search' => $search, 'status' => $statusFilter, 'page' => $drivers->currentPage()]) }}'"
@@ -230,9 +230,9 @@
         <!-- Right Column: Detail Panel -->
         @if($selectedDriver)
             @php
-                $selActiveTrip = $selectedDriver->trips()->whereIn('status_trip', ['ready', 'berjalan'])->first();
+                $selActiveTrip = $selectedDriver->trips()->whereIn('status_trip', ['ready', 'on_trip'])->first();
             @endphp
-            <div class="w-full xl:w-[400px] bg-white rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-900/5 flex flex-col overflow-hidden">
+            <div class="w-full xl:w-[400px] bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
                 <div class="p-8 border-b border-slate-50 flex items-center justify-between">
                     <h3 class="text-sm font-black text-slate-900 uppercase tracking-widest">Detail Profil Driver</h3>
                     <span class="text-[10px] font-black text-slate-400 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">

@@ -17,7 +17,7 @@ class JadwalPublicController extends Controller
 
         $query = Jadwal::with('rute')
             ->withSum(['bookings as booked_seats' => function ($q) {
-                $q->where('status_booking', '!=', Booking::STATUS_DIBATALKAN);
+                $q->whereNotIn('status_booking', [Booking::STATUS_CANCELLED, Booking::STATUS_EXPIRED]);
             }], 'jumlah_penumpang')
             ->aktif();
 

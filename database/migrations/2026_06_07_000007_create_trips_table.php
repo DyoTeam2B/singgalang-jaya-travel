@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('jadwal_id')->constrained('jadwal')->onDelete('cascade');
             $table->foreignId('driver_id')->constrained('drivers')->onDelete('cascade');
-            $table->enum('status_trip', ['ready', 'berjalan', 'selesai'])->default('ready');
+            $table->enum('status_trip', ['new', 'ready', 'on_trip', 'completed', 'cancelled'])->default('new');
             $table->dateTime('started_at')->nullable();
             $table->dateTime('completed_at')->nullable();
             $table->timestamps();

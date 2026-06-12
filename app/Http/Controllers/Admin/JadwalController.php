@@ -17,11 +17,13 @@ class JadwalController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $tab = $request->input('tab', 'active'); // 'active' or 'history'
+        $today = now()->toDateString();
 
         $jadwal = Jadwal::query()
             ->with(['rute'])
             ->withSum(['bookings' => function ($query) {
-                $query->where('status_booking', '!=', 'dibatalkan');
+                $query->whereNotIn('status_booking', ['cancelled', 'expired']);
             }], 'jumlah_penumpang')
             ->when($search, function ($query) use ($search) {
                 $query->whereHas('rute', function ($q) use ($search) {
@@ -30,11 +32,17 @@ class JadwalController extends Controller
                 })->orWhere('tanggal_keberangkatan', 'like', "%{$search}%")
                   ->orWhere('shift', 'like', "%{$search}%");
             })
+            ->when($tab === 'history', function ($query) use ($today) {
+                $query->where('tanggal_keberangkatan', '<', $today);
+            })
+            ->when($tab === 'active', function ($query) use ($today) {
+                $query->where('tanggal_keberangkatan', '>=', $today);
+            })
             ->latest()
             ->paginate(9)
             ->withQueryString();
 
-        return view('admin.jadwal.index', compact('jadwal', 'search'));
+        return view('admin.jadwal.index', compact('jadwal', 'search', 'tab'));
     }
 
     /**
@@ -84,7 +92,7 @@ class JadwalController extends Controller
         
         // Calculate booked quota
         $booked = $jadwal->bookings()
-            ->where('status_booking', '!=', 'dibatalkan')
+            ->whereNotIn('status_booking', ['cancelled', 'expired'])
             ->sum('jumlah_penumpang');
 
         // Safety check if new capacity is lower than booked seats
@@ -113,7 +121,7 @@ class JadwalController extends Controller
     public function destroy(Jadwal $jadwal)
     {
         // Safety check if schedule has active bookings
-        if ($jadwal->bookings()->where('status_booking', '!=', 'dibatalkan')->exists()) {
+        if ($jadwal->bookings()->whereNotIn('status_booking', ['cancelled', 'expired'])->exists()) {
             return redirect()
                 ->route('admin.jadwal.index')
                 ->with('error', 'Jadwal tidak dapat dihapus karena memiliki booking aktif.');
@@ -136,7 +144,7 @@ class JadwalController extends Controller
         // If enabling it but it's already full, set status to penuh
         if ($newStatus === 'aktif') {
             $booked = $jadwal->bookings()
-                ->where('status_booking', '!=', 'dibatalkan')
+                ->whereNotIn('status_booking', ['cancelled', 'expired'])
                 ->sum('jumlah_penumpang');
             
             if ($booked >= $jadwal->kuota) {

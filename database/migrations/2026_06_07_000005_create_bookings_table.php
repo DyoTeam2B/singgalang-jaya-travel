@@ -25,14 +25,18 @@ return new class extends Migration
             $table->unsignedInteger('jumlah_penumpang')->default(1);
             $table->unsignedInteger('total_harga');
             $table->enum('status_booking', [
+                'booking_dibuat',
                 'menunggu_pembayaran',
                 'menunggu_verifikasi',
                 'dikonfirmasi',
-                'masuk_trip',
-                'dalam_perjalanan',
-                'selesai',
-                'dibatalkan'
+                'assigned_to_trip',
+                'on_trip',
+                'completed',
+                'cancelled',
+                'expired'
             ])->default('menunggu_pembayaran');
+            $table->dateTime('batas_bayar_at')->nullable();
+            $table->text('alasan_pembatalan')->nullable();
             $table->timestamps();
 
             // Indexes

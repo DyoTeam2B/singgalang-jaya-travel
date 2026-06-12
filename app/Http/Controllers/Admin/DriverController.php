@@ -40,12 +40,12 @@ class DriverController extends Controller
             if ($statusFilter === 'Tersedia') {
                 $query->where('status_driver', 'aktif')
                       ->whereDoesntHave('trips', function ($tq) {
-                          $tq->whereIn('status_trip', ['ready', 'berjalan']);
+                          $tq->whereIn('status_trip', ['ready', 'on_trip']);
                       });
             } elseif ($statusFilter === 'Sedang Bertugas') {
                 $query->where('status_driver', 'aktif')
                       ->whereHas('trips', function ($tq) {
-                          $tq->whereIn('status_trip', ['ready', 'berjalan']);
+                          $tq->whereIn('status_trip', ['ready', 'on_trip']);
                       });
             } elseif ($statusFilter === 'Tidak Aktif') {
                 $query->where('status_driver', 'nonaktif');
@@ -155,7 +155,7 @@ class DriverController extends Controller
     {
         // Check if driver is currently assigned to active trips
         $hasActiveTrip = $driver->trips()
-            ->whereIn('status_trip', ['ready', 'berjalan'])
+            ->whereIn('status_trip', ['ready', 'on_trip'])
             ->exists();
 
         if ($hasActiveTrip) {

@@ -21,7 +21,7 @@ class TripController extends Controller
         $status = $request->input('status', 'ready'); // default to ready
 
         // Validate status input to prevent sql issues
-        if (!in_array($status, ['ready', 'berjalan', 'selesai'])) {
+        if (!in_array($status, ['new', 'ready', 'on_trip', 'completed', 'cancelled'])) {
             $status = 'ready';
         }
 
@@ -47,9 +47,11 @@ class TripController extends Controller
 
         // Get count of trips for badge indicators
         $counts = [
+            'new' => Trip::where('status_trip', 'new')->count(),
             'ready' => Trip::where('status_trip', 'ready')->count(),
-            'berjalan' => Trip::where('status_trip', 'berjalan')->count(),
-            'selesai' => Trip::where('status_trip', 'selesai')->count(),
+            'on_trip' => Trip::where('status_trip', 'on_trip')->count(),
+            'completed' => Trip::where('status_trip', 'completed')->count(),
+            'cancelled' => Trip::where('status_trip', 'cancelled')->count(),
         ];
 
         // Get bookings waiting to be assigned (status: dikonfirmasi)
