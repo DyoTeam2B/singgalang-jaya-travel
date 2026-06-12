@@ -75,6 +75,25 @@ app/Http/Controllers/
 └── JadwalPublicController.php         ← 🔲 BUAT BARU
 ```
 
+### Services
+
+```
+app/Services/
+├── BookingService.php                  ← 🔲 BUAT BARU
+├── FonnteService.php                   ← 🔲 BUAT BARU (WhatsApp API)
+├── PaymentVerificationService.php      ← 🔲 BUAT BARU
+├── TripAssignmentService.php           ← 🔲 BUAT BARU
+└── DriverTripService.php               ← 🔲 BUAT BARU
+```
+
+### Console Commands
+
+```
+app/Console/Commands/
+├── ExpireUnpaidBookings.php            ← 🔲 BUAT BARU (auto-expire 30 menit)
+└── SendDepartureConfirmation.php       ← 🔲 BUAT BARU (WA konfirmasi pagi hari)
+```
+
 ### Livewire Components
 
 ```
@@ -176,7 +195,8 @@ app/Models/
 ├── Booking.php                        ← 🔲 BUAT BARU
 ├── Pembayaran.php                     ← 🔲 BUAT BARU
 ├── Trip.php                           ← 🔲 BUAT BARU
-└── DetailTrip.php                     ← 🔲 BUAT BARU
+├── DetailTrip.php                     ← 🔲 BUAT BARU
+└── WhatsappNotification.php            ← 🔲 BUAT BARU
 ```
 
 ### Middleware
@@ -196,7 +216,7 @@ File berikut sudah ada dan berfungsi. **Jangan modify kecuali ada alasan kuat:**
 |------|--------|
 | `bootstrap/app.php` | RoleMiddleware sudah terdaftar: `'role' => RoleMiddleware::class` |
 | `app/Http/Middleware/RoleMiddleware.php` | Cek `...$roles` dari `in_array($request->user()->role, $roles)` |
-| `app/Models/User.php` | Pakai `#[Fillable]` attribute. Field = `name`, `email`, `password`, `role` |
+| `app/Models/User.php` | Pakai `#[Fillable]` attribute. Field = `name`, `email`, `password`, `role`. Role = `admin`, `driver`, `pelanggan` |
 | `routes/auth.php` | Breeze auth routes lengkap |
 | `app/Http/Controllers/Auth/*` | 9 controller Breeze |
 | `app/Http/Controllers/ProfileController.php` | Profile edit/update/destroy |
@@ -220,6 +240,8 @@ if ($user->role === 'admin') {
 if ($user->role === 'driver') {
     return redirect()->intended(route('driver.dashboard'));
 }
+// Pelanggan (default) → redirect ke home atau booking
+return redirect()->intended(route('home'));
 ```
 
 ### Route Group Pattern
@@ -240,9 +262,16 @@ Route::middleware(['auth', 'role:driver'])
      ->group(function() {
          // tambah route di sini
      });
+
+// Pelanggan routes — booking memerlukan auth
+Route::middleware(['auth', 'role:pelanggan'])
+     ->group(function() {
+         // Route booking, pembayaran, cek-booking di sini
+     });
 ```
 
 > ⚠️ Saat menambah route admin/driver, tambahkan di dalam group yang sudah ada. **Jangan buat group baru.**
+> ⚠️ Booking routes memerlukan middleware `auth` karena pelanggan wajib login.
 
 ---
 
@@ -282,6 +311,7 @@ Custom methods:
 | `verify` | Verifikasi pembayaran | PUT |
 | `reject` | Tolak pembayaran | PUT |
 | `cancel` | Batalkan booking | PUT |
+| `update` (booking) | Edit lokasi jemput | PUT/PATCH |
 | `toggleStatus` | Toggle jadwal aktif/nonaktif | PUT |
 | `assignBooking` | Masukkan booking ke trip | POST |
 | `removeBooking` | Keluarkan booking dari trip | DELETE |
@@ -655,13 +685,15 @@ Load via Google Fonts di layout:
 
 | Value | Label (ID) |
 |-------|------------|
+| `booking_dibuat` | Booking Dibuat |
 | `menunggu_pembayaran` | Menunggu Pembayaran |
 | `menunggu_verifikasi` | Menunggu Verifikasi |
 | `dikonfirmasi` | Dikonfirmasi |
-| `masuk_trip` | Masuk Trip |
-| `dalam_perjalanan` | Dalam Perjalanan |
-| `selesai` | Selesai |
-| `dibatalkan` | Dibatalkan |
+| `assigned_to_trip` | Assigned To Trip |
+| `on_trip` | On Trip |
+| `completed` | Completed |
+| `cancelled` | Cancelled |
+| `expired` | Expired |
 
 ### Payment Status
 
@@ -675,9 +707,11 @@ Load via Google Fonts di layout:
 
 | Value | Label (ID) |
 |-------|------------|
+| `new` | New |
 | `ready` | Ready |
-| `berjalan` | Berjalan |
-| `selesai` | Selesai |
+| `on_trip` | On Trip |
+| `completed` | Completed |
+| `cancelled` | Cancelled |
 
 ### Schedule Status
 
@@ -776,10 +810,64 @@ Default center: Padang Panjang `[-0.4669, 100.3986]`
 
 ---
 
-## 16. WhatsApp Integration
+## 16. WhatsApp Integration (FonnteAPI)
 
+> ⚠️ **PERUBAHAN**: WhatsApp link `wa.me` diganti dengan **FonnteAPI** untuk pengiriman pesan otomatis.
+
+### Konfigurasi
+
+```php
+// .env
+FONNTE_TOKEN=your_fonnte_api_token
+
+// config/services.php
+'fonnte' => [
+    'token' => env('FONNTE_TOKEN'),
+    'url' => 'https://api.fonnte.com/send',
+],
 ```
-https://wa.me/628xxxxxxxxxx?text={encoded_message}
+
+### FonnteService
+
+```php
+// app/Services/FonnteService.php
+namespace App\Services;
+
+use Illuminate\Support\Facades\Http;
+
+class FonnteService
+{
+    public function sendMessage(string $target, string $message): array
+    {
+        $response = Http::withHeaders([
+            'Authorization' => config('services.fonnte.token'),
+        ])->asForm()->post(config('services.fonnte.url'), [
+            'target' => $target,
+            'message' => $message,
+        ]);
+
+        return $response->json();
+    }
+}
+```
+
+### Use Cases
+
+| Trigger | Pesan | Target |
+|---------|-------|--------|
+| Booking dibatalkan pelanggan | "Booking {kode} telah dibatalkan oleh pelanggan" | Admin + Driver (jika assigned) |
+| Pagi hari sebelum keberangkatan | "Konfirmasi keberangkatan Anda hari ini..." | Pelanggan |
+| DP reminder (optional) | "Segera bayar DP booking {kode}, batas waktu 30 menit" | Pelanggan |
+
+### Scheduler (Laravel)
+
+```php
+// app/Console/Kernel.php atau routes/console.php
+// 1. Auto-expire booking yang melewati batas waktu
+Schedule::command('booking:expire')->everyMinute();
+
+// 2. Konfirmasi ulang pagi hari sebelum keberangkatan
+Schedule::command('booking:send-confirmation')->dailyAt('06:00');
 ```
 
 ---
@@ -868,6 +956,9 @@ type = feat | fix | refactor | style | docs | test | chore
 - `GET /booking/{kode}/review` → `booking.review`
 - `GET /booking/{kode}/pembayaran` → `booking.pembayaran`
 - `POST /booking/{kode}/pembayaran` → `booking.pembayaran.store`
+- `GET /booking/{kode}/edit` → `booking.edit` (edit lokasi jemput)
+- `PUT /booking/{kode}` → `booking.update` (update lokasi jemput)
+- `PUT /booking/{kode}/cancel` → `booking.cancel` (pelanggan cancel booking)
 - `GET /cek-booking` → `cek-booking.index`
 - `POST /cek-booking` → `cek-booking.show`
 - `GET /jadwal/available` → `jadwal.available`

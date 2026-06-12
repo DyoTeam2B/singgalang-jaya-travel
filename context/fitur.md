@@ -31,6 +31,8 @@
 
 ### A. PUBLIC / CUSTOMER ROUTES — `Rayhan`
 
+> ⚠️ Booking routes (A3, A4) memerlukan middleware `auth` karena pelanggan WAJIB login.
+
 #### A1. Landing Page
 
 | # | Method | URI | Name | Controller/Livewire | View |
@@ -51,7 +53,25 @@
 | 4 | POST | `/booking` | `booking.store` | `BookingController@store` | — (redirect) |
 | 5 | GET | `/booking/{kode}/review` | `booking.review` | `BookingController@review` | `public.booking.review` |
 
-> **Livewire option**: Form booking bisa pakai Livewire component `BookingForm` untuk reactivity (hitung tarif otomatis, map picker).
+> **Livewire option**: Form booking bisa pakai Livewire component `BookingForm` untuk reactivity (hitung tarif = harga rute × jumlah penumpang, map picker).
+> **Auth**: Route booking memerlukan middleware `auth, role:pelanggan`.
+
+#### A3b. Edit Booking (Lokasi Jemput)
+
+| # | Method | URI | Name | Controller/Livewire | View |
+|---|--------|-----|------|---------------------|------|
+| 5b | GET | `/booking/{kode}/edit` | `booking.edit` | `BookingController@edit` | `public.booking.edit` |
+| 5c | PUT | `/booking/{kode}` | `booking.update` | `BookingController@update` | — (redirect) |
+
+> **Catatan**: Pelanggan hanya bisa edit lokasi/alamat jemput selama status booking belum `assigned_to_trip`.
+
+#### A3c. Cancel Booking (Pelanggan)
+
+| # | Method | URI | Name | Controller/Livewire | View |
+|---|--------|-----|------|---------------------|------|
+| 5d | PUT | `/booking/{kode}/cancel` | `booking.cancel` | `BookingController@cancel` | — (redirect) |
+
+> **Catatan**: Pelanggan bisa cancel selama status belum `on_trip`. Notifikasi otomatis ke admin & driver via FonnteAPI.
 
 #### A4. Pembayaran DP (Customer)
 
@@ -74,7 +94,7 @@
 | 10 | GET | `/jadwal/available` | `jadwal.available` | `JadwalPublicController@available` | — (JSON) |
 | 11 | GET | `/jadwal/{id}/check-kuota` | `jadwal.checkKuota` | `JadwalPublicController@checkKuota` | — (JSON) |
 
-> **Total Rayhan: 11 routes**
+> **Total Rayhan: 14 routes** (termasuk edit booking + cancel booking)
 
 ---
 
@@ -188,7 +208,23 @@
 | 58 | GET | `/admin/laporan/export` | `admin.laporan.export` | `Admin\LaporanController@export` | — (download) |
 
 > **Total Rayfo: 16 routes** (Dashboard + Rute + Jadwal + Laporan)
-> **Total Nayasha: 16 routes** (Auth✅ + Booking Mgmt + Pembayaran + Driver)
+> **Total Nayasha: 16 routes** (Auth✅done + Booking Mgmt + Pembayaran + Driver)
+
+---
+
+### E. WHATSAPP NOTIFICATION (FonnteAPI) — Shared
+
+> Integrasi WhatsApp via **FonnteAPI** (bukan `wa.me` link).
+
+| # | Trigger | Target | Pesan | Mekanisme |
+|---|---------|--------|-------|-----------|
+| N1 | Booking dibatalkan pelanggan | Admin + Driver (jika assigned) | "Booking {kode} dibatalkan" | Event + FonnteService |
+| N2 | Pagi hari sebelum keberangkatan | Pelanggan | "Konfirmasi keberangkatan Anda hari ini" | Scheduler `06:00` |
+| N3 | Booking hampir expire (optional) | Pelanggan | "Batas bayar DP tinggal X menit" | Scheduler / queue |
+
+**Scheduler Commands**:
+- `booking:expire` — Auto-expire booking yang melebihi 30 menit tanpa bayar (run setiap menit)
+- `booking:send-confirmation` — Kirim WA konfirmasi ulang pagi hari (run jam 06:00)
 
 ---
 
@@ -226,11 +262,11 @@
 
 | Nama | Modul | Jumlah Route |
 |------|-------|:------------:|
-| **Rayhan** | Landing, Jadwal Public, Booking, Payment (Customer), Cek Status, API | **11** |
+| **Rayhan** | Landing, Jadwal Public, Booking, Payment (Customer), Cek Status, API, Edit Booking, Cancel Booking | **14** |
 | **Rayfo** | Admin Dashboard, Admin Rute, Admin Jadwal, Admin Laporan | **16** |
 | **Nayasha** | Auth (✅done), Admin Booking, Admin Pembayaran, Admin Driver | **16** |
 | **Kevin** | Admin Trip, Driver Dashboard, Driver Trip & Operations | **15** |
-| | **TOTAL** | **58** |
+| | **TOTAL** | **61** |
 
 ---
 
@@ -300,11 +336,12 @@
 
 | View | Keterangan |
 |------|------------|
-| `public.home` | Landing page (Hero, Keunggulan, Jadwal, Armada, Charter, Kontak, CTA, Footer) |
+| `public.home` | Landing page (Hero, Keunggulan, Jadwal, Armada & Driver, Charter, Kontak, CTA, Footer) |
 | `public.jadwal.index` | Daftar jadwal keberangkatan |
 | `public.booking.create` | Form booking |
 | `public.booking.review` | Review booking sebelum submit |
-| `public.pembayaran.show` | Halaman instruksi & upload DP |
+| `public.booking.edit` | Edit lokasi/alamat jemput (sebelum assigned ke trip) |
+| `public.pembayaran.show` | Halaman instruksi & upload DP (timer 30 menit) |
 | `public.cek-booking.index` | Form input kode booking |
 | `public.cek-booking.show` | Detail status booking + timeline |
 

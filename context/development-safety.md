@@ -31,16 +31,16 @@ Contoh placeholder aman:
 Untuk kelancaran demo selama Sprint awal, navigasi menu berikut:
 * **Home**
 * **Jadwal**
-* **Armada**
-* **Charter**
+* **Booking** (memerlukan login)
 * **Kontak**
 
 diperbolehkan menggunakan link anchor sementara:
 * `href="#home"`
 * `href="#jadwal"`
-* `href="#armada"`
-* `href="#charter"`
+* `href="#booking"`
 * `href="#kontak"`
+
+> ⚠️ **Armada bukan modul terpisah** — data kendaraan melekat pada Driver. Tidak ada halaman Armada standalone.
 
 Tautan anchor ini harus tetap dipertahankan sampai fitur sesungguhnya selesai diimplementasikan secara penuh.
 
@@ -96,3 +96,18 @@ Sebelum melakukan commit kode Anda, pastikan Anda mencentang checklist internal 
 - [ ] **Migration Valid**: Urutan migrasi aman dan tidak ada masalah constraint foreign key saat dideploy ulang.
 - [ ] **Bebas Merge Conflict**: Tidak ada conflict marker git sisa merge di berkas manapun.
 - [ ] **Dokumentasi Terupdate**: Berkas `context/sprint-planning.md` dan `docs/CHANGELOG.md` telah disesuaikan dengan progress terbaru.
+
+## Scheduler Safety
+
+Sistem memiliki **dua command scheduler** yang WAJIB berjalan di production:
+
+| Command | Jadwal | Fungsi |
+|---------|--------|--------|
+| `booking:expire` | Setiap menit | Auto-expire booking yang melewati batas 30 menit tanpa bayar DP |
+| `booking:send-confirmation` | Setiap hari jam 06:00 | Kirim WA konfirmasi ulang ke pelanggan sebelum keberangkatan |
+
+**Catatan**:
+- Pastikan `php artisan schedule:run` sudah terdaftar di cron server.
+- Pastikan `FONNTE_TOKEN` sudah diset di `.env` sebelum testing notifikasi WhatsApp.
+- Jangan test command `booking:send-confirmation` tanpa memastikan token FonnteAPI valid.
+- Gunakan `--dry-run` flag (jika tersedia) saat testing scheduler di local.

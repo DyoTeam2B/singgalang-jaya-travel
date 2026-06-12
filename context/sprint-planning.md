@@ -54,11 +54,13 @@
 | Landing Page | 1 | 1 |
 | Jadwal Public | 1 | 1 |
 | Booking Flow | 3 | 3 |
+| Edit Booking (lokasi jemput) | 2 | 1 |
+| Cancel Booking (pelanggan) | 1 | — |
 | Pembayaran Customer | 2 | 1 |
 | Cek Status Booking | 2 | 2 |
 | API (AJAX) | 2 | — |
 | Layout Public | — | 1 |
-| **Total** | **11** | **9** |
+| **Total** | **14** | **10** |
 
 ### Rayfo (RYF) — Admin Core
 
@@ -139,18 +141,26 @@ Semua tugas fondasi telah diselesaikan dengan sukses: Setup project, Breeze auth
 
 | Task | PIC | Routes |
 |------|-----|--------|
-| Booking Form (create) | RYH | `booking.create` |
+| Booking Form (create) — requires auth | RYH | `booking.create` |
 | Booking Store + kode booking | RYH | `booking.store` |
 | Booking Review | RYH | `booking.review` |
-| Payment Page + Upload DP | RYH | 2 routes |
+| Edit Booking (lokasi jemput) | RYH | `booking.edit`, `booking.update` |
+| Cancel Booking (pelanggan) | RYH | `booking.cancel` |
+| Payment Page + Upload DP (timer 30 menit) | RYH | 2 routes |
 | API Jadwal (AJAX) | RYH | 2 routes |
 | Admin Booking Management | NYS | 3 routes |
 | Admin Pembayaran Verification | NYS | 4 routes |
 | Admin Trip — Show + Assign booking | KVN | 5 routes |
 
-**Livewire**: `BookingForm` (auto-calculate tarif), `BookingTable`, `PembayaranTable`
+**Livewire**: `BookingForm` (auto-calculate tarif = harga rute × jumlah penumpang, timer DP 30 menit), `BookingTable`, `PembayaranTable`
 
-**Deliverable**: Customer bisa booking + bayar DP. Admin bisa verifikasi + kelola booking.
+**Catatan**:
+- Pelanggan WAJIB login untuk booking. Total tarif = Harga Rute × Jumlah Penumpang.
+- Batas waktu bayar DP: 30 menit (auto-expire).
+- Pelanggan bisa edit lokasi jemput (sebelum assigned ke trip).
+- Pelanggan bisa cancel booking (notifikasi ke admin & driver via FonnteAPI).
+
+**Deliverable**: Customer bisa booking + bayar DP + edit lokasi + cancel. Admin bisa verifikasi + kelola booking.
 
 ---
 
@@ -169,10 +179,11 @@ Semua tugas fondasi telah diselesaikan dengan sukses: Setup project, Breeze auth
 | Cek Status Booking | RYH | 2 routes |
 | Admin Laporan | RYF | 2 routes |
 | Status booking auto-update | NYS | Observer/listener logic |
+| Auto-expire unpaid bookings | RYH | Artisan command + scheduler |
 
 **Livewire**: `TripManifest` (driver — interaktif pickup/dropoff)
 
-**Deliverable**: Driver bisa operasikan trip penuh. Pelanggan bisa cek status.
+**Deliverable**: Driver bisa operasikan trip penuh. Pelanggan bisa cek status. Booking expired otomatis.
 
 ---
 
@@ -185,12 +196,14 @@ Semua tugas fondasi telah diselesaikan dengan sukses: Setup project, Breeze auth
 | Leaflet map picker (booking form) | RYH | Pilih lokasi jemput & tujuan |
 | Leaflet map viewer (driver) | KVN | Lihat semua titik jemput/antar |
 | Leaflet map viewer (admin trip) | KVN | Lihat distribusi penumpang |
-| WhatsApp link integration | RYH | Tombol WA di landing + booking |
+| FonnteAPI integration | RYH | WhatsApp notification service |
+| WA konfirmasi pagi keberangkatan | RYH | Scheduler command `dailyAt('06:00')` |
+| WA notifikasi cancel booking | RYH | Event-driven via FonnteService |
 | Admin trip — remove booking, delete | KVN | Cleanup routes |
 | Admin laporan export | RYF | Export PDF/Excel |
 | Notification bell (admin) | RYF | Count pending items |
 
-**Deliverable**: Maps terintegrasi. WhatsApp link berfungsi. Laporan bisa export.
+**Deliverable**: Maps terintegrasi. FonnteAPI WhatsApp berfungsi. Laporan bisa export.
 
 ---
 
@@ -261,4 +274,4 @@ flowchart LR
     S5 --> S6[Sprint 6<br>Testing]
 ```
 
-> **Next step**: Selesaikan sisa Sprint 0 (migrations, models, layouts).
+> **Next step**: Mulai Sprint 1 — Admin Core CRUD (Rute, Jadwal, Driver) + Landing Page.

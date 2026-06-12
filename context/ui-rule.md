@@ -228,11 +228,11 @@ Digunakan untuk: **Delete, Reject, Cancel Trip, Batalkan**
 
 | Tipe | Values | Classes |
 |------|--------|---------|
-| **Success** | Terverifikasi, Aktif, Ready, Selesai, Sudah Dijemput, Sudah Diantar | `bg-green-100 text-green-800` |
-| **Warning** | Menunggu Pembayaran, Menunggu Verifikasi, Menunggu | `bg-yellow-100 text-yellow-800` |
-| **Danger** | Ditolak, Dibatalkan, Nonaktif | `bg-red-100 text-red-800` |
-| **Info** | Dikonfirmasi, Masuk Trip, Dalam Perjalanan, Berjalan | `bg-blue-100 text-blue-800` |
-| **Neutral** | Belum (jemput/antar) | `bg-slate-100 text-slate-600` |
+| **Success** | Terverifikasi, Aktif, Ready, Completed, Sudah Dijemput, Sudah Diantar | `bg-green-100 text-green-800` |
+| **Warning** | Booking Dibuat, Menunggu Pembayaran, Menunggu Verifikasi, Menunggu | `bg-yellow-100 text-yellow-800` |
+| **Danger** | Ditolak, Cancelled, Expired, Nonaktif | `bg-red-100 text-red-800` |
+| **Info** | Dikonfirmasi, Assigned To Trip, On Trip | `bg-blue-100 text-blue-800` |
+| **Neutral** | New, Belum (jemput/antar) | `bg-slate-100 text-slate-600` |
 
 ---
 
@@ -300,10 +300,13 @@ Digunakan untuk: **Delete, Reject, Cancel Trip, Batalkan**
 ### Booking Flow (urutan WAJIB tetap)
 
 ```
-Booking Form → Review Booking → Payment → Upload Proof → Status Booking
+Booking Form → Review Booking → Payment (timer 30 menit) → Upload Proof → Status Booking
 ```
 
 > ❌ Jangan skip step
+> ⏱️ Timer countdown 30 menit ditampilkan di halaman pembayaran DP.
+> ✏️ Pelanggan bisa edit lokasi jemput (sebelum assigned ke trip).
+> ❌ Pelanggan bisa cancel booking (sebelum on_trip). DP hangus.
 
 ---
 
@@ -314,12 +317,13 @@ Booking Form → Review Booking → Payment → Upload Proof → Status Booking
 | # | Menu Item | Route Name | Icon |
 |---|-----------|------------|------|
 | 1 | Dashboard | `admin.dashboard` | Grid/Home |
-| 2 | Booking | `admin.bookings.index` | Clipboard |
-| 3 | Pembayaran | `admin.pembayaran.index` | CreditCard |
-| 4 | Jadwal | `admin.jadwal.index` | Calendar |
-| 5 | Trip | `admin.trips.index` | Truck |
-| 6 | Driver | `admin.drivers.index` | Users |
-| 7 | Laporan | `admin.laporan.index` | BarChart |
+| 2 | Rute | `admin.rute.index` | Map |
+| 3 | Booking | `admin.bookings.index` | Clipboard |
+| 4 | Pembayaran | `admin.pembayaran.index` | CreditCard |
+| 5 | Jadwal | `admin.jadwal.index` | Calendar |
+| 6 | Trip | `admin.trips.index` | Truck |
+| 7 | Driver | `admin.drivers.index` | Users |
+| 8 | Laporan | `admin.laporan.index` | BarChart |
 
 ### Sidebar Style
 
@@ -352,8 +356,9 @@ Booking Form → Review Booking → Payment → Upload Proof → Status Booking
 |--------|------------|
 | Total Booking | Count semua booking |
 | Pending Verification | Count `menunggu_verifikasi` |
-| Trip Aktif | Count trip `berjalan` |
-| Pendapatan | Sum `total_harga` booking `selesai` |
+| Trip Aktif | Count trip `on_trip` |
+| Pendapatan | Sum `total_harga` booking `completed` |
+| Booking Expired | Count booking `expired` (hari ini) |
 
 Widget style:
 ```html
@@ -404,8 +409,7 @@ Widget style:
 ### Driver Flow (urutan WAJIB tetap)
 
 ```
-Trip Ready → Start Trip → Pickup Mode → Mark Picked Up (per penumpang) →
-All Picked Up → Delivery Mode → Mark Dropped Off (per penumpang) → Complete Trip
+Trip Ready → Start Trip → Pickup Mode → Delivery Mode → Complete Trip
 ```
 
 > ❌ Jangan ubah flow ini

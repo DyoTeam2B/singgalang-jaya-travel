@@ -26,29 +26,37 @@ Untuk mengatasi permasalahan tersebut, akan dibangun sebuah **sistem informasi b
 
 ## 3. Aktor Sistem
 
-### Pelanggan (Guest — Tanpa Login)
+### Pelanggan (Wajib Register & Login)
+
+> ⚠️ **PERUBAHAN**: Pelanggan sekarang WAJIB register dan login sebelum melakukan booking.
 
 | Aksi | Keterangan |
 |------|------------|
+| Register & Login | Membuat akun pelanggan (role `pelanggan`) |
 | Melihat informasi travel | Landing page & info layanan |
 | Melihat jadwal keberangkatan | Jadwal harian yang tersedia |
-| Melakukan booking | Form booking tanpa perlu akun |
-| Upload bukti pembayaran DP | Bukti transfer DP Rp50.000 |
-| Melihat status booking | Menggunakan **kode booking** |
-| Menghubungi admin | Via WhatsApp link |
+| Melakukan booking | Form booking (harus login, hanya pada jadwal tersedia) |
+| Upload bukti pembayaran DP | Bukti transfer DP Rp50.000 (batas waktu 30 menit) |
+| Edit booking | Edit lokasi/alamat jemput sebelum assigned ke trip |
+| Membatalkan booking | Cancel booking (DP hangus, notifikasi ke admin & driver) |
+| Melihat status booking | Menggunakan **kode booking** atau dari dashboard |
+| Menerima notifikasi WhatsApp | Konfirmasi ulang pagi hari sebelum keberangkatan |
 
-### Admin (Koordinator Operasional)
+### Admin / Koordinator
 
 | Aksi | Keterangan |
 |------|------------|
-| Mengelola jadwal | CRUD jadwal keberangkatan |
+| Mengelola rute | CRUD rute perjalanan (wajib sebelum buat jadwal) |
+| Mengelola jadwal | CRUD jadwal keberangkatan (tarif diambil dari rute) |
 | Mengelola booking | Lihat, konfirmasi, batalkan booking |
 | Memverifikasi pembayaran | Verifikasi bukti DP dari pelanggan |
 | Mengelola driver | CRUD data driver & kendaraan |
-| Membuat trip | Buat trip berdasarkan jadwal |
+| Membuat trip | Buat trip dari jadwal, wajib pilih driver (vehicle otomatis ikut driver) |
 | Mengelompokkan penumpang ke trip | Assign booking ke trip tertentu |
 | Melihat laporan | Laporan booking, pendapatan, operasional |
 | Monitoring operasional | Pantau status trip berjalan |
+| Menerima notifikasi | Notifikasi saat pelanggan membatalkan booking |
+| Kirim konfirmasi WhatsApp | Konfirmasi ulang ke pelanggan pagi hari sebelum keberangkatan (via FonnteAPI) |
 
 ### Driver (Memiliki Akun Login)
 
@@ -56,10 +64,11 @@ Untuk mengatasi permasalahan tersebut, akan dibangun sebuah **sistem informasi b
 |------|------------|
 | Melihat trip yang ditugaskan | Dashboard trip aktif |
 | Melihat manifest penumpang | Daftar penumpang dalam trip |
-| Melihat lokasi jemput | Titik penjemputan di peta |
+| Melihat lokasi jemput | Titik penjemputan di peta (Leaflet) |
 | Update status penjemputan | Tandai penumpang sudah dijemput |
 | Update status pengantaran | Tandai penumpang sudah diantar |
 | Menyelesaikan trip | Tandai trip selesai |
+| Menerima notifikasi | Notifikasi saat pelanggan membatalkan booking dalam trip |
 
 ---
 
@@ -72,28 +81,62 @@ Untuk mengatasi permasalahan tersebut, akan dibangun sebuah **sistem informasi b
 | Padang Panjang → Pekanbaru | Rute pergi |
 | Pekanbaru → Padang Panjang | Rute pulang |
 
+> Admin WAJIB membuat Rute terlebih dahulu sebelum membuat Jadwal.
+
 ### Tarif & Pembayaran
 
 | Item | Nilai | Keterangan |
 |------|-------|------------|
-| **Tarif** | Rp150.000/penumpang | Berlaku tetap untuk seluruh rute utama |
-| **DP (Uang Muka)** | Rp50.000/booking | Tanda jadi pemesanan |
-| **Pelunasan** | Rp100.000 | Dibayar langsung ke driver saat perjalanan |
+| **Tarif** | Ditentukan oleh harga pada Rute | Tarif TIDAK lagi berdasarkan jarak |
+| **Total Tarif** | Harga Rute × Jumlah Penumpang | Dihitung otomatis saat booking |
+| **DP (Uang Muka)** | Rp50.000/booking | Tanda jadi pemesanan, **batas waktu 30 menit** |
+| **Pelunasan** | Sisa (Total Tarif - DP) | Dibayar langsung ke Driver saat perjalanan |
+
+> Jadwal mengambil tarif dari Rute. Tarif ditentukan per rute, bukan per jarak.
+> ⏱️ **Batas waktu pembayaran DP: 30 menit** sejak booking dibuat. Jika tidak dibayar dalam 30 menit, booking otomatis **expired** (gagal).
+
+### Booking
+
+- Pelanggan WAJIB register dan login sebelum booking.
+- Booking hanya dapat dilakukan pada jadwal yang tersedia.
+- Booking dapat berisi lebih dari satu penumpang melalui field `jumlah_penumpang`.
+- Tidak perlu menyimpan nama setiap penumpang.
+- Lokasi jemput dan tujuan menggunakan Leaflet Map.
+- Leaflet hanya untuk operasional dan navigasi, BUKAN untuk menghitung tarif.
+- **Pelanggan dapat mengedit lokasi/alamat jemput** selama status booking belum `assigned_to_trip`.
+- **Batas waktu pembayaran DP: 30 menit** sejak booking dibuat. Jika melebihi → status otomatis `expired`.
 
 ### Pembatalan
 
-- DP **hangus** apabila pelanggan membatalkan perjalanan.
+- **Pelanggan dapat membatalkan booking** selama status belum `on_trip`.
+- DP **hangus** apabila pelanggan membatalkan perjalanan setelah DP dibayar.
 - **Tidak ada pengembalian DP**.
+- Saat booking dibatalkan → **notifikasi otomatis** dikirim ke Admin dan Driver (jika sudah assigned ke trip) via WhatsApp (FonnteAPI).
+- Jika DP tidak dibayar dalam 30 menit → booking otomatis **expired** (bukan cancelled, tapi expired).
+
+### Konfirmasi Ulang via WhatsApp
+
+- Sistem mengirimkan **pesan konfirmasi ulang** ke pelanggan melalui WhatsApp di **pagi hari sebelum keberangkatan**.
+- Pesan dikirim otomatis via **FonnteAPI** (scheduler/cron job).
+- Jadwal pengiriman: pagi hari (jam 06:00) pada tanggal keberangkatan.
 
 ### Jadwal
 
 - Tersedia **dua shift**: Pagi & Malam.
-- Jadwal dibuat oleh admin.
+- Jadwal dibuat oleh admin setelah Rute tersedia.
+- Jadwal mengambil tarif dari Rute.
 
-### Driver
+### Driver & Kendaraan
 
 - Driver ditentukan oleh admin.
 - Data kendaraan melekat pada data driver (tidak ada tabel armada terpisah).
+- Armada BUKAN modul terpisah — kendaraan adalah bagian dari data Driver.
+
+### Trip
+
+- Trip dibuat dari Jadwal.
+- Create Trip WAJIB memilih Driver.
+- Vehicle otomatis mengikuti Driver yang dipilih.
 
 ---
 
@@ -104,7 +147,7 @@ Trip merupakan **inti operasional** sistem.
 ### Alur
 
 ```
-Jadwal → Trip → Driver → Daftar Booking
+Jadwal → Trip (pilih Driver → vehicle otomatis) → Daftar Booking
 ```
 
 ### Contoh
@@ -122,6 +165,12 @@ Jadwal: 05 Juni 2026, Shift Pagi
 ```
 
 > Satu jadwal dapat memiliki **lebih dari satu trip** apabila jumlah penumpang melebihi kapasitas kendaraan.
+
+### Driver Flow (Alur Operasional Driver)
+
+```
+Trip Ready → Start Trip → Pickup Mode → Delivery Mode → Complete Trip
+```
 
 ---
 
@@ -145,40 +194,62 @@ Untuk menyederhanakan sistem, **armada tidak dibuat sebagai tabel terpisah**. Da
 
 ```mermaid
 flowchart TD
-    A[Pelanggan buka website] --> B[Lihat jadwal keberangkatan]
-    B --> C[Isi form booking]
-    C --> D[Pilih titik jemput]
-    D --> E[Pilih titik tujuan]
-    E --> F[Sistem buat kode booking]
-    F --> G["Status: Menunggu Pembayaran"]
-    G --> H[Upload bukti DP]
+    A[Pelanggan register & login] --> B[Lihat jadwal keberangkatan]
+    B --> C[Isi form booking pada jadwal tersedia]
+    C --> D[Pilih titik jemput via Leaflet Map]
+    D --> E[Pilih titik tujuan via Leaflet Map]
+    E --> E2[Tentukan jumlah penumpang]
+    E2 --> F[Sistem hitung total tarif & buat kode booking]
+    F --> G["Status: Booking Dibuat"]
+    G --> G2["Status: Menunggu Pembayaran (30 menit)"]
+    G2 -->|Upload DP| H[Upload bukti DP Rp50.000]
+    G2 -->|Timeout 30 menit| EXP["Status: Expired"]
     H --> I["Status: Menunggu Verifikasi"]
     I --> J[Admin verifikasi pembayaran]
     J --> K["Status: Dikonfirmasi"]
-    K --> L[Admin buat trip]
-    L --> M[Admin pilih driver]
+    K -->|Pelanggan bisa edit lokasi jemput| K
+    K --> L[Admin buat trip dari jadwal]
+    L --> M[Admin pilih driver - vehicle otomatis]
     M --> N[Admin masukkan booking ke trip]
-    N --> O["Status: Masuk Trip"]
+    N --> O["Status: Assigned To Trip"]
     O --> P[Driver lihat manifest]
-    P --> Q[Driver mulai perjalanan]
-    Q --> R[Driver jemput penumpang]
-    R --> S[Driver antar penumpang]
-    S --> T[Penumpang lunasi pembayaran]
-    T --> U[Driver selesaikan trip]
-    U --> V["Status: Selesai"]
+    P --> Q["Driver: Start Trip"]
+    Q --> Q2["Driver: Pickup Mode"]
+    Q2 --> R[Driver jemput penumpang]
+    R --> R2["Driver: Delivery Mode"]
+    R2 --> S[Driver antar penumpang]
+    S --> T[Penumpang lunasi pembayaran ke Driver]
+    T --> U["Driver: Complete Trip"]
+    U --> V["Status: Completed"]
+
+    K -.->|Pelanggan batalkan| CAN["Status: Cancelled"]
+    CAN -.-> NOTIF["Notif WA ke Admin & Driver"]
+    O -.->|Konfirmasi pagi hari| WA["WA konfirmasi ulang via FonnteAPI"]
 ```
 
 ### Status Booking Flow
 
-| Status | Trigger | Aktor |
-|--------|---------|-------|
-| `menunggu_pembayaran` | Booking baru dibuat | Sistem |
-| `menunggu_verifikasi` | Bukti DP diupload | Pelanggan |
-| `dikonfirmasi` | DP diverifikasi admin | Admin |
-| `masuk_trip` | Booking dimasukkan ke trip | Admin |
-| `dalam_perjalanan` | Driver mulai trip | Driver |
-| `selesai` | Trip diselesaikan driver | Driver |
-| `dibatalkan` | Booking dibatalkan | Admin |
+| Status | Label | Trigger | Aktor |
+|--------|-------|---------|-------|
+| `booking_dibuat` | Booking Dibuat | Booking baru dibuat | Sistem |
+| `menunggu_pembayaran` | Menunggu Pembayaran | Menunggu upload bukti DP (30 menit) | Sistem |
+| `menunggu_verifikasi` | Menunggu Verifikasi | Bukti DP diupload | Pelanggan |
+| `dikonfirmasi` | Dikonfirmasi | DP diverifikasi admin | Admin |
+| `assigned_to_trip` | Assigned To Trip | Booking dimasukkan ke trip | Admin |
+| `on_trip` | On Trip | Driver mulai trip | Driver |
+| `completed` | Completed | Trip diselesaikan driver | Driver |
+| `cancelled` | Cancelled | Booking dibatalkan oleh pelanggan/admin | Pelanggan/Admin |
+| `expired` | Expired | DP tidak dibayar dalam 30 menit | Sistem (auto) |
+
+### Status Trip Flow
+
+| Status | Label | Trigger | Aktor |
+|--------|-------|---------|-------|
+| `new` | New | Trip baru dibuat | Admin |
+| `ready` | Ready | Trip siap berangkat | Admin |
+| `on_trip` | On Trip | Driver mulai trip | Driver |
+| `completed` | Completed | Trip diselesaikan | Driver |
+| `cancelled` | Cancelled | Trip dibatalkan | Admin |
 
 ---
 
@@ -193,7 +264,7 @@ flowchart TD
 | **Auth** | Laravel Breeze (Blade stack) | 2.4 |
 | **Database** | MySQL | — |
 | **Maps** | Leaflet + OpenStreetMap | 1.9.x |
-| **Notifikasi** | WhatsApp Link (wa.me) | — |
+| **Notifikasi WhatsApp** | FonnteAPI | — |
 | **Build Tool** | Vite | 8.x |
 | **HTTP Client** | Axios | 1.16.x |
 
@@ -313,5 +384,6 @@ drivers      1 ──── * trips
 - **View**: Blade (slot-based layout via Breeze) + **Livewire components** untuk interaktif.
 - **CSS**: TailwindCSS v3 + `@tailwindcss/forms`.
 - **Auth**: Laravel Breeze (sudah terpasang). Role-based via `RoleMiddleware`.
-- **No login untuk pelanggan**: Akses via kode booking.
+- **Pelanggan WAJIB login**: Register sebagai role `pelanggan`. Booking memerlukan auth.
 - **User model field**: `name` (bukan `nama`) — mengikuti Breeze default.
+- **User roles**: `admin`, `driver`, `pelanggan`.
