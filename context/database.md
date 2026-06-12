@@ -5,12 +5,14 @@
 ```mermaid
 erDiagram
     USERS ||--o| DRIVERS : "has"
+    USERS ||--o| PELANGGAN : "has"
     RUTE ||--|{ JADWAL : "has"
     JADWAL ||--|{ BOOKINGS : "has"
     JADWAL ||--|{ TRIPS : "has"
     PELANGGAN ||--|{ BOOKINGS : "has"
     BOOKINGS ||--|{ PEMBAYARAN : "has"
     BOOKINGS ||--|{ DETAIL_TRIP : "assigned"
+    BOOKINGS ||--o{ WHATSAPP_NOTIFICATIONS : "has"
     TRIPS ||--|{ DETAIL_TRIP : "contains"
     DRIVERS ||--|{ TRIPS : "assigned"
 
@@ -45,6 +47,7 @@ erDiagram
 
     PELANGGAN {
         bigint id PK
+        bigint user_id FK
         string nama
         string no_hp
         timestamps timestamps
@@ -75,6 +78,8 @@ erDiagram
         int jumlah_penumpang
         int total_harga
         enum status_booking
+        datetime batas_bayar_at
+        text alasan_pembatalan
         timestamps timestamps
     }
 
@@ -110,6 +115,17 @@ erDiagram
         datetime dropped_off_at
         timestamps timestamps
     }
+
+    WHATSAPP_NOTIFICATIONS {
+        bigint id PK
+        string target
+        text message
+        enum type
+        bigint booking_id FK
+        enum status
+        text response
+        timestamps timestamps
+    }
 ```
 
 ---
@@ -125,7 +141,7 @@ erDiagram
 | `email` | VARCHAR(255) | NOT NULL, UNIQUE | Email login |
 | `email_verified_at` | TIMESTAMP | NULLABLE | |
 | `password` | VARCHAR(255) | NOT NULL | Hashed password |
-| `role` | ENUM('admin', 'driver') | NOT NULL, DEFAULT 'driver' | Role user |
+| `role` | ENUM('admin', 'driver', 'pelanggan') | NOT NULL, DEFAULT 'pelanggan' | Role user |
 | `remember_token` | VARCHAR(100) | NULLABLE | |
 | `created_at` | TIMESTAMP | NULLABLE | |
 | `updated_at` | TIMESTAMP | NULLABLE | |
@@ -149,6 +165,7 @@ erDiagram
 **Seeder**: `UserSeeder` ✅
 - Admin: `admin@gmail.com` / `admin12345`
 - Driver: `driver@gmail.com` / `driver12345`
+- Pelanggan: `pelanggan@gmail.com` / `pelanggan12345`
 
 > ⚠️ **PENTING**: User model pakai `name` (bukan `nama`). Ini default Breeze. Jangan ubah.
 
@@ -203,6 +220,7 @@ erDiagram
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
 | `id` | BIGINT UNSIGNED | PK, AUTO_INCREMENT | |
+| `user_id` | BIGINT UNSIGNED | FK → users.id, UNIQUE | Relasi 1:1 ke user (role pelanggan) |
 | `nama` | VARCHAR(255) | NOT NULL | Nama lengkap pelanggan |
 | `no_hp` | VARCHAR(20) | NOT NULL | Nomor HP |
 | `created_at` | TIMESTAMP | NULLABLE | |
@@ -210,7 +228,9 @@ erDiagram
 
 **Migration**: `create_pelanggan_table`
 
-**Catatan**: Pelanggan tidak perlu login. Data dibuat otomatis saat booking.
+**Index**: `user_id` (UNIQUE)
+
+**Catatan**: Pelanggan WAJIB register dan login (role `pelanggan`). Data pelanggan dibuat otomatis saat register atau saat pertama kali booking.
 
 ---
 
@@ -251,6 +271,8 @@ erDiagram
 | `jumlah_penumpang` | INT UNSIGNED | NOT NULL, DEFAULT 1 | Jumlah penumpang |
 | `total_harga` | INT UNSIGNED | NOT NULL | Total harga (tarif × jumlah) |
 | `status_booking` | ENUM(...) | NOT NULL, DEFAULT 'menunggu_pembayaran' | Status booking |
+| `batas_bayar_at` | DATETIME | NULLABLE | Batas waktu pembayaran DP (created_at + 30 menit) |
+| `alasan_pembatalan` | TEXT | NULLABLE | Alasan cancel (diisi pelanggan/admin) |
 | `created_at` | TIMESTAMP | NULLABLE | |
 | `updated_at` | TIMESTAMP | NULLABLE | |
 
@@ -262,13 +284,17 @@ erDiagram
 
 | Value | Keterangan |
 |-------|------------|
-| `menunggu_pembayaran` | Booking baru, belum bayar DP |
+| `booking_dibuat` | Booking baru dibuat |
+| `menunggu_pembayaran` | Menunggu upload bukti DP (30 menit) |
 | `menunggu_verifikasi` | DP sudah diupload, menunggu verifikasi admin |
 | `dikonfirmasi` | DP terverifikasi oleh admin |
-| `masuk_trip` | Booking sudah dimasukkan ke trip |
-| `dalam_perjalanan` | Trip sedang berjalan |
-| `selesai` | Trip selesai |
-| `dibatalkan` | Booking dibatalkan |
+| `assigned_to_trip` | Booking sudah dimasukkan ke trip |
+| `on_trip` | Trip sedang berjalan |
+| `completed` | Trip selesai |
+| `cancelled` | Booking dibatalkan oleh pelanggan/admin |
+| `expired` | DP tidak dibayar dalam 30 menit (auto) |
+
+**Batas Waktu Pembayaran**: `batas_bayar_at` = `created_at + 30 menit`. Cron job / scheduler mengecek booking yang melewati batas waktu dan set status ke `expired`.
 
 **Format Kode Booking**: `SJT-{YYYYMMDD}-{RANDOM5}` contoh: `SJT-20260605-A3X7K`
 
@@ -304,7 +330,7 @@ erDiagram
 | `id` | BIGINT UNSIGNED | PK, AUTO_INCREMENT | |
 | `jadwal_id` | BIGINT UNSIGNED | FK → jadwal.id | Relasi ke jadwal |
 | `driver_id` | BIGINT UNSIGNED | FK → drivers.id | Relasi ke driver |
-| `status_trip` | ENUM('ready', 'berjalan', 'selesai') | NOT NULL, DEFAULT 'ready' | Status trip |
+| `status_trip` | ENUM('new', 'ready', 'on_trip', 'completed', 'cancelled') | NOT NULL, DEFAULT 'new' | Status trip |
 | `started_at` | DATETIME | NULLABLE | Waktu mulai trip |
 | `completed_at` | DATETIME | NULLABLE | Waktu selesai trip |
 | `created_at` | TIMESTAMP | NULLABLE | |
@@ -338,17 +364,41 @@ erDiagram
 
 ---
 
+### 10. `whatsapp_notifications` — 🔲 BELUM ADA
+
+| Column | Type | Constraint | Keterangan |
+|--------|------|------------|------------|
+| `id` | BIGINT UNSIGNED | PK, AUTO_INCREMENT | |
+| `booking_id` | BIGINT UNSIGNED | FK → bookings.id, NULLABLE | Relasi ke booking (optional) |
+| `target` | VARCHAR(20) | NOT NULL | Nomor HP tujuan |
+| `message` | TEXT | NOT NULL | Isi pesan WhatsApp |
+| `type` | ENUM('konfirmasi_keberangkatan', 'pembatalan_booking', 'reminder_dp', 'custom') | NOT NULL | Tipe notifikasi |
+| `status` | ENUM('pending', 'sent', 'failed') | NOT NULL, DEFAULT 'pending' | Status pengiriman |
+| `response` | TEXT | NULLABLE | Response dari FonnteAPI |
+| `created_at` | TIMESTAMP | NULLABLE | |
+| `updated_at` | TIMESTAMP | NULLABLE | |
+
+**Migration**: `create_whatsapp_notifications_table`
+
+**Index**: `booking_id`, `type`, `status`
+
+**Catatan**: Tabel ini digunakan untuk logging semua notifikasi WhatsApp yang dikirim via FonnteAPI. Berguna untuk audit trail dan retry jika gagal.
+
+---
+
 ## Relasi Antar Tabel
 
 | Relasi | Tipe | Keterangan |
 |--------|------|------------|
 | `users` → `drivers` | 1:1 | Satu user (role driver) punya satu data driver |
-| `rute` → `jadwal` | 1:N | Satu rute punya banyak jadwal |
+| `users` → `pelanggan` | 1:1 | Satu user (role pelanggan) punya satu data pelanggan |
+| `rute` → `jadwal` | 1:N | Satu rute punya banyak jadwal. Jadwal mengambil tarif dari rute |
 | `jadwal` → `bookings` | 1:N | Satu jadwal punya banyak booking |
 | `jadwal` → `trips` | 1:N | Satu jadwal bisa punya banyak trip |
 | `pelanggan` → `bookings` | 1:N | Satu pelanggan bisa punya banyak booking |
 | `bookings` → `pembayaran` | 1:N | Satu booking bisa punya banyak pembayaran |
 | `bookings` → `detail_trip` | 1:N | Satu booking bisa masuk banyak detail trip |
+| `bookings` → `whatsapp_notifications` | 1:N | Satu booking bisa punya banyak notifikasi WA |
 | `trips` → `detail_trip` | 1:N | Satu trip punya banyak detail trip |
 | `drivers` → `trips` | 1:N | Satu driver bisa handle banyak trip |
 
@@ -370,6 +420,7 @@ erDiagram
 | 10 | `create_pembayaran_table` | `pembayaran` | 🔲 |
 | 11 | `create_trips_table` | `trips` | 🔲 |
 | 12 | `create_detail_trip_table` | `detail_trip` | 🔲 |
+| 13 | `create_whatsapp_notifications_table` | `whatsapp_notifications` | 🔲 |
 
 ---
 
@@ -389,12 +440,14 @@ erDiagram
 
 ```
 User        → hasOne(Driver)                              ✅ Model ada, relationship belum
+User        → hasOne(Pelanggan)                            🔲
 Driver      → belongsTo(User), hasMany(Trip)              🔲
 Rute        → hasMany(Jadwal)                             🔲
 Jadwal      → belongsTo(Rute), hasMany(Booking), hasMany(Trip)  🔲
-Pelanggan   → hasMany(Booking)                            🔲
-Booking     → belongsTo(Pelanggan), belongsTo(Jadwal), hasMany(Pembayaran), hasMany(DetailTrip)  🔲
+Pelanggan   → belongsTo(User), hasMany(Booking)           🔲
+Booking     → belongsTo(Pelanggan), belongsTo(Jadwal), hasMany(Pembayaran), hasMany(DetailTrip), hasMany(WhatsappNotification)  🔲
 Pembayaran  → belongsTo(Booking)                          🔲
 Trip        → belongsTo(Jadwal), belongsTo(Driver), hasMany(DetailTrip)  🔲
 DetailTrip  → belongsTo(Trip), belongsTo(Booking)         🔲
+WhatsappNotification → belongsTo(Booking)                 🔲
 ```

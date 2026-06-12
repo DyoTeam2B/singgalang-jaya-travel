@@ -1,4 +1,4 @@
-﻿# Laravel Standard - Singgalang Jaya Travel
+# Laravel Standard - Singgalang Jaya Travel
 
 Dokumen ini merangkum standar coding Laravel untuk project Singgalang Jaya Travel. Basis utamanya adalah praktik dari repo `alexeymezenin/laravel-best-practices`, lalu disesuaikan dengan struktur, bahasa, dan kebutuhan aplikasi travel ini.
 
@@ -102,16 +102,20 @@ class StoreBookingRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return auth()->check() && auth()->user()->role === 'pelanggan';
     }
 
     public function rules(): array
     {
         return [
-            'nama_pelanggan' => ['required', 'string', 'max:100'],
-            'nomor_hp' => ['required', 'string', 'max:20'],
             'jadwal_id' => ['required', 'exists:jadwal,id'],
-            'alamat_jemput' => ['required', 'string', 'max:255'],
+            'alamat_jemput' => ['required', 'string', 'max:500'],
+            'alamat_tujuan' => ['required', 'string', 'max:500'],
+            'jumlah_penumpang' => ['required', 'integer', 'min:1'],
+            'latitude_jemput' => ['nullable', 'numeric'],
+            'longitude_jemput' => ['nullable', 'numeric'],
+            'latitude_tujuan' => ['nullable', 'numeric'],
+            'longitude_tujuan' => ['nullable', 'numeric'],
         ];
     }
 }
@@ -126,6 +130,7 @@ Contoh kandidat service:
 - `PaymentVerificationService`: validasi bukti DP dan update status pembayaran.
 - `TripAssignmentService`: mengelompokkan booking ke trip dan menjaga kapasitas kendaraan.
 - `DriverTripService`: update status jemput, antar, dan selesai trip.
+- `FonnteService`: kirim pesan WhatsApp via FonnteAPI (konfirmasi, notifikasi pembatalan, reminder DP).
 
 Service tidak boleh bergantung pada request HTTP mentah. Kirim data bersih dari `$request->validated()`.
 
@@ -160,17 +165,31 @@ Contoh:
 ```php
 class Booking extends Model
 {
-    public const STATUS_PENDING = 'pending';
-    public const STATUS_CONFIRMED = 'confirmed';
+    public const STATUS_BOOKING_DIBUAT = 'booking_dibuat';
+    public const STATUS_MENUNGGU_PEMBAYARAN = 'menunggu_pembayaran';
+    public const STATUS_MENUNGGU_VERIFIKASI = 'menunggu_verifikasi';
+    public const STATUS_DIKONFIRMASI = 'dikonfirmasi';
+    public const STATUS_ASSIGNED_TO_TRIP = 'assigned_to_trip';
+    public const STATUS_ON_TRIP = 'on_trip';
+    public const STATUS_COMPLETED = 'completed';
     public const STATUS_CANCELLED = 'cancelled';
+    public const STATUS_EXPIRED = 'expired';
 
     protected $fillable = [
         'kode_booking',
-        'nama_pelanggan',
-        'nomor_hp',
+        'pelanggan_id',
         'jadwal_id',
         'alamat_jemput',
-        'status',
+        'latitude_jemput',
+        'longitude_jemput',
+        'alamat_tujuan',
+        'latitude_tujuan',
+        'longitude_tujuan',
+        'jumlah_penumpang',
+        'total_harga',
+        'status_booking',
+        'batas_bayar_at',
+        'alasan_pembatalan',
     ];
 
     public function jadwal(): BelongsTo
@@ -178,14 +197,19 @@ class Booking extends Model
         return $this->belongsTo(Jadwal::class);
     }
 
+    public function pelanggan(): BelongsTo
+    {
+        return $this->belongsTo(Pelanggan::class);
+    }
+
     public function scopeConfirmed($query)
     {
-        return $query->where('status', self::STATUS_CONFIRMED);
+        return $query->where('status_booking', self::STATUS_DIKONFIRMASI);
     }
 
     public function isConfirmed(): bool
     {
-        return $this->status === self::STATUS_CONFIRMED;
+        return $this->status_booking === self::STATUS_DIKONFIRMASI;
     }
 }
 ```
@@ -371,6 +395,14 @@ Gunakan:
 - Queue/Scheduler bawaan Laravel jika nanti dibutuhkan.
 
 Jangan tambah package baru jika fitur bawaan sudah cukup atau package belum disepakati tim.
+
+### Package Tambahan (Disetujui)
+
+| Package | Kegunaan | Status |
+|---------|----------|--------|
+| FonnteAPI (via HTTP client) | WhatsApp notification | ✅ Disetujui |
+
+> FonnteAPI menggunakan Laravel HTTP client bawaan (`Http::post`). **Tidak perlu** install package composer tambahan.
 
 ## Komentar, Type Hint, Dan DocBlock
 
