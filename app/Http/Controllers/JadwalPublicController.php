@@ -15,11 +15,21 @@ class JadwalPublicController extends Controller
     {
         $validated = $request->validated();
 
+        $today = now()->toDateString();
+        $currentTime = now()->toTimeString();
+
         $query = Jadwal::with('rute')
             ->withSum(['bookings as booked_seats' => function ($q) {
                 $q->whereNotIn('status_booking', [Booking::STATUS_CANCELLED, Booking::STATUS_EXPIRED]);
             }], 'jumlah_penumpang')
-            ->aktif();
+            ->aktif()
+            ->where(function ($q) use ($today, $currentTime) {
+                $q->where('tanggal_keberangkatan', '>', $today)
+                  ->orWhere(function ($sq) use ($today, $currentTime) {
+                      $sq->where('tanggal_keberangkatan', $today)
+                         ->where('jam_berangkat', '>=', $currentTime);
+                  });
+            });
 
         if (!empty($validated['asal'])) {
             $query->whereHas('rute', function ($q) use ($validated) {

@@ -464,12 +464,23 @@
 
             <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
                 @php
-                    $fleetData = [
-                        ['id' => 1, 'name' => 'Toyota Avanza', 'plate' => 'BA 1234 AB', 'capacity' => 'Maks. 5 Penumpang', 'route' => 'Padang Panjang ↔ Pekanbaru', 'status' => 'Tersedia'],
-                        ['id' => 2, 'name' => 'Toyota Avanza', 'plate' => 'BA 1567 CD', 'capacity' => 'Maks. 5 Penumpang', 'route' => 'Padang Panjang ↔ Pekanbaru', 'status' => 'Tersedia'],
-                        ['id' => 3, 'name' => 'Toyota Avanza', 'plate' => 'BM 2089 EF', 'capacity' => 'Maks. 5 Penumpang', 'route' => 'Pekanbaru ↔ Padang Panjang', 'status' => 'Tersedia'],
-                        ['id' => 4, 'name' => 'Toyota Avanza', 'plate' => 'BM 2310 GH', 'capacity' => 'Maks. 5 Penumpang', 'route' => 'Pekanbaru ↔ Padang Panjang', 'status' => 'Tersedia'],
-                    ];
+                    $fleetData = collect($drivers ?? [])->map(fn($d) => [
+                        'id' => $d->id,
+                        'name' => $d->nama_mobil,
+                        'plate' => $d->nomor_plat,
+                        'capacity' => 'Maks. ' . $d->kapasitas_mobil . ' Penumpang',
+                        'route' => 'Padang Panjang ↔ Pekanbaru',
+                        'status' => $d->dynamic_status === 'tersedia' ? 'Tersedia' : ($d->dynamic_status === 'sedang_bertugas' ? 'Sedang Bertugas' : 'Tidak Aktif')
+                    ])->toArray();
+
+                    if (empty($fleetData)) {
+                        $fleetData = [
+                            ['id' => 1, 'name' => 'Toyota Avanza', 'plate' => 'BA 1234 AB', 'capacity' => 'Maks. 5 Penumpang', 'route' => 'Padang Panjang ↔ Pekanbaru', 'status' => 'Tersedia'],
+                            ['id' => 2, 'name' => 'Toyota Avanza', 'plate' => 'BA 1567 CD', 'capacity' => 'Maks. 5 Penumpang', 'route' => 'Padang Panjang ↔ Pekanbaru', 'status' => 'Tersedia'],
+                            ['id' => 3, 'name' => 'Toyota Avanza', 'plate' => 'BM 2089 EF', 'capacity' => 'Maks. 5 Penumpang', 'route' => 'Pekanbaru ↔ Padang Panjang', 'status' => 'Tersedia'],
+                            ['id' => 4, 'name' => 'Toyota Avanza', 'plate' => 'BM 2310 GH', 'capacity' => 'Maks. 5 Penumpang', 'route' => 'Pekanbaru ↔ Padang Panjang', 'status' => 'Tersedia'],
+                        ];
+                    }
                 @endphp
                 @foreach ($fleetData as $car)
                     <div class="bg-white rounded-2xl border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_45px_rgb(37,99,235,0.10)] hover:-translate-y-1.5 transition-all duration-300 p-3 group flex flex-col">

@@ -28,7 +28,7 @@
 @if ($config && $message)
     <div x-data="{ show: true }"
          x-show="show"
-         x-init="setTimeout(() => show = false, 2000)"
+         x-init="setTimeout(() => show = false, '{{ $type }}' === 'error' ? 8000 : 4000)"
          x-transition:leave="transition ease-in duration-300"
          x-transition:leave-start="opacity-100 transform scale-100"
          x-transition:leave-end="opacity-0 transform scale-95"

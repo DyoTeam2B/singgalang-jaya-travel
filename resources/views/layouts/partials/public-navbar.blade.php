@@ -24,11 +24,11 @@
                 @php
                     $isHome = Request::routeIs('home');
                     $navLinks = [
-                        ['name' => 'Home', 'href' => $isHome ? '#home' : route('home') . '#home', 'active' => $isHome && !Request::is('cek-booking')],
+                        ['name' => 'Home', 'href' => $isHome ? '#home' : route('home') . '#home', 'active' => $isHome && !Request::is('cek-status')],
                         ['name' => 'Jadwal', 'href' => $isHome ? '#jadwal' : route('home') . '#jadwal', 'active' => false],
                         ['name' => 'Armada', 'href' => $isHome ? '#armada' : route('home') . '#armada', 'active' => false],
                         ['name' => 'Charter', 'href' => $isHome ? '#charter' : route('home') . '#charter', 'active' => false],
-                        ['name' => 'Cek Status', 'href' => Route::has('cek-booking.index') ? route('cek-booking.index') : '#', 'active' => Request::is('cek-booking*')],
+                        ['name' => 'Cek Status', 'href' => Route::has('cek-status') ? route('cek-status') : '#', 'active' => Request::is('cek-status*')],
                         ['name' => 'Kontak', 'href' => $isHome ? '#kontak' : route('home') . '#kontak', 'active' => false],
                     ];
                 @endphp

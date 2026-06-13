@@ -120,11 +120,11 @@ class JadwalController extends Controller
      */
     public function destroy(Jadwal $jadwal)
     {
-        // Safety check if schedule has active bookings
-        if ($jadwal->bookings()->whereNotIn('status_booking', ['cancelled', 'expired'])->exists()) {
+        // Safety check if schedule has any bookings
+        if ($jadwal->bookings()->exists()) {
             return redirect()
                 ->route('admin.jadwal.index')
-                ->with('error', 'Jadwal tidak dapat dihapus karena memiliki booking aktif.');
+                ->with('error', 'Jadwal tidak dapat dihapus karena memiliki data booking terkait.');
         }
 
         $jadwal->delete();

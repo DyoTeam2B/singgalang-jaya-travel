@@ -23,7 +23,7 @@ class StoreJadwalRequest extends FormRequest
     {
         return [
             'rute_id' => ['required', 'exists:rute,id'],
-            'tanggal_keberangkatan' => ['required', 'date'],
+            'tanggal_keberangkatan' => ['required', 'date', 'after_or_equal:today'],
             'shift' => ['required', 'in:pagi,malam'],
             'jam_berangkat' => ['required', 'date_format:H:i'],
             'kuota' => ['required', 'integer', 'min:1'],
@@ -43,6 +43,7 @@ class StoreJadwalRequest extends FormRequest
             'rute_id.exists' => 'Rute yang dipilih tidak valid.',
             'tanggal_keberangkatan.required' => 'Tanggal keberangkatan wajib diisi.',
             'tanggal_keberangkatan.date' => 'Format tanggal tidak valid.',
+            'tanggal_keberangkatan.after_or_equal' => 'Tanggal keberangkatan tidak boleh di masa lalu.',
             'shift.required' => 'Shift keberangkatan wajib dipilih.',
             'shift.in' => 'Shift harus berupa Pagi atau Malam.',
             'jam_berangkat.required' => 'Jam berangkat wajib diisi.',

@@ -82,7 +82,7 @@
                         <option value="">Pilih Driver Tersedia...</option>
                         @foreach($drivers as $d)
                             <option value="{{ $d->id }}">
-                                {{ $d->nama_driver }} · BA {{ $d->nomor_plat }} ({{ $d->nama_mobil }})
+                                {{ $d->nama_driver }} · {{ $d->nomor_plat }} ({{ $d->nama_mobil }})
                             </option>
                         @endforeach
                     </select>

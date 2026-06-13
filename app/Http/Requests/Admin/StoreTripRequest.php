@@ -22,8 +22,38 @@ class StoreTripRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'jadwal_id' => ['required', 'exists:jadwal,id'],
-            'driver_id' => ['required', 'exists:drivers,id'],
+            'jadwal_id' => [
+                'required',
+                'exists:jadwal,id',
+                function ($attribute, $value, $fail) {
+                    $exists = \App\Models\Trip::where('jadwal_id', $value)
+                        ->whereNotIn('status_trip', ['cancelled'])
+                        ->exists();
+                    if ($exists) {
+                        $fail('Jadwal keberangkatan ini sudah memiliki trip aktif.');
+                    }
+                }
+            ],
+            'driver_id' => [
+                'required',
+                'exists:drivers,id',
+                function ($attribute, $value, $fail) {
+                    $jadwalId = $this->input('jadwal_id');
+                    $jadwal = \App\Models\Jadwal::find($jadwalId);
+                    if ($jadwal) {
+                        $exists = \App\Models\Trip::where('driver_id', $value)
+                            ->whereNotIn('status_trip', ['cancelled'])
+                            ->whereHas('jadwal', function ($q) use ($jadwal) {
+                                $q->where('tanggal_keberangkatan', $jadwal->tanggal_keberangkatan->toDateString())
+                                  ->where('shift', $jadwal->shift);
+                            })
+                            ->exists();
+                        if ($exists) {
+                            $fail('Driver ini sudah memiliki tugas trip aktif di hari dan shift yang sama.');
+                        }
+                    }
+                }
+            ],
         ];
     }
 

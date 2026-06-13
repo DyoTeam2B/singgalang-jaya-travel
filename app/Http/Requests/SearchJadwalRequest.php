@@ -24,7 +24,7 @@ class SearchJadwalRequest extends FormRequest
         return [
             'asal' => ['nullable', 'string', 'max:100'],
             'tujuan' => ['nullable', 'string', 'max:100'],
-            'tanggal' => ['nullable', 'date'],
+            'tanggal' => ['nullable', 'date', 'after_or_equal:today'],
         ];
     }
 
@@ -41,6 +41,7 @@ class SearchJadwalRequest extends FormRequest
             'tujuan.string' => 'Kota tujuan harus berupa teks.',
             'tujuan.max' => 'Kota tujuan maksimal 100 karakter.',
             'tanggal.date' => 'Format tanggal perjalanan tidak valid.',
+            'tanggal.after_or_equal' => 'Tanggal perjalanan tidak boleh di masa lalu.',
         ];
     }
 }

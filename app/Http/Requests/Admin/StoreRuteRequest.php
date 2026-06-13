@@ -23,7 +23,7 @@ class StoreRuteRequest extends FormRequest
     {
         return [
             'asal' => ['required', 'string', 'max:255'],
-            'tujuan' => ['required', 'string', 'max:255'],
+            'tujuan' => ['required', 'string', 'max:255', 'different:asal'],
             'tarif' => ['required', 'integer', 'min:0'],
         ];
     }
@@ -42,6 +42,7 @@ class StoreRuteRequest extends FormRequest
             'tujuan.required' => 'Kota tujuan wajib diisi.',
             'tujuan.string' => 'Kota tujuan harus berupa teks.',
             'tujuan.max' => 'Kota tujuan tidak boleh lebih dari 255 karakter.',
+            'tujuan.different' => 'Kota tujuan tidak boleh sama dengan kota asal.',
             'tarif.required' => 'Tarif rute wajib diisi.',
             'tarif.integer' => 'Tarif harus berupa angka.',
             'tarif.min' => 'Tarif tidak boleh kurang dari 0.',
