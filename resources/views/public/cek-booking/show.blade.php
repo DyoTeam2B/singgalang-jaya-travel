@@ -191,18 +191,30 @@
                                 <span class="text-slate-500 uppercase tracking-wider">Uang Muka (DP)</span>
                                 <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">Belum Dibayar</span>
                             </div>
-                            @if(auth()->check() && $booking->pelanggan->user_id === auth()->id() && $booking->status_booking === \App\Models\Booking::STATUS_MENUNGGU_PAYMENT)
+                            @if(auth()->check() && $booking->pelanggan->user_id === auth()->id() && $booking->status_booking === \App\Models\Booking::STATUS_MENUNGGU_PEMBAYARAN)
                                 <a href="{{ route('booking.pembayaran', ['kode' => $booking->kode_booking]) }}" class="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs px-4 py-2.5 rounded-xl transition-colors shadow-sm">
                                     Bayar Sekarang
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                 </a>
                             @endif
                         @else
-                            @php $pembayaran = $booking->pembayaran->first(); @endphp
+                            @php
+                                $pembayaran = $latestPayment ?? $booking->pembayaran->first();
+                                $paymentCounts = $pembayaran && $pembayaran->status_pembayaran !== \App\Models\Pembayaran::STATUS_DITOLAK;
+                                $sisaBayar = $pembayaran && $pembayaran->isPelunasan() && $paymentCounts
+                                    ? 0
+                                    : max(0, $booking->total_harga - ($paymentCounts ? $pembayaran->jumlah_bayar : 0));
+                            @endphp
                             <div class="flex justify-between items-center text-sm font-medium">
-                                <span class="text-slate-500 uppercase tracking-wider">Uang Muka (DP)</span>
+                                <span class="text-slate-500 uppercase tracking-wider">{{ $pembayaran->isPelunasan() ? 'Pembayaran Lunas' : 'Uang Muka (DP)' }}</span>
                                 <span class="text-blue-600 font-bold">- Rp {{ number_format($pembayaran->jumlah_bayar, 0, ',', '.') }}</span>
                             </div>
+                            @if($pembayaran->nominal_diskon > 0)
+                                <div class="flex justify-between items-center text-sm font-medium">
+                                    <span class="text-slate-500 uppercase tracking-wider">Voucher {{ $pembayaran->voucher_kode }} ({{ $pembayaran->diskon_persen }}%)</span>
+                                    <span class="text-emerald-600 font-bold">- Rp {{ number_format($pembayaran->nominal_diskon, 0, ',', '.') }}</span>
+                                </div>
+                            @endif
                             <div class="flex justify-between items-center text-sm font-medium">
                                 <span class="text-slate-500 uppercase tracking-wider">Status Verifikasi</span>
                                 <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold
@@ -236,13 +248,15 @@
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                                 </div>
                                 <div>
-                                    <p class="text-xs font-bold text-green-700 uppercase tracking-wider mb-0.5">Bayar di Driver</p>
-                                    <p class="text-xs font-medium text-green-600">Silakan lunasi sisa pembayaran saat penjemputan.</p>
+                                    <p class="text-xs font-bold text-green-700 uppercase tracking-wider mb-0.5">{{ isset($pembayaran) && $pembayaran->isPelunasan() && $paymentCounts ? 'Pembayaran Lunas' : 'Bayar di Driver' }}</p>
+                                    <p class="text-xs font-medium text-green-600">
+                                        {{ isset($pembayaran) && $pembayaran->isPelunasan() && $paymentCounts ? 'Tidak ada sisa pembayaran setelah voucher lunas diverifikasi.' : 'Silakan lunasi sisa pembayaran saat penjemputan.' }}
+                                    </p>
                                 </div>
                             </div>
                             <div class="text-right">
-                                <p class="text-2xl font-bold text-green-700 tracking-tight">Rp {{ number_format(max(0, $booking->total_harga - 50000), 0, ',', '.') }}</p>
-                                <p class="text-xs font-semibold text-green-600/60 uppercase tracking-wider mt-1">Cash / Transfer Driver</p>
+                                <p class="text-2xl font-bold text-green-700 tracking-tight">Rp {{ number_format($sisaBayar ?? max(0, $booking->total_harga - \App\Models\Pembayaran::NOMINAL_DP), 0, ',', '.') }}</p>
+                                <p class="text-xs font-semibold text-green-600/60 uppercase tracking-wider mt-1">{{ isset($pembayaran) && $pembayaran->isPelunasan() && $paymentCounts ? ($pembayaran->voucher_kode ?? 'Lunas') : 'Cash / Transfer Driver' }}</p>
                             </div>
                         </div>
                     </div>

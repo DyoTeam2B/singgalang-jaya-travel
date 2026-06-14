@@ -21,7 +21,14 @@ class BookingController extends Controller
      */
     public function show(Booking $booking)
     {
-        $booking->load(['pelanggan.user', 'jadwal.rute', 'pembayaran', 'whatsappNotifications']);
+        $booking->load([
+            'pelanggan.user',
+            'jadwal.rute',
+            'pembayaran' => function ($q) {
+                $q->latest();
+            },
+            'whatsappNotifications',
+        ]);
         
         return view('admin.bookings.show', compact('booking'));
     }

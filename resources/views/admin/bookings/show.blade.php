@@ -160,6 +160,9 @@
             <!-- Rincian Biaya -->
             <div class="bg-white rounded-[2rem] border border-slate-200/60 shadow-sm p-6 space-y-4">
                 <h3 class="text-sm font-black text-slate-900 uppercase tracking-widest border-b border-slate-100 pb-3">Rincian Biaya</h3>
+                @php
+                    $latestPayment = $booking->pembayaran->first();
+                @endphp
                 
                 <div class="space-y-2">
                     <div class="flex justify-between text-xs font-medium text-slate-500">
@@ -174,6 +177,20 @@
                         <span>Total Biaya:</span>
                         <span class="text-blue-900">Rp {{ number_format($booking->total_harga, 0, ',', '.') }}</span>
                     </div>
+                    @if ($latestPayment)
+                        <div class="flex justify-between text-xs font-medium text-slate-500 pt-2 border-t border-slate-100">
+                            <span>Pembayaran Terakhir:</span>
+                            <span class="font-bold {{ $latestPayment->isPelunasan() ? 'text-emerald-700' : 'text-blue-700' }}">
+                                {{ $latestPayment->isPelunasan() ? 'Pelunasan' : 'DP' }} - Rp {{ number_format($latestPayment->jumlah_bayar, 0, ',', '.') }}
+                            </span>
+                        </div>
+                        @if ($latestPayment->nominal_diskon > 0)
+                            <div class="flex justify-between text-xs font-medium text-emerald-700">
+                                <span>Voucher {{ $latestPayment->voucher_kode }}:</span>
+                                <span class="font-bold">- Rp {{ number_format($latestPayment->nominal_diskon, 0, ',', '.') }}</span>
+                            </div>
+                        @endif
+                    @endif
                 </div>
             </div>
 

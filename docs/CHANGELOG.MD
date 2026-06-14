@@ -2,6 +2,23 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-15] - Mini Hackathon - Voucher Lunas 10%
+
+### Added
+* Migration `2026_06_15_000001_add_voucher_discount_to_pembayaran_table.php` untuk menyimpan kode voucher, persentase diskon, dan nominal diskon pada transaksi pembayaran.
+* Opsi pembayaran lunas dengan voucher `LUNAS10` diskon 10% pada halaman pembayaran pelanggan.
+* Helper perhitungan diskon dan nominal pembayaran lunas pada model `App\Models\Pembayaran`.
+* Tampilan informasi voucher dan diskon pada halaman cek booking, detail booking admin, daftar booking admin, dan verifikasi pembayaran admin.
+* Tes fitur untuk memastikan pembayaran lunas menerapkan voucher 10% dari backend.
+
+### Changed
+* Validasi pembayaran kini mewajibkan pilihan jenis pembayaran `dp` atau `pelunasan`.
+* Controller pembayaran menghitung nominal transfer di server agar nilai diskon tidak bergantung pada input frontend.
+* Dashboard admin menghitung revenue booking lunas dari nominal pembayaran setelah diskon.
+
+### Fixed
+* Perbaikan konstanta status `STATUS_MENUNGGU_PAYMENT` menjadi `STATUS_MENUNGGU_PEMBAYARAN` pada halaman cek booking.
+
 ## [2026-06-14] - Rayhan - Sprint 3 (Armada Separation & CRUD)
 
 ### Added

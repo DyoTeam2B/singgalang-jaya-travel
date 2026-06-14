@@ -118,6 +118,11 @@
 
             {{-- Price Breakdown --}}
             <div class="p-8 border-t border-slate-100">
+                @php
+                    $dpAmount = \App\Models\Pembayaran::NOMINAL_DP;
+                    $discountAmount = \App\Models\Pembayaran::hitungDiskonLunas($booking->total_harga);
+                    $fullPaymentAmount = \App\Models\Pembayaran::hitungNominalLunas($booking->total_harga);
+                @endphp
                 <div class="space-y-4">
                     <div class="flex justify-between items-center text-sm font-medium">
                         <span class="text-slate-500 uppercase tracking-wider">Tiket Perjalanan ({{ $booking->jumlah_penumpang }}x)</span>
@@ -125,7 +130,18 @@
                     </div>
                     <div class="flex justify-between items-center text-sm font-medium">
                         <span class="text-slate-500 uppercase tracking-wider">Uang Muka (DP) Wajib</span>
-                        <span class="text-blue-600 font-bold">- Rp {{ number_format(50000, 0, ',', '.') }}</span>
+                        <span class="text-blue-600 font-bold">- Rp {{ number_format($dpAmount, 0, ',', '.') }}</span>
+                    </div>
+
+                    <div class="rounded-2xl border border-emerald-100 bg-emerald-50 p-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                        <div>
+                            <p class="text-xs font-bold text-emerald-700 uppercase tracking-wider">Voucher LUNAS10</p>
+                            <p class="text-xs font-medium text-emerald-600 mt-1">Bayar lunas sekarang dan hemat 10% sebesar Rp {{ number_format($discountAmount, 0, ',', '.') }}.</p>
+                        </div>
+                        <div class="text-left md:text-right">
+                            <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Total Transfer Lunas</p>
+                            <p class="text-lg font-bold text-emerald-700">Rp {{ number_format($fullPaymentAmount, 0, ',', '.') }}</p>
+                        </div>
                     </div>
 
                     <div class="relative py-3">
@@ -146,7 +162,7 @@
                             </div>
                         </div>
                         <div class="text-right">
-                            <p class="text-2xl font-bold text-green-700 tracking-tight">Rp {{ number_format(max(0, $booking->total_harga - 50000), 0, ',', '.') }}</p>
+                            <p class="text-2xl font-bold text-green-700 tracking-tight">Rp {{ number_format(max(0, $booking->total_harga - $dpAmount), 0, ',', '.') }}</p>
                             <p class="text-xs font-semibold text-green-600/60 uppercase tracking-wider mt-1">Cash / Transfer Driver</p>
                         </div>
                     </div>

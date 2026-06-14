@@ -14,6 +14,11 @@ class Pembayaran extends Model
     public const JENIS_DP = 'dp';
     public const JENIS_PELUNASAN = 'pelunasan';
 
+    // Payment amount and voucher constants
+    public const NOMINAL_DP = 50000;
+    public const VOUCHER_LUNAS_10 = 'LUNAS10';
+    public const DISKON_LUNAS_PERSEN = 10;
+
     // Status Pembayaran Constants
     public const STATUS_MENUNGGU = 'menunggu';
     public const STATUS_TERVERIFIKASI = 'terverifikasi';
@@ -36,6 +41,9 @@ class Pembayaran extends Model
         'metode_pembayaran',
         'bukti_pembayaran',
         'status_pembayaran',
+        'voucher_kode',
+        'diskon_persen',
+        'nominal_diskon',
         'catatan',
     ];
 
@@ -46,7 +54,41 @@ class Pembayaran extends Model
      */
     protected $casts = [
         'jumlah_bayar' => 'integer',
+        'diskon_persen' => 'integer',
+        'nominal_diskon' => 'integer',
     ];
+
+    /**
+     * Calculate the 10% voucher discount for full payment.
+     */
+    public static function hitungDiskonLunas(int $totalHarga): int
+    {
+        return intdiv($totalHarga * self::DISKON_LUNAS_PERSEN, 100);
+    }
+
+    /**
+     * Calculate amount paid when customer chooses full payment with voucher.
+     */
+    public static function hitungNominalLunas(int $totalHarga): int
+    {
+        return max(0, $totalHarga - self::hitungDiskonLunas($totalHarga));
+    }
+
+    /**
+     * Helper to check if payment is a down payment.
+     */
+    public function isDp(): bool
+    {
+        return $this->jenis_pembayaran === self::JENIS_DP;
+    }
+
+    /**
+     * Helper to check if payment is full payment.
+     */
+    public function isPelunasan(): bool
+    {
+        return $this->jenis_pembayaran === self::JENIS_PELUNASAN;
+    }
 
     /**
      * Local scope to filter only payments that are pending verification.

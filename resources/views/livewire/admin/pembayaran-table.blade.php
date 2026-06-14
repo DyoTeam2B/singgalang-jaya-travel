@@ -92,8 +92,14 @@
                                     <p class="text-xs font-bold text-slate-800">{{ $p->booking->pelanggan->nama ?? 'N/A' }}</p>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="text-[10px] font-black {{ $p->jenis_pembayaran === 'dp' ? 'text-blue-600' : 'text-emerald-600' }} uppercase">
-                                        {{ $p->jenis_pembayaran === 'dp' ? 'DP (Flat Rp50.000)' : 'Pelunasan' }}
+                                    <span class="text-[10px] font-black {{ $p->isDp() ? 'text-blue-600' : 'text-emerald-600' }} uppercase">
+                                        @if ($p->isDp())
+                                            DP (Flat Rp50.000)
+                                        @elseif ($p->voucher_kode)
+                                            Pelunasan ({{ $p->voucher_kode }})
+                                        @else
+                                            Pelunasan
+                                        @endif
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-xs font-black text-slate-900">
@@ -187,7 +193,13 @@
                                 <div>
                                     <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Tipe Pembayaran</p>
                                     <p class="text-xs font-bold text-slate-900 uppercase">
-                                        {{ $selectedPayment->jenis_pembayaran === 'dp' ? 'DP (Flat Rp50.000)' : 'Pelunasan' }}
+                                        @if ($selectedPayment->isDp())
+                                            DP (Flat Rp50.000)
+                                        @elseif ($selectedPayment->voucher_kode)
+                                            Pelunasan ({{ $selectedPayment->voucher_kode }})
+                                        @else
+                                            Pelunasan
+                                        @endif
                                     </p>
                                 </div>
                                 <div>
@@ -199,6 +211,18 @@
                                 <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Nominal Transfer</p>
                                 <p class="text-lg font-black text-blue-900">Rp {{ number_format($selectedPayment->jumlah_bayar, 0, ',', '.') }}</p>
                             </div>
+                            @if ($selectedPayment->nominal_diskon > 0)
+                                <div class="pt-3 border-t border-slate-200/50 grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Voucher</p>
+                                        <p class="text-xs font-black text-emerald-700">{{ $selectedPayment->voucher_kode }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Diskon</p>
+                                        <p class="text-xs font-black text-emerald-700">{{ $selectedPayment->diskon_persen }}% (-Rp {{ number_format($selectedPayment->nominal_diskon, 0, ',', '.') }})</p>
+                                    </div>
+                                </div>
+                            @endif
                             <div class="flex items-center gap-3 pt-1">
                                 <div class="flex items-center gap-1 text-[9px] font-bold text-slate-500 bg-white px-2 py-1 rounded border border-slate-200/60 shadow-sm">
                                     <!-- Calendar Icon -->

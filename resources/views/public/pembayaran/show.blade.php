@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'Pembayaran DP - Singgalang Jaya Travel')
+@section('title', 'Pembayaran - Singgalang Jaya Travel')
 
 @section('content')
 <div class="py-12 md:py-20 bg-slate-50 flex-1">
@@ -88,6 +88,16 @@
                     timerText: '30:00',
                     previewUrl: null,
                     fileName: null,
+                    paymentType: @js(old('jenis_pembayaran', \App\Models\Pembayaran::JENIS_DP)),
+                    dpAmount: {{ $paymentSummary['dp_amount'] }},
+                    fullPaymentAmount: {{ $paymentSummary['full_payment_amount'] }},
+                    discountAmount: {{ $paymentSummary['discount_amount'] }},
+                    formatRupiah(value) {
+                        return new Intl.NumberFormat('id-ID').format(value);
+                    },
+                    selectedAmount() {
+                        return this.paymentType === 'pelunasan' ? this.fullPaymentAmount : this.dpAmount;
+                    },
                     init() {
                         this.updateText();
                         let interval = setInterval(() => {
@@ -133,8 +143,10 @@
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
                                 </div>
                                 <div>
-                                    <h2 class="text-lg font-bold text-slate-800 tracking-tight">Pembayaran DP</h2>
-                                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Selesaikan pembayaran DP Rp 50.000</p>
+                                    <h2 class="text-lg font-bold text-slate-800 tracking-tight">Pembayaran Booking</h2>
+                                    <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">
+                                        <span x-text="paymentType === 'pelunasan' ? 'Bayar lunas dengan voucher 10%' : 'Selesaikan pembayaran DP'"></span>
+                                    </p>
                                 </div>
                             </div>
 
@@ -174,6 +186,10 @@
                                             <p class="text-sm font-bold uppercase">Singgalang Jaya Travel</p>
                                             <span class="text-xs font-bold uppercase text-blue-400">Verifikasi Cepat</span>
                                         </div>
+                                        <div class="mt-4 pt-4 border-t border-white/10 flex justify-between items-center">
+                                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Nominal Transfer</span>
+                                            <span class="text-lg font-bold text-white">Rp <span x-text="formatRupiah(selectedAmount())">{{ number_format($paymentSummary['dp_amount'], 0, ',', '.') }}</span></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -187,7 +203,11 @@
                                     <div class="space-y-2">
                                         <p class="text-xs font-bold text-blue-900 uppercase tracking-wider">Instruksi Pembayaran</p>
                                         <ol class="text-xs font-medium text-blue-700 space-y-1.5 list-decimal ml-4">
-                                            <li>Lakukan transfer sebesar <span class="text-blue-900 font-bold">Rp 50.000</span> (DP).</li>
+                                            <li>
+                                                Lakukan transfer sebesar
+                                                <span class="text-blue-900 font-bold">Rp <span x-text="formatRupiah(selectedAmount())">{{ number_format($paymentSummary['dp_amount'], 0, ',', '.') }}</span></span>
+                                                <span x-text="paymentType === 'pelunasan' ? '(lunas setelah voucher)' : '(DP)'"></span>.
+                                            </li>
                                             <li>Pastikan nama pengirim atau berita transfer sesuai.</li>
                                             <li>Ambil screenshot atau foto bukti transfer.</li>
                                             <li>Unggah bukti tersebut pada form di sebelah kanan/bawah.</li>
@@ -228,6 +248,42 @@
                             <div>
                                 <h3 class="text-lg font-bold text-slate-800 tracking-tight mb-1">Unggah Bukti</h3>
                                 <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Format: JPG, PNG, atau PDF</p>
+                            </div>
+
+                            {{-- Payment Type --}}
+                            <div class="space-y-3">
+                                <label class="block text-sm font-medium text-slate-700">Pilih Jenis Pembayaran</label>
+                                <div class="grid gap-3">
+                                    <label class="block cursor-pointer rounded-2xl border p-4 transition-colors"
+                                        :class="paymentType === 'dp' ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500/10' : 'border-slate-200 bg-white hover:bg-slate-50'">
+                                        <input type="radio" name="jenis_pembayaran" value="dp" x-model="paymentType" class="sr-only">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div>
+                                                <p class="text-sm font-bold text-slate-800">Bayar DP</p>
+                                                <p class="text-xs font-medium text-slate-500 mt-1">Kursi diamankan setelah bukti DP diverifikasi admin.</p>
+                                            </div>
+                                            <span class="text-sm font-bold text-blue-700 whitespace-nowrap">Rp {{ number_format($paymentSummary['dp_amount'], 0, ',', '.') }}</span>
+                                        </div>
+                                    </label>
+
+                                    <label class="block cursor-pointer rounded-2xl border p-4 transition-colors"
+                                        :class="paymentType === 'pelunasan' ? 'border-emerald-500 bg-emerald-50 ring-2 ring-emerald-500/10' : 'border-slate-200 bg-white hover:bg-slate-50'">
+                                        <input type="radio" name="jenis_pembayaran" value="pelunasan" x-model="paymentType" class="sr-only">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div>
+                                                <div class="flex flex-wrap items-center gap-2">
+                                                    <p class="text-sm font-bold text-slate-800">Bayar Lunas</p>
+                                                    <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700">{{ $paymentSummary['voucher_code'] }}</span>
+                                                </div>
+                                                <p class="text-xs font-medium text-slate-500 mt-1">Voucher diskon {{ $paymentSummary['discount_percent'] }}% langsung diterapkan.</p>
+                                            </div>
+                                            <span class="text-sm font-bold text-emerald-700 whitespace-nowrap">Rp {{ number_format($paymentSummary['full_payment_amount'], 0, ',', '.') }}</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                @error('jenis_pembayaran')
+                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             {{-- Dropzone Upload --}}
@@ -310,16 +366,32 @@
                             {{-- Price Summary --}}
                             <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-2.5">
                                 <div class="flex justify-between items-center text-xs font-medium">
-                                    <span class="text-slate-500 uppercase tracking-wider">Down Payment (DP)</span>
-                                    <span class="text-blue-600 font-bold">Rp {{ number_format(50000, 0, ',', '.') }}</span>
-                                </div>
-                                <div class="flex justify-between items-center text-xs font-medium">
                                     <span class="text-slate-500 uppercase tracking-wider">Total Tiket</span>
                                     <span class="text-slate-800 font-bold">Rp {{ number_format($booking->total_harga, 0, ',', '.') }}</span>
                                 </div>
-                                <div class="flex justify-between items-center text-xs font-medium">
-                                    <span class="text-slate-500 uppercase tracking-wider">Pelunasan</span>
-                                    <span class="text-slate-800 font-bold">Rp {{ number_format(max(0, $booking->total_harga - 50000), 0, ',', '.') }}</span>
+                                <div x-show="paymentType === 'dp'" class="space-y-2.5">
+                                    <div class="flex justify-between items-center text-xs font-medium">
+                                        <span class="text-slate-500 uppercase tracking-wider">Down Payment (DP)</span>
+                                        <span class="text-blue-600 font-bold">Rp {{ number_format($paymentSummary['dp_amount'], 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-xs font-medium">
+                                        <span class="text-slate-500 uppercase tracking-wider">Sisa Bayar ke Driver</span>
+                                        <span class="text-slate-800 font-bold">Rp {{ number_format($paymentSummary['dp_remaining'], 0, ',', '.') }}</span>
+                                    </div>
+                                </div>
+                                <div x-show="paymentType === 'pelunasan'" class="space-y-2.5">
+                                    <div class="flex justify-between items-center text-xs font-medium">
+                                        <span class="text-slate-500 uppercase tracking-wider">Voucher {{ $paymentSummary['voucher_code'] }} ({{ $paymentSummary['discount_percent'] }}%)</span>
+                                        <span class="text-emerald-600 font-bold">- Rp {{ number_format($paymentSummary['discount_amount'], 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-xs font-medium">
+                                        <span class="text-slate-500 uppercase tracking-wider">Sisa Bayar ke Driver</span>
+                                        <span class="text-emerald-700 font-bold">Rp 0</span>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-center border-t border-slate-200 pt-2 text-sm font-bold">
+                                    <span class="text-slate-800 uppercase tracking-wider">Total Transfer</span>
+                                    <span class="text-blue-800">Rp <span x-text="formatRupiah(selectedAmount())">{{ number_format($paymentSummary['dp_amount'], 0, ',', '.') }}</span></span>
                                 </div>
                             </div>
 
@@ -334,7 +406,7 @@
                                 </template>
                                 <template x-if="!isExpired">
                                     <span class="flex items-center gap-2">
-                                        Kirim Bukti Pembayaran
+                                        <span x-text="paymentType === 'pelunasan' ? 'Kirim Bukti Lunas' : 'Kirim Bukti DP'"></span>
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                     </span>
                                 </template>

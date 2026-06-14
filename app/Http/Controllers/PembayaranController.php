@@ -15,7 +15,7 @@ class PembayaranController extends Controller
      */
     public function show($kode)
     {
-        $booking = Booking::with('pelanggan')
+        $booking = Booking::with(['pelanggan', 'jadwal.rute'])
             ->where('kode_booking', $kode)
             ->firstOrFail();
 
@@ -43,13 +43,14 @@ class PembayaranController extends Controller
         if ($booking->status_booking !== Booking::STATUS_MENUNGGU_PEMBAYARAN) {
             return view('public.pembayaran.show', [
                 'booking' => $booking,
+                'paymentSummary' => $this->paymentSummary($booking),
                 'isExpired' => $booking->status_booking === Booking::STATUS_EXPIRED,
                 'isAlreadyProcessed' => !in_array($booking->status_booking, [Booking::STATUS_MENUNGGU_PEMBAYARAN, Booking::STATUS_EXPIRED]),
             ]);
         }
 
         $isExpired = false;
-        $secondsRemaining = now()->diffInSeconds($booking->batas_bayar_at, false);
+        $secondsRemaining = (int) floor(now()->diffInSeconds($booking->batas_bayar_at, false));
         if ($secondsRemaining <= 0) {
             $isExpired = true;
             $secondsRemaining = 0;
@@ -60,6 +61,7 @@ class PembayaranController extends Controller
 
         return view('public.pembayaran.show', [
             'booking' => $booking,
+            'paymentSummary' => $this->paymentSummary($booking),
             'secondsRemaining' => $secondsRemaining,
             'isExpired' => $isExpired,
             'isAlreadyProcessed' => false,
@@ -100,6 +102,8 @@ class PembayaranController extends Controller
                 ->with('info', 'Pembayaran booking ini sedang diproses atau sudah diverifikasi.');
         }
 
+        $validated = $request->validated();
+
         // Upload file
         if ($request->hasFile('bukti_pembayaran')) {
             $file = $request->file('bukti_pembayaran');
@@ -110,15 +114,25 @@ class PembayaranController extends Controller
             // Store file to storage/app/public/bukti-pembayaran
             $filePath = $file->storeAs('bukti-pembayaran', $fileName, 'public');
 
+            $jenisPembayaran = $validated['jenis_pembayaran'];
+            $isPelunasan = $jenisPembayaran === Pembayaran::JENIS_PELUNASAN;
+            $nominalDiskon = $isPelunasan ? Pembayaran::hitungDiskonLunas($booking->total_harga) : 0;
+            $jumlahBayar = $isPelunasan
+                ? Pembayaran::hitungNominalLunas($booking->total_harga)
+                : Pembayaran::NOMINAL_DP;
+
             // Save Payment record
             Pembayaran::create([
                 'booking_id' => $booking->id,
-                'jenis_pembayaran' => Pembayaran::JENIS_DP,
-                'jumlah_bayar' => 50000,
-                'metode_pembayaran' => $request->metode_pembayaran,
+                'jenis_pembayaran' => $jenisPembayaran,
+                'jumlah_bayar' => $jumlahBayar,
+                'metode_pembayaran' => $validated['metode_pembayaran'],
                 'bukti_pembayaran' => $filePath,
                 'status_pembayaran' => Pembayaran::STATUS_MENUNGGU,
-                'catatan' => $request->catatan,
+                'voucher_kode' => $isPelunasan ? Pembayaran::VOUCHER_LUNAS_10 : null,
+                'diskon_persen' => $isPelunasan ? Pembayaran::DISKON_LUNAS_PERSEN : 0,
+                'nominal_diskon' => $nominalDiskon,
+                'catatan' => $validated['catatan'] ?? null,
             ]);
 
             // Update Booking status
@@ -128,11 +142,30 @@ class PembayaranController extends Controller
 
             return redirect()
                 ->route('cek-booking.index', ['kode_booking' => $booking->kode_booking])
-                ->with('success', 'Bukti pembayaran DP berhasil diunggah. Menunggu verifikasi admin.');
+                ->with('success', $isPelunasan
+                    ? 'Bukti pembayaran lunas berhasil diunggah. Voucher LUNAS10 10% diterapkan dan menunggu verifikasi admin.'
+                    : 'Bukti pembayaran DP berhasil diunggah. Menunggu verifikasi admin.');
         }
 
         return redirect()
             ->back()
             ->with('error', 'Gagal mengunggah bukti pembayaran.');
+    }
+
+    /**
+     * Build payment option numbers shown to customers.
+     */
+    private function paymentSummary(Booking $booking): array
+    {
+        $discountAmount = Pembayaran::hitungDiskonLunas($booking->total_harga);
+
+        return [
+            'dp_amount' => Pembayaran::NOMINAL_DP,
+            'dp_remaining' => max(0, $booking->total_harga - Pembayaran::NOMINAL_DP),
+            'voucher_code' => Pembayaran::VOUCHER_LUNAS_10,
+            'discount_percent' => Pembayaran::DISKON_LUNAS_PERSEN,
+            'discount_amount' => $discountAmount,
+            'full_payment_amount' => max(0, $booking->total_harga - $discountAmount),
+        ];
     }
 }

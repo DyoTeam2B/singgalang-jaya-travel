@@ -85,7 +85,7 @@
                         <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-start gap-3">
                             <svg class="w-5 h-5 text-blue-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             <p class="text-xs font-medium text-blue-700 leading-relaxed">
-                                Harga tiket flat <span class="font-bold">Rp {{ number_format($tarif_per_orang, 0, ',', '.') }}</span> per orang. Down Payment (DP) hanya <span class="font-bold">Rp 50.000</span> per booking.
+                                Harga tiket flat <span class="font-bold">Rp {{ number_format($tarif_per_orang, 0, ',', '.') }}</span> per orang. Down Payment (DP) hanya <span class="font-bold">Rp {{ number_format(\App\Models\Pembayaran::NOMINAL_DP, 0, ',', '.') }}</span> per booking.
                             </p>
                         </div>
                     @endif
@@ -222,27 +222,41 @@
 
                         {{-- Pricing --}}
                         <div class="space-y-2.5">
+                            @php
+                                $dpAmount = \App\Models\Pembayaran::NOMINAL_DP;
+                                $discountAmount = \App\Models\Pembayaran::hitungDiskonLunas($total_harga);
+                                $fullPaymentAmount = \App\Models\Pembayaran::hitungNominalLunas($total_harga);
+                            @endphp
                             <div class="flex items-center justify-between text-xs font-medium">
                                 <span class="text-slate-500">Subtotal ({{ $jumlah_penumpang }}x)</span>
                                 <span class="text-slate-800 font-bold">Rp {{ number_format($total_harga, 0, ',', '.') }}</span>
                             </div>
                             <div class="flex items-center justify-between text-xs font-medium">
                                 <span class="text-slate-500">Uang Muka (DP)</span>
-                                <span class="text-blue-600 font-bold">- Rp {{ number_format(50000, 0, ',', '.') }}</span>
+                                <span class="text-blue-600 font-bold">- Rp {{ number_format($dpAmount, 0, ',', '.') }}</span>
                             </div>
                             <div class="p-3 bg-green-50 rounded-xl border border-green-100">
                                 <div class="flex items-center justify-between mb-0.5">
                                     <span class="text-xs font-bold text-green-700 uppercase tracking-wider">Bayar di Driver</span>
-                                    <span class="text-sm font-bold text-green-700">Rp {{ number_format(max(0, $total_harga - 50000), 0, ',', '.') }}</span>
+                                    <span class="text-sm font-bold text-green-700">Rp {{ number_format(max(0, $total_harga - $dpAmount), 0, ',', '.') }}</span>
                                 </div>
                                 <p class="text-xs font-medium text-green-600 uppercase tracking-wider">Pelunasan saat penjemputan</p>
                             </div>
+                            @if($total_harga > 0)
+                                <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                                    <div class="flex items-center justify-between mb-0.5 gap-3">
+                                        <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider">Voucher LUNAS10</span>
+                                        <span class="text-sm font-bold text-emerald-700">Rp {{ number_format($fullPaymentAmount, 0, ',', '.') }}</span>
+                                    </div>
+                                    <p class="text-xs font-medium text-emerald-600 uppercase tracking-wider">Hemat Rp {{ number_format($discountAmount, 0, ',', '.') }} saat bayar lunas</p>
+                                </div>
+                            @endif
                         </div>
 
                         {{-- Total DP --}}
                         <div class="flex items-end justify-between pt-3">
                             <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Bayar (DP)</p>
-                            <p class="text-2xl font-bold text-blue-800 tracking-tight">Rp {{ number_format(50000, 0, ',', '.') }}</p>
+                            <p class="text-2xl font-bold text-blue-800 tracking-tight">Rp {{ number_format($dpAmount, 0, ',', '.') }}</p>
                         </div>
 
                         {{-- CTA Button --}}

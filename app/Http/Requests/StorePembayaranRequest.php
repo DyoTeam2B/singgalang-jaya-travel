@@ -20,6 +20,7 @@ class StorePembayaranRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'jenis_pembayaran' => ['required', 'in:dp,pelunasan'],
             'bukti_pembayaran' => ['required', 'file', 'mimes:jpeg,png,jpg,pdf', 'max:2048'],
             'metode_pembayaran' => ['required', 'string', 'max:50'],
             'catatan' => ['nullable', 'string', 'max:1000'],
@@ -32,6 +33,8 @@ class StorePembayaranRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'jenis_pembayaran.required' => 'Jenis pembayaran wajib dipilih.',
+            'jenis_pembayaran.in' => 'Jenis pembayaran tidak valid.',
             'bukti_pembayaran.required' => 'Bukti pembayaran wajib diupload.',
             'bukti_pembayaran.file' => 'Bukti pembayaran harus berupa file.',
             'bukti_pembayaran.mimes' => 'Format bukti pembayaran harus berupa JPG, JPEG, PNG, atau PDF.',

@@ -111,7 +111,7 @@
                             <!-- Pembayaran -->
                             <td class="px-8 py-6">
                                 @php
-                                    $pembayaranTerakhir = $b->pembayaran->last();
+                                    $pembayaranTerakhir = $b->pembayaran->sortByDesc('created_at')->first();
                                 @endphp
                                 <div class="flex items-center gap-2">
                                     <div class="w-1.5 h-1.5 rounded-full {{ 
@@ -121,7 +121,8 @@
                                     }}"></div>
                                     <span class="text-[10px] font-black text-slate-900 uppercase">
                                         @if ($pembayaranTerakhir)
-                                            {{ $pembayaranTerakhir->status_pembayaran }} ({{ ucfirst($pembayaranTerakhir->jenis_pembayaran) }})
+                                            {{ $pembayaranTerakhir->status_pembayaran }}
+                                            ({{ $pembayaranTerakhir->isPelunasan() ? ($pembayaranTerakhir->voucher_kode ? 'Pelunasan ' . $pembayaranTerakhir->voucher_kode : 'Pelunasan') : 'DP' }})
                                         @else
                                             Belum Bayar
                                         @endif
