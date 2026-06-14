@@ -9,8 +9,24 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/jadwal', [JadwalPublicController::class, 'index'])->name('jadwal.index');
+Route::get('/cek-booking', [\App\Http\Controllers\CekBookingController::class, 'index'])->name('cek-booking.index');
+Route::post('/cek-booking', [\App\Http\Controllers\CekBookingController::class, 'show'])->name('cek-booking.show');
+Route::get('/jadwal/available', [JadwalPublicController::class, 'available'])->name('jadwal.available');
+Route::get('/jadwal/{id}/check-kuota', [JadwalPublicController::class, 'checkKuota'])->name('jadwal.checkKuota');
 
 Route::middleware('auth')->group(function () {
+    // Pelanggan Routes
+    Route::middleware('role:pelanggan')->group(function () {
+        Route::get('/booking/create', [\App\Http\Controllers\BookingController::class, 'create'])->name('booking.create');
+        Route::post('/booking', [\App\Http\Controllers\BookingController::class, 'store'])->name('booking.store');
+        Route::get('/booking/{kode}/review', [\App\Http\Controllers\BookingController::class, 'review'])->name('booking.review');
+        Route::get('/booking/{kode}/pembayaran', [\App\Http\Controllers\PembayaranController::class, 'show'])->name('booking.pembayaran');
+        Route::post('/booking/{kode}/pembayaran', [\App\Http\Controllers\PembayaranController::class, 'store'])->name('booking.pembayaran.store');
+        Route::get('/booking/{kode}/edit', [\App\Http\Controllers\BookingController::class, 'edit'])->name('booking.edit');
+        Route::put('/booking/{kode}', [\App\Http\Controllers\BookingController::class, 'update'])->name('booking.update');
+        Route::put('/booking/{kode}/cancel', [\App\Http\Controllers\BookingController::class, 'cancel'])->name('booking.cancel');
+    });
+
     // Redirection Dashboard (Breeze Default)
     Route::get('/dashboard', function () {
         if (Auth::user()->role === 'admin') {
