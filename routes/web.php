@@ -50,6 +50,8 @@ Route::middleware('auth')->group(function () {
              Route::resource('jadwal', \App\Http\Controllers\Admin\JadwalController::class);
              Route::put('jadwal/{jadwal}/toggle', [\App\Http\Controllers\Admin\JadwalController::class, 'toggleStatus'])->name('jadwal.toggle');
              Route::resource('drivers', \App\Http\Controllers\Admin\DriverController::class);
+             Route::post('trips/{trip}/assign', [\App\Http\Controllers\Admin\TripController::class, 'assignBooking'])->name('trips.assign');
+             Route::delete('trips/{trip}/remove/{detailTrip}', [\App\Http\Controllers\Admin\TripController::class, 'removeBooking'])->name('trips.remove');
              Route::resource('trips', \App\Http\Controllers\Admin\TripController::class);
 
              // Admin Bookings & Pembayaran (Sprint 2 - Nayasha)

@@ -15,6 +15,19 @@ Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 ### Changed
 
 * Modifikasi `routes/web.php` untuk mendaftarkan resource route bookings, pembayaran, aksi cancel booking, verifikasi, dan penolakan pembayaran.
+## [2026-06-14] - Kevin - Sprint 2
+
+### Added
+* Berkas view `resources/views/admin/trips/show.blade.php` untuk antarmuka detail trip admin, manifes penumpang, serta modal penugasan driver dan alokasi booking.
+
+### Changed
+* Modifikasi `routes/web.php` untuk menambahkan route POST `trips/{trip}/assign` dan DELETE `trips/{trip}/remove/{detailTrip}` di bawah middleware admin.
+* Modifikasi `app/Http/Controllers/Admin/TripController.php` untuk mengimplementasikan method `show`, `update` (transisi status trip dan penugasan driver), `destroy` (menghapus trip dengan aman), `assignBooking` (penugasan booking ke trip dengan validasi sisa kuota kursi), dan `removeBooking` (pelepasan booking dari trip).
+* Modifikasi `resources/views/admin/trips/index.blade.php` untuk menghubungkan tautan Detail Trip serta mengaktifkan tombol alokasi booking dari panel antrean ke trip terkait.
+* Modifikasi `resources/views/admin/trips/create.blade.php` untuk mendukung pre-seleksi jadwal berdasarkan query parameter `jadwal_id`.
+
+### Notes
+* Fitur alokasi booking ke trip secara otomatis mengintegrasikan data driver dan armada kendaraan, karena informasi armada melekat langsung pada profil driver.
 
 ## [2026-06-12] - Rayhan - Sprint 1 (Alignment)
 

@@ -2,7 +2,7 @@
 
 @section('content')
     <div x-data="{
-        scheduleId: '{{ old('jadwal_id') }}',
+        scheduleId: '{{ old('jadwal_id', request('jadwal_id')) }}',
         driverId: '{{ old('driver_id') }}',
         schedules: {{ $schedules->map(fn($s) => [
             'id' => $s->id,
