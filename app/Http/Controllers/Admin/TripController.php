@@ -8,6 +8,8 @@ use App\Models\Trip;
 use App\Models\Jadwal;
 use App\Models\Driver;
 use App\Models\Booking;
+use App\Models\DetailTrip;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class TripController extends Controller
@@ -103,8 +105,27 @@ class TripController extends Controller
      */
     public function show(Trip $trip)
     {
-        return redirect()->route('admin.trips.index')
-            ->with('info', 'Detail Trip akan tersedia pada Sprint 2.');
+        $trip->load(['driver', 'jadwal.rute', 'detailTrips.booking.pelanggan']);
+
+        // Fetch drivers that are active, and:
+        // - Either they don't have any active trip (ready/on_trip) OR they are the current driver of this trip.
+        $drivers = Driver::where('status_driver', 'aktif')
+            ->where(function($query) use ($trip) {
+                $query->whereDoesntHave('trips', function($q) {
+                    $q->whereIn('status_trip', ['ready', 'on_trip']);
+                })->orWhere('id', $trip->driver_id);
+            })
+            ->latest()
+            ->get();
+
+        // Fetch bookings for the same schedule (jadwal_id) that have status 'dikonfirmasi'
+        $availableBookings = Booking::where('status_booking', Booking::STATUS_DIKONFIRMASI)
+            ->where('jadwal_id', $trip->jadwal_id)
+            ->with('pelanggan')
+            ->latest()
+            ->get();
+
+        return view('admin.trips.show', compact('trip', 'drivers', 'availableBookings'));
     }
 
     /**
@@ -112,8 +133,7 @@ class TripController extends Controller
      */
     public function edit(Trip $trip)
     {
-        return redirect()->route('admin.trips.index')
-            ->with('info', 'Fitur edit Trip akan tersedia pada Sprint 2.');
+        return redirect()->route('admin.trips.show', $trip->id);
     }
 
     /**
@@ -121,7 +141,66 @@ class TripController extends Controller
      */
     public function update(Request $request, Trip $trip)
     {
-        return redirect()->route('admin.trips.index');
+        $request->validate([
+            'driver_id' => 'nullable|exists:drivers,id',
+            'status_trip' => 'nullable|in:new,ready,on_trip,completed,cancelled',
+        ]);
+
+        $updateData = [];
+
+        if ($request->has('driver_id')) {
+            $driver = Driver::findOrFail($request->driver_id);
+
+            if ($driver->status_driver === 'nonaktif') {
+                return redirect()->back()->with('error', 'Driver tidak aktif.');
+            }
+
+            // check if driver is already assigned to another active trip
+            $hasOtherActiveTrip = $driver->trips()
+                ->where('id', '!=', $trip->id)
+                ->whereIn('status_trip', ['ready', 'on_trip'])
+                ->exists();
+
+            if ($hasOtherActiveTrip) {
+                return redirect()->back()->with('error', 'Driver sedang bertugas di trip lain.');
+            }
+
+            $updateData['driver_id'] = $request->driver_id;
+        }
+
+        if ($request->has('status_trip')) {
+            $status = $request->status_trip;
+            $updateData['status_trip'] = $status;
+
+            if ($status === 'on_trip' && !$trip->started_at) {
+                $updateData['started_at'] = now();
+            } elseif ($status === 'completed') {
+                $updateData['completed_at'] = now();
+
+                // Set all bookings to completed
+                DB::transaction(function() use ($trip) {
+                    foreach ($trip->detailTrips as $detail) {
+                        if ($detail->booking) {
+                            $detail->booking->update(['status_booking' => Booking::STATUS_COMPLETED]);
+                        }
+                    }
+                });
+            } elseif ($status === 'cancelled') {
+                // Revert all bookings to dikonfirmasi
+                DB::transaction(function() use ($trip) {
+                    foreach ($trip->detailTrips as $detail) {
+                        if ($detail->booking) {
+                            $detail->booking->update(['status_booking' => Booking::STATUS_DIKONFIRMASI]);
+                        }
+                    }
+                });
+            }
+        }
+
+        $trip->update($updateData);
+
+        return redirect()->route('admin.trips.show', $trip->id)
+            ->with('success', 'Trip berhasil diperbarui.');
     }
 
     /**
@@ -129,7 +208,93 @@ class TripController extends Controller
      */
     public function destroy(Trip $trip)
     {
+        DB::transaction(function() use ($trip) {
+            // Revert all bookings in this trip to dikonfirmasi
+            foreach ($trip->detailTrips as $detail) {
+                if ($detail->booking) {
+                    $detail->booking->update(['status_booking' => Booking::STATUS_DIKONFIRMASI]);
+                }
+            }
+            $trip->delete();
+        });
+
         return redirect()->route('admin.trips.index')
-            ->with('info', 'Fitur hapus Trip akan tersedia pada Sprint 2.');
+            ->with('success', 'Trip berhasil dihapus dan antrean booking dikembalikan.');
+    }
+
+    /**
+     * Assign a booking to the specified trip.
+     */
+    public function assignBooking(Request $request, Trip $trip)
+    {
+        $request->validate([
+            'booking_id' => 'required|exists:bookings,id',
+        ]);
+
+        $booking = Booking::findOrFail($request->booking_id);
+
+        if ($booking->jadwal_id !== $trip->jadwal_id) {
+            return redirect()->back()->with('error', 'Jadwal booking tidak sesuai dengan jadwal trip.');
+        }
+
+        if ($booking->status_booking === Booking::STATUS_ASSIGNED_TO_TRIP) {
+            return redirect()->back()->with('error', 'Booking sudah ditugaskan ke trip lain.');
+        }
+
+        if ($booking->status_booking !== Booking::STATUS_DIKONFIRMASI) {
+            return redirect()->back()->with('error', 'Booking belum dikonfirmasi pembayarannya.');
+        }
+
+        // Check sisa kapasitas
+        $currentPax = $trip->detailTrips->sum(function($dt) {
+            return $dt->booking ? $dt->booking->jumlah_penumpang : 0;
+        });
+        $capacity = $trip->driver ? $trip->driver->kapasitas_mobil : 5;
+        $remainingSeats = $capacity - $currentPax;
+
+        if ($booking->jumlah_penumpang > $remainingSeats) {
+            return redirect()->back()->with('error', 'Kapasitas mobil tidak mencukupi untuk penumpang baru.');
+        }
+
+        DB::transaction(function() use ($trip, $booking) {
+            $trip->detailTrips()->create([
+                'booking_id' => $booking->id,
+                'status_jemput' => 'belum',
+                'status_antar' => 'belum',
+            ]);
+
+            $booking->update([
+                'status_booking' => Booking::STATUS_ASSIGNED_TO_TRIP,
+            ]);
+        });
+
+        return redirect()->route('admin.trips.show', $trip->id)
+            ->with('success', 'Booking ' . $booking->kode_booking . ' berhasil ditugaskan ke trip.');
+    }
+
+    /**
+     * Remove a booking from the specified trip.
+     */
+    public function removeBooking(Trip $trip, DetailTrip $detailTrip)
+    {
+        // Safety check to make sure the detailTrip belongs to this trip
+        if ($detailTrip->trip_id !== $trip->id) {
+            return redirect()->back()->with('error', 'Data manifes tidak cocok dengan trip ini.');
+        }
+
+        $booking = $detailTrip->booking;
+
+        DB::transaction(function() use ($detailTrip, $booking) {
+            $detailTrip->delete();
+
+            if ($booking) {
+                $booking->update([
+                    'status_booking' => Booking::STATUS_DIKONFIRMASI,
+                ]);
+            }
+        });
+
+        return redirect()->route('admin.trips.show', $trip->id)
+            ->with('success', 'Booking berhasil dikeluarkan dari trip.');
     }
 }

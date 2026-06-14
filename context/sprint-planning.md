@@ -151,7 +151,7 @@ Semua tugas fondasi telah diselesaikan dengan sukses: Setup project, Breeze auth
 | API Jadwal (AJAX) | RYH | 2 routes |
 | Admin Booking Management | NYS | 3 routes |
 | Admin Pembayaran Verification | NYS | 4 routes |
-| Admin Trip — Show + Assign booking | KVN | 5 routes |
+| Admin Trip — Show + Assign booking | KVN | 5 routes (Selesai ✅) |
 
 **Livewire**: `BookingForm` (auto-calculate tarif = harga rute × jumlah penumpang, timer DP 30 menit), `BookingTable`, `PembayaranTable`
 
