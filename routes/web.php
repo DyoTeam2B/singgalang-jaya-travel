@@ -35,6 +35,13 @@ Route::middleware('auth')->group(function () {
              Route::put('jadwal/{jadwal}/toggle', [\App\Http\Controllers\Admin\JadwalController::class, 'toggleStatus'])->name('jadwal.toggle');
              Route::resource('drivers', \App\Http\Controllers\Admin\DriverController::class);
              Route::resource('trips', \App\Http\Controllers\Admin\TripController::class);
+
+             // Admin Bookings & Pembayaran (Sprint 2 - Nayasha)
+             Route::resource('bookings', \App\Http\Controllers\Admin\BookingController::class)->only(['index', 'show']);
+             Route::put('bookings/{booking}/cancel', [\App\Http\Controllers\Admin\BookingController::class, 'cancel'])->name('bookings.cancel');
+             Route::resource('pembayaran', \App\Http\Controllers\Admin\PembayaranController::class)->only(['index', 'show']);
+             Route::put('pembayaran/{pembayaran}/verify', [\App\Http\Controllers\Admin\PembayaranController::class, 'verify'])->name('pembayaran.verify');
+             Route::put('pembayaran/{pembayaran}/reject', [\App\Http\Controllers\Admin\PembayaranController::class, 'reject'])->name('pembayaran.reject');
          });
 
     // Driver Routes

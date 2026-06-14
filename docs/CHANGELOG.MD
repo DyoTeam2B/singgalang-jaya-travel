@@ -2,6 +2,20 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-14] - Nayasha - Sprint 2
+
+### Added
+
+* Controller `App\Http\Controllers\Admin\BookingController` untuk mengelola booking admin (index, show, cancel).
+* Controller `App\Http\Controllers\Admin\PembayaranController` untuk verifikasi pembayaran admin (index, show, verify, reject).
+* Livewire Component `App\Livewire\Admin\BookingTable` dan view `resources/views/livewire/admin/booking-table.blade.php` untuk antarmuka pencarian, pemfilteran, dan pengiriman WA konfirmasi.
+* Livewire Component `App\Livewire\Admin\PembayaranTable` dan view `resources/views/livewire/admin/pembayaran-table.blade.php` untuk antarmuka split-screen verifikasi pembayaran beserta panel detail interaktif, preview lightbox, modal persetujuan, dan modal alasan penolakan.
+* Blade view `resources/views/admin/bookings/index.blade.php`, `resources/views/admin/bookings/show.blade.php`, dan `resources/views/admin/pembayaran/index.blade.php` untuk halaman admin.
+
+### Changed
+
+* Modifikasi `routes/web.php` untuk mendaftarkan resource route bookings, pembayaran, aksi cancel booking, verifikasi, dan penolakan pembayaran.
+
 ## [2026-06-12] - Rayhan - Sprint 1 (Alignment)
 
 ### Added
