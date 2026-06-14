@@ -29,18 +29,29 @@ Contoh placeholder aman:
 ## Navigation Safety
 
 Untuk kelancaran demo selama Sprint awal, navigasi menu berikut:
+
+### Navbar Pelanggan (Guest — Belum Login):
 * **Home**
 * **Jadwal**
-* **Booking** (memerlukan login)
+* **Armada & Driver**
+* **Charter**
 * **Kontak**
+* **Login**
+* **Register**
+
+### Navbar Pelanggan (Setelah Login):
+* **Home**
+* **Jadwal**
+* **Booking Saya**
+* **Charter**
+* **Kontak**
+* **Profil** (Dropdown: Profil Saya, Booking Saya, Logout)
 
 diperbolehkan menggunakan link anchor sementara:
 * `href="#home"`
 * `href="#jadwal"`
 * `href="#booking"`
 * `href="#kontak"`
-
-> ⚠️ **Armada bukan modul terpisah** — data kendaraan melekat pada Driver. Tidak ada halaman Armada standalone.
 
 Tautan anchor ini harus tetap dipertahankan sampai fitur sesungguhnya selesai diimplementasikan secara penuh.
 
@@ -62,6 +73,7 @@ Sebelum melakukan commit migrasi database baru, periksa hal-hal berikut secara t
 1. **Nama Tabel**: Pastikan menggunakan penamaan konsisten (Bahasa Indonesia untuk tabel operasional).
 2. **Foreign Key**: Pastikan tabel induk sudah dimigrasikan terlebih dahulu sebelum ditunjuk oleh foreign key di tabel anak.
 3. **Urutan File Migrasi**: Periksa penomoran timestamp pada nama file migrasi untuk menjamin tabel induk dibuat lebih dahulu daripada tabel dependen.
+4. **Tabel Armada**: Tabel `armada` HARUS dibuat sebelum `drivers` dan `trips` karena kedua tabel tersebut memiliki foreign key `armada_id`.
 
 ## Git Safety
 
@@ -99,11 +111,10 @@ Sebelum melakukan commit kode Anda, pastikan Anda mencentang checklist internal 
 
 ## Scheduler Safety
 
-Sistem memiliki **dua command scheduler** yang WAJIB berjalan di production:
+Sistem memiliki **satu command scheduler** yang WAJIB berjalan di production:
 
 | Command | Jadwal | Fungsi |
 |---------|--------|--------|
-| `booking:expire` | Setiap menit | Auto-expire booking yang melewati batas 30 menit tanpa bayar DP |
 | `booking:send-confirmation` | Setiap hari jam 06:00 | Kirim WA konfirmasi ulang ke pelanggan sebelum keberangkatan |
 
 **Catatan**:

@@ -6,6 +6,8 @@
 erDiagram
     USERS ||--o| DRIVERS : "has"
     USERS ||--o| PELANGGAN : "has"
+    ARMADA ||--o| DRIVERS : "has"
+    ARMADA ||--|{ TRIPS : "assigned"
     RUTE ||--|{ JADWAL : "has"
     JADWAL ||--|{ BOOKINGS : "has"
     JADWAL ||--|{ TRIPS : "has"
@@ -25,14 +27,21 @@ erDiagram
         timestamps timestamps
     }
 
+    ARMADA {
+        bigint id PK
+        string nama_mobil
+        string nomor_plat
+        int kapasitas
+        enum status_armada
+        timestamps timestamps
+    }
+
     DRIVERS {
         bigint id PK
         bigint user_id FK
+        bigint armada_id FK
         string nama_driver
         string no_hp
-        string nama_mobil
-        string nomor_plat
-        int kapasitas_mobil
         enum status_driver
         timestamps timestamps
     }
@@ -78,8 +87,6 @@ erDiagram
         int jumlah_penumpang
         int total_harga
         enum status_booking
-        datetime batas_bayar_at
-        text alasan_pembatalan
         timestamps timestamps
     }
 
@@ -91,7 +98,6 @@ erDiagram
         string metode_pembayaran
         string bukti_pembayaran
         enum status_pembayaran
-        text catatan
         timestamps timestamps
     }
 
@@ -99,6 +105,7 @@ erDiagram
         bigint id PK
         bigint jadwal_id FK
         bigint driver_id FK
+        bigint armada_id FK
         enum status_trip
         datetime started_at
         datetime completed_at
@@ -171,30 +178,46 @@ erDiagram
 
 ---
 
-### 2. `drivers` — 🔲 BELUM ADA
+### 2. `armada` — 🔲 BELUM ADA
+
+| Column | Type | Constraint | Keterangan |
+|--------|------|------------|------------|
+| `id` | BIGINT UNSIGNED | PK, AUTO_INCREMENT | |
+| `nama_mobil` | VARCHAR(100) | NOT NULL | Merk/tipe kendaraan |
+| `nomor_plat` | VARCHAR(20) | NOT NULL | Plat nomor kendaraan |
+| `kapasitas` | INT UNSIGNED | NOT NULL, DEFAULT 5 | Kapasitas penumpang |
+| `status_armada` | ENUM('aktif', 'nonaktif') | NOT NULL, DEFAULT 'aktif' | Status ketersediaan |
+| `created_at` | TIMESTAMP | NULLABLE | |
+| `updated_at` | TIMESTAMP | NULLABLE | |
+
+**Migration**: `create_armada_table`
+
+**Catatan**: Armada adalah tabel terpisah. Satu armada bisa memiliki 0 atau 1 driver (boleh belum punya driver). Satu driver HARUS memiliki 1 armada.
+
+---
+
+### 3. `drivers` — 🔲 BELUM ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
 | `id` | BIGINT UNSIGNED | PK, AUTO_INCREMENT | |
 | `user_id` | BIGINT UNSIGNED | FK → users.id, UNIQUE | Relasi 1:1 ke user |
+| `armada_id` | BIGINT UNSIGNED | FK → armada.id | Relasi ke armada (wajib) |
 | `nama_driver` | VARCHAR(255) | NOT NULL | Nama lengkap driver |
 | `no_hp` | VARCHAR(20) | NOT NULL | Nomor HP |
-| `nama_mobil` | VARCHAR(100) | NOT NULL | Merk/tipe kendaraan |
-| `nomor_plat` | VARCHAR(20) | NOT NULL | Plat nomor kendaraan |
-| `kapasitas_mobil` | INT UNSIGNED | NOT NULL, DEFAULT 5 | Kapasitas penumpang |
 | `status_driver` | ENUM('aktif', 'nonaktif') | NOT NULL, DEFAULT 'aktif' | Status ketersediaan |
 | `created_at` | TIMESTAMP | NULLABLE | |
 | `updated_at` | TIMESTAMP | NULLABLE | |
 
 **Migration**: `create_drivers_table`
 
-**Index**: `user_id` (UNIQUE)
+**Index**: `user_id` (UNIQUE), `armada_id`
 
-**Catatan**: Data kendaraan melekat pada driver. Tidak ada tabel armada terpisah.
+**Catatan**: Data kendaraan TIDAK lagi melekat pada driver. Driver memiliki foreign key `armada_id` yang merujuk ke tabel `armada`. Satu driver harus memiliki satu armada.
 
 ---
 
-### 3. `rute` — 🔲 BELUM ADA
+### 4. `rute` — 🔲 BELUM ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
@@ -215,7 +238,7 @@ erDiagram
 
 ---
 
-### 4. `pelanggan` — 🔲 BELUM ADA
+### 5. `pelanggan` — 🔲 BELUM ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
@@ -234,7 +257,7 @@ erDiagram
 
 ---
 
-### 5. `jadwal` — 🔲 BELUM ADA
+### 6. `jadwal` — 🔲 BELUM ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
@@ -252,9 +275,13 @@ erDiagram
 
 **Index**: `rute_id`, `tanggal_keberangkatan`, `shift`
 
+**Catatan Jadwal**:
+- Pagi: 08.00 - 10.00
+- Malam: 20.00 - 22.00
+
 ---
 
-### 6. `bookings` — 🔲 BELUM ADA
+### 7. `bookings` — 🔲 BELUM ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
@@ -270,9 +297,7 @@ erDiagram
 | `longitude_tujuan` | DECIMAL(11,8) | NULLABLE | Lng tujuan |
 | `jumlah_penumpang` | INT UNSIGNED | NOT NULL, DEFAULT 1 | Jumlah penumpang |
 | `total_harga` | INT UNSIGNED | NOT NULL | Total harga (tarif × jumlah) |
-| `status_booking` | ENUM(...) | NOT NULL, DEFAULT 'menunggu_pembayaran' | Status booking |
-| `batas_bayar_at` | DATETIME | NULLABLE | Batas waktu pembayaran DP (created_at + 30 menit) |
-| `alasan_pembatalan` | TEXT | NULLABLE | Alasan cancel (diisi pelanggan/admin) |
+| `status_booking` | ENUM(...) | NOT NULL, DEFAULT 'booking_dibuat' | Status booking |
 | `created_at` | TIMESTAMP | NULLABLE | |
 | `updated_at` | TIMESTAMP | NULLABLE | |
 
@@ -284,23 +309,27 @@ erDiagram
 
 | Value | Keterangan |
 |-------|------------|
-| `booking_dibuat` | Booking baru dibuat |
-| `menunggu_pembayaran` | Menunggu upload bukti DP (30 menit) |
+| `booking_dibuat` | Booking baru dibuat, menunggu upload bukti DP |
 | `menunggu_verifikasi` | DP sudah diupload, menunggu verifikasi admin |
 | `dikonfirmasi` | DP terverifikasi oleh admin |
 | `assigned_to_trip` | Booking sudah dimasukkan ke trip |
 | `on_trip` | Trip sedang berjalan |
 | `completed` | Trip selesai |
-| `cancelled` | Booking dibatalkan oleh pelanggan/admin |
-| `expired` | DP tidak dibayar dalam 30 menit (auto) |
-
-**Batas Waktu Pembayaran**: `batas_bayar_at` = `created_at + 30 menit`. Cron job / scheduler mengecek booking yang melewati batas waktu dan set status ke `expired`.
+| `cancelled` | Booking dibatalkan oleh pelanggan/admin (DP hangus) |
+| `expired` | Booking kadaluarsa |
 
 **Format Kode Booking**: `SJT-{YYYYMMDD}-{RANDOM5}` contoh: `SJT-20260605-A3X7K`
 
+**Catatan**:
+- Tidak ada `batas_bayar_at` (timer 30 menit dihapus).
+- Tidak ada konsep `token booking`.
+- DP flat Rp50.000 per booking.
+- Pelanggan wajib login sebelum booking.
+- Jika pelanggan membatalkan, DP hangus (tidak dikembalikan).
+
 ---
 
-### 7. `pembayaran` — 🔲 BELUM ADA
+### 8. `pembayaran` — 🔲 BELUM ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
@@ -311,7 +340,6 @@ erDiagram
 | `metode_pembayaran` | VARCHAR(50) | NULLABLE | Transfer Bank / Cash |
 | `bukti_pembayaran` | VARCHAR(255) | NULLABLE | Path file bukti upload |
 | `status_pembayaran` | ENUM('menunggu', 'terverifikasi', 'ditolak') | NOT NULL, DEFAULT 'menunggu' | Status verifikasi |
-| `catatan` | TEXT | NULLABLE | Catatan admin (alasan tolak, dll) |
 | `created_at` | TIMESTAMP | NULLABLE | |
 | `updated_at` | TIMESTAMP | NULLABLE | |
 
@@ -319,17 +347,22 @@ erDiagram
 
 **Index**: `booking_id`, `status_pembayaran`
 
-**Catatan**: Satu booking bisa punya banyak pembayaran (jika DP ditolak → upload ulang).
+**Catatan**:
+- Satu booking bisa punya banyak pembayaran (DP + pelunasan, atau upload ulang jika ditolak).
+- DP adalah flat Rp50.000 per booking.
+- Pelunasan = Total Tarif - DP. Dibayar langsung ke driver saat penjemputan/perjalanan.
+- Kolom `catatan` dihapus dari tabel ini.
 
 ---
 
-### 8. `trips` — 🔲 BELUM ADA
+### 9. `trips` — 🔲 BELUM ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
 | `id` | BIGINT UNSIGNED | PK, AUTO_INCREMENT | |
 | `jadwal_id` | BIGINT UNSIGNED | FK → jadwal.id | Relasi ke jadwal |
 | `driver_id` | BIGINT UNSIGNED | FK → drivers.id | Relasi ke driver |
+| `armada_id` | BIGINT UNSIGNED | FK → armada.id | Relasi ke armada |
 | `status_trip` | ENUM('new', 'ready', 'on_trip', 'completed', 'cancelled') | NOT NULL, DEFAULT 'new' | Status trip |
 | `started_at` | DATETIME | NULLABLE | Waktu mulai trip |
 | `completed_at` | DATETIME | NULLABLE | Waktu selesai trip |
@@ -338,11 +371,13 @@ erDiagram
 
 **Migration**: `create_trips_table`
 
-**Index**: `jadwal_id`, `driver_id`, `status_trip`
+**Index**: `jadwal_id`, `driver_id`, `armada_id`, `status_trip`
+
+**Catatan**: Trip sekarang memiliki `armada_id` terpisah selain `driver_id`. Admin assign driver DAN armada ke trip.
 
 ---
 
-### 9. `detail_trip` — 🔲 BELUM ADA
+### 10. `detail_trip` — 🔲 BELUM ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
@@ -364,7 +399,7 @@ erDiagram
 
 ---
 
-### 10. `whatsapp_notifications` — 🔲 BELUM ADA
+### 11. `whatsapp_notifications` — 🔲 BELUM ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
@@ -392,6 +427,8 @@ erDiagram
 |--------|------|------------|
 | `users` → `drivers` | 1:1 | Satu user (role driver) punya satu data driver |
 | `users` → `pelanggan` | 1:1 | Satu user (role pelanggan) punya satu data pelanggan |
+| `armada` → `drivers` | 1:0..1 | Satu armada bisa punya 0 atau 1 driver |
+| `drivers` → `armada` | N:1 | Satu driver harus punya 1 armada |
 | `rute` → `jadwal` | 1:N | Satu rute punya banyak jadwal. Jadwal mengambil tarif dari rute |
 | `jadwal` → `bookings` | 1:N | Satu jadwal punya banyak booking |
 | `jadwal` → `trips` | 1:N | Satu jadwal bisa punya banyak trip |
@@ -401,6 +438,7 @@ erDiagram
 | `bookings` → `whatsapp_notifications` | 1:N | Satu booking bisa punya banyak notifikasi WA |
 | `trips` → `detail_trip` | 1:N | Satu trip punya banyak detail trip |
 | `drivers` → `trips` | 1:N | Satu driver bisa handle banyak trip |
+| `armada` → `trips` | 1:N | Satu armada bisa dipakai banyak trip |
 
 ---
 
@@ -412,15 +450,16 @@ erDiagram
 | 2 | `create_cache_table` | `cache`, `cache_locks` | ✅ Sudah ada |
 | 3 | `create_jobs_table` | `jobs`, `job_batches`, `failed_jobs` | ✅ Sudah ada |
 | 4 | `add_role_to_users_table` | `users` (alter) | ✅ Sudah ada |
-| 5 | `create_drivers_table` | `drivers` | 🔲 |
-| 6 | `create_rute_table` | `rute` | 🔲 |
-| 7 | `create_pelanggan_table` | `pelanggan` | 🔲 |
-| 8 | `create_jadwal_table` | `jadwal` | 🔲 |
-| 9 | `create_bookings_table` | `bookings` | 🔲 |
-| 10 | `create_pembayaran_table` | `pembayaran` | 🔲 |
-| 11 | `create_trips_table` | `trips` | 🔲 |
-| 12 | `create_detail_trip_table` | `detail_trip` | 🔲 |
-| 13 | `create_whatsapp_notifications_table` | `whatsapp_notifications` | 🔲 |
+| 5 | `create_armada_table` | `armada` | 🔲 |
+| 6 | `create_drivers_table` | `drivers` | 🔲 |
+| 7 | `create_rute_table` | `rute` | 🔲 |
+| 8 | `create_pelanggan_table` | `pelanggan` | 🔲 |
+| 9 | `create_jadwal_table` | `jadwal` | 🔲 |
+| 10 | `create_bookings_table` | `bookings` | 🔲 |
+| 11 | `create_pembayaran_table` | `pembayaran` | 🔲 |
+| 12 | `create_trips_table` | `trips` | 🔲 |
+| 13 | `create_detail_trip_table` | `detail_trip` | 🔲 |
+| 14 | `create_whatsapp_notifications_table` | `whatsapp_notifications` | 🔲 |
 
 ---
 
@@ -428,9 +467,10 @@ erDiagram
 
 | Seeder | Status | Keterangan |
 |--------|--------|------------|
-| `UserSeeder` | ✅ Sudah ada | Admin + Driver default |
+| `UserSeeder` | ✅ Sudah ada | Admin + Driver + Pelanggan default |
 | `RuteSeeder` | 🔲 | 2 rute utama (PP↔PKU) |
-| `DriverSeeder` | 🔲 | 2-3 sample driver + update user seeder |
+| `ArmadaSeeder` | 🔲 | 2-3 sample armada |
+| `DriverSeeder` | 🔲 | 2-3 sample driver + link ke armada |
 | `JadwalSeeder` | 🔲 | Sample jadwal untuk testing |
 | `BookingSeeder` | 🔲 | Sample booking (optional, for dev) |
 
@@ -439,15 +479,16 @@ erDiagram
 ## Model Relationships (Eloquent)
 
 ```
-User        → hasOne(Driver)                              ✅ Model ada, relationship belum
-User        → hasOne(Pelanggan)                            🔲
-Driver      → belongsTo(User), hasMany(Trip)              🔲
-Rute        → hasMany(Jadwal)                             🔲
-Jadwal      → belongsTo(Rute), hasMany(Booking), hasMany(Trip)  🔲
-Pelanggan   → belongsTo(User), hasMany(Booking)           🔲
+User        → hasOne(Driver)                                            ✅ Model ada, relationship belum
+User        → hasOne(Pelanggan)                                          🔲
+Armada      → hasOne(Driver), hasMany(Trip)                             🔲
+Driver      → belongsTo(User), belongsTo(Armada), hasMany(Trip)         🔲
+Rute        → hasMany(Jadwal)                                           🔲
+Jadwal      → belongsTo(Rute), hasMany(Booking), hasMany(Trip)          🔲
+Pelanggan   → belongsTo(User), hasMany(Booking)                         🔲
 Booking     → belongsTo(Pelanggan), belongsTo(Jadwal), hasMany(Pembayaran), hasMany(DetailTrip), hasMany(WhatsappNotification)  🔲
-Pembayaran  → belongsTo(Booking)                          🔲
-Trip        → belongsTo(Jadwal), belongsTo(Driver), hasMany(DetailTrip)  🔲
-DetailTrip  → belongsTo(Trip), belongsTo(Booking)         🔲
-WhatsappNotification → belongsTo(Booking)                 🔲
+Pembayaran  → belongsTo(Booking)                                        🔲
+Trip        → belongsTo(Jadwal), belongsTo(Driver), belongsTo(Armada), hasMany(DetailTrip)  🔲
+DetailTrip  → belongsTo(Trip), belongsTo(Booking)                       🔲
+WhatsappNotification → belongsTo(Booking)                               🔲
 ```

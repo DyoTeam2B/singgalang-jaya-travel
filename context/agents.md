@@ -26,10 +26,10 @@
 | Aspek | Bahasa | Contoh |
 |-------|--------|--------|
 | Kode (variabel, function, class) | **English** | `$totalPrice`, `getAvailableSchedules()` |
-| Nama tabel & kolom database | **Bahasa Indonesia** (sesuai ERD) | `pelanggan`, `jadwal`, `kode_booking` |
+| Nama tabel & kolom database | **Bahasa Indonesia** (sesuai ERD) | `pelanggan`, `jadwal`, `kode_booking`, `armada` |
 | Nama kolom tabel users | **English** (Breeze default) | `name`, `email`, `password`, `role` |
-| Route URI | **Bahasa Indonesia** untuk resource utama | `/admin/jadwal`, `/admin/pembayaran` |
-| Route name | **English pattern** | `admin.jadwal.index`, `driver.trips.show` |
+| Route URI | **Bahasa Indonesia** untuk resource utama | `/admin/jadwal`, `/admin/armada`, `/admin/pembayaran` |
+| Route name | **English pattern** | `admin.jadwal.index`, `admin.armada.index`, `driver.trips.show` |
 | UI Label & Text | **Bahasa Indonesia** | "Nama Lengkap", "Kode Booking" |
 | Komentar kode | **English** | `// Check if schedule has available quota` |
 | Commit message | **English** | `feat: add booking form with map picker` |
@@ -56,6 +56,7 @@ app/Http/Controllers/
 ├── Admin/                             ← 🔲 BUAT BARU
 │   ├── DashboardController.php
 │   ├── RuteController.php
+│   ├── ArmadaController.php
 │   ├── JadwalController.php
 │   ├── BookingController.php
 │   ├── PembayaranController.php
@@ -71,7 +72,6 @@ app/Http/Controllers/
 ├── HomeController.php                 ← 🔲 BUAT BARU
 ├── BookingController.php              ← 🔲 BUAT BARU
 ├── PembayaranController.php           ← 🔲 BUAT BARU
-├── CekBookingController.php           ← 🔲 BUAT BARU
 └── JadwalPublicController.php         ← 🔲 BUAT BARU
 ```
 
@@ -90,7 +90,6 @@ app/Services/
 
 ```
 app/Console/Commands/
-├── ExpireUnpaidBookings.php            ← 🔲 BUAT BARU (auto-expire 30 menit)
 └── SendDepartureConfirmation.php       ← 🔲 BUAT BARU (WA konfirmasi pagi hari)
 ```
 
@@ -102,6 +101,7 @@ app/Livewire/                          ← ✅ DIRECTORY ADA (kosong)
 ├── Admin/
 │   ├── BookingTable.php               ← 🔲 Optional: tabel dengan search/filter
 │   ├── PembayaranTable.php
+│   ├── ArmadaTable.php
 │   ├── JadwalTable.php
 │   ├── DriverTable.php
 │   └── TripTable.php
@@ -141,15 +141,18 @@ resources/views/
 │   │   └── index.blade.php            ← ✅ SUDAH ADA (Daftar jadwal)
 │   ├── booking/
 │   │   ├── create.blade.php           ← 🔲 BUAT BARU
-│   │   └── review.blade.php           ← 🔲 BUAT BARU
-│   ├── pembayaran/
-│   │   └── show.blade.php             ← 🔲 BUAT BARU
-│   └── cek-booking/
-│       ├── index.blade.php            ← 🔲 BUAT BARU
+│   │   ├── review.blade.php           ← 🔲 BUAT BARU
+│   │   ├── index.blade.php            ← 🔲 BUAT BARU (Booking Saya)
+│   │   └── show.blade.php             ← 🔲 BUAT BARU (Detail Booking)
+│   └── pembayaran/
 │       └── show.blade.php             ← 🔲 BUAT BARU
 ├── admin/                             ← Halaman Admin
 │   ├── dashboard.blade.php            ← ✅ SUDAH ADA (Dashboard panel)
 │   ├── rute/
+│   │   ├── index.blade.php            ← 🔲 BUAT BARU
+│   │   ├── create.blade.php           ← 🔲 BUAT BARU
+│   │   └── edit.blade.php             ← 🔲 BUAT BARU
+│   ├── armada/
 │   │   ├── index.blade.php            ← 🔲 BUAT BARU
 │   │   ├── create.blade.php           ← 🔲 BUAT BARU
 │   │   └── edit.blade.php             ← 🔲 BUAT BARU
@@ -188,6 +191,7 @@ resources/views/
 ```
 app/Models/
 ├── User.php                           ← ✅ SUDAH ADA
+├── Armada.php                         ← 🔲 BUAT BARU
 ├── Driver.php                         ← 🔲 BUAT BARU
 ├── Rute.php                           ← 🔲 BUAT BARU
 ├── Pelanggan.php                      ← 🔲 BUAT BARU
@@ -266,7 +270,7 @@ Route::middleware(['auth', 'role:driver'])
 // Pelanggan routes — booking memerlukan auth
 Route::middleware(['auth', 'role:pelanggan'])
      ->group(function() {
-         // Route booking, pembayaran, cek-booking di sini
+         // Route booking, pembayaran, booking-saya di sini
      });
 ```
 
@@ -287,6 +291,9 @@ Route::get('/jadwal', [JadwalPublicController::class, 'index'])->name('jadwal.in
 // Admin — pakai resource atau manual di dalam group yang sudah ada:
 Route::resource('jadwal', Admin\JadwalController::class);
 // → admin.jadwal.index, admin.jadwal.create, admin.jadwal.store, dll
+
+Route::resource('armada', Admin\ArmadaController::class);
+// → admin.armada.index, admin.armada.create, admin.armada.store, dll
 
 // Driver — di dalam group yang sudah ada:
 Route::get('trips', [Driver\TripController::class, 'index'])->name('trips.index');
@@ -311,7 +318,6 @@ Custom methods:
 | `verify` | Verifikasi pembayaran | PUT |
 | `reject` | Tolak pembayaran | PUT |
 | `cancel` | Batalkan booking | PUT |
-| `update` (booking) | Edit lokasi jemput | PUT/PATCH |
 | `toggleStatus` | Toggle jadwal aktif/nonaktif | PUT |
 | `assignBooking` | Masukkan booking ke trip | POST |
 | `removeBooking` | Keluarkan booking dari trip | DELETE |
@@ -319,6 +325,7 @@ Custom methods:
 | `pickup` | Tandai dijemput | PUT |
 | `dropoff` | Tandai diantar | PUT |
 | `complete` | Selesaikan trip | PUT |
+| `confirmPayment` | Konfirmasi pelunasan dari pelanggan | PUT |
 | `export` | Export laporan | GET |
 
 ### Model Naming
@@ -326,6 +333,7 @@ Custom methods:
 | Model | Tabel | Override `$table` |
 |-------|-------|:------------------:|
 | `User` | `users` | Tidak perlu |
+| `Armada` | `armada` | ✅ `$table = 'armada'` |
 | `Driver` | `drivers` | Tidak perlu |
 | `Rute` | `rute` | ✅ `$table = 'rute'` |
 | `Pelanggan` | `pelanggan` | ✅ `$table = 'pelanggan'` |
@@ -607,6 +615,8 @@ app/Http/Requests/
 ├── Admin/
 │   ├── StoreRuteRequest.php
 │   ├── UpdateRuteRequest.php
+│   ├── StoreArmadaRequest.php
+│   ├── UpdateArmadaRequest.php
 │   ├── StoreJadwalRequest.php
 │   ├── UpdateJadwalRequest.php
 │   ├── StoreDriverRequest.php
@@ -614,8 +624,7 @@ app/Http/Requests/
 │   ├── StoreTripRequest.php
 │   └── AssignBookingRequest.php
 ├── StoreBookingRequest.php
-├── StorePembayaranRequest.php
-└── CekBookingRequest.php
+└── StorePembayaranRequest.php
 ```
 
 ---
@@ -686,7 +695,6 @@ Load via Google Fonts di layout:
 | Value | Label (ID) |
 |-------|------------|
 | `booking_dibuat` | Booking Dibuat |
-| `menunggu_pembayaran` | Menunggu Pembayaran |
 | `menunggu_verifikasi` | Menunggu Verifikasi |
 | `dikonfirmasi` | Dikonfirmasi |
 | `assigned_to_trip` | Assigned To Trip |
@@ -694,6 +702,8 @@ Load via Google Fonts di layout:
 | `completed` | Completed |
 | `cancelled` | Cancelled |
 | `expired` | Expired |
+
+> ⚠️ **PERUBAHAN**: Status `menunggu_pembayaran` dihapus. Booking langsung berstatus `booking_dibuat` saat dibuat, pelanggan upload bukti DP untuk masuk ke `menunggu_verifikasi`.
 
 ### Payment Status
 
@@ -722,6 +732,13 @@ Load via Google Fonts di layout:
 | `penuh` | Penuh |
 
 ### Driver Status
+
+| Value | Label (ID) |
+|-------|------------|
+| `aktif` | Aktif |
+| `nonaktif` | Nonaktif |
+
+### Armada Status
 
 | Value | Label (ID) |
 |-------|------------|
@@ -791,6 +808,7 @@ public function messages(): array
         'nama.required' => 'Nama wajib diisi.',
         'no_hp.required' => 'Nomor HP wajib diisi.',
         'jadwal_id.required' => 'Jadwal keberangkatan wajib dipilih.',
+        'armada_id.required' => 'Armada wajib dipilih.',
         'bukti_pembayaran.required' => 'Bukti pembayaran wajib diupload.',
         'bukti_pembayaran.max' => 'Ukuran file maksimal 2MB.',
     ];
@@ -812,7 +830,7 @@ Default center: Padang Panjang `[-0.4669, 100.3986]`
 
 ## 16. WhatsApp Integration (FonnteAPI)
 
-> ⚠️ **PERUBAHAN**: WhatsApp link `wa.me` diganti dengan **FonnteAPI** untuk pengiriman pesan otomatis.
+> ⚠️ WhatsApp link `wa.me` diganti dengan **FonnteAPI** untuk pengiriman pesan otomatis.
 
 ### Konfigurasi
 
@@ -857,16 +875,12 @@ class FonnteService
 |---------|-------|--------|
 | Booking dibatalkan pelanggan | "Booking {kode} telah dibatalkan oleh pelanggan" | Admin + Driver (jika assigned) |
 | Pagi hari sebelum keberangkatan | "Konfirmasi keberangkatan Anda hari ini..." | Pelanggan |
-| DP reminder (optional) | "Segera bayar DP booking {kode}, batas waktu 30 menit" | Pelanggan |
 
 ### Scheduler (Laravel)
 
 ```php
 // app/Console/Kernel.php atau routes/console.php
-// 1. Auto-expire booking yang melewati batas waktu
-Schedule::command('booking:expire')->everyMinute();
-
-// 2. Konfirmasi ulang pagi hari sebelum keberangkatan
+// Konfirmasi ulang pagi hari sebelum keberangkatan
 Schedule::command('booking:send-confirmation')->dailyAt('06:00');
 ```
 
@@ -920,7 +934,6 @@ type = feat | fix | refactor | style | docs | test | chore
 - `app/Http/Controllers/HomeController.php`
 - `app/Http/Controllers/BookingController.php`
 - `app/Http/Controllers/PembayaranController.php`
-- `app/Http/Controllers/CekBookingController.php`
 - `app/Http/Controllers/JadwalPublicController.php`
 
 
@@ -946,7 +959,6 @@ type = feat | fix | refactor | style | docs | test | chore
 **Form Requests milik Rayhan:**
 - `app/Http/Requests/StoreBookingRequest.php`
 - `app/Http/Requests/StorePembayaranRequest.php`
-- `app/Http/Requests/CekBookingRequest.php`
 
 **Routes milik Rayhan** (di `routes/web.php` — public section):
 - `GET /` → `home`
@@ -956,11 +968,8 @@ type = feat | fix | refactor | style | docs | test | chore
 - `GET /booking/{kode}/review` → `booking.review`
 - `GET /booking/{kode}/pembayaran` → `booking.pembayaran`
 - `POST /booking/{kode}/pembayaran` → `booking.pembayaran.store`
-- `GET /booking/{kode}/edit` → `booking.edit` (edit lokasi jemput)
-- `PUT /booking/{kode}` → `booking.update` (update lokasi jemput)
-- `PUT /booking/{kode}/cancel` → `booking.cancel` (pelanggan cancel booking)
-- `GET /cek-booking` → `cek-booking.index`
-- `POST /cek-booking` → `cek-booking.show`
+- `GET /booking-saya` → `booking.index`
+- `GET /booking/{kode}` → `booking.show`
 - `GET /jadwal/available` → `jadwal.available`
 - `GET /jadwal/{id}/check-kuota` → `jadwal.checkKuota`
 
@@ -971,6 +980,7 @@ type = feat | fix | refactor | style | docs | test | chore
 **Controllers milik Rayfo:**
 - `app/Http/Controllers/Admin/DashboardController.php`
 - `app/Http/Controllers/Admin/RuteController.php`
+- `app/Http/Controllers/Admin/ArmadaController.php`
 - `app/Http/Controllers/Admin/JadwalController.php`
 - `app/Http/Controllers/Admin/LaporanController.php`
 
@@ -980,33 +990,42 @@ type = feat | fix | refactor | style | docs | test | chore
 - `resources/views/components/card.blade.php`
 - `resources/views/admin/dashboard.blade.php`
 - `resources/views/admin/rute/**`
+- `resources/views/admin/armada/**`
 - `resources/views/admin/jadwal/**`
 - `resources/views/admin/laporan/**`
 
 **Livewire milik Rayfo:**
 - `app/Livewire/Admin/JadwalTable.php`
+- `app/Livewire/Admin/ArmadaTable.php`
 - `resources/views/livewire/admin/jadwal-table.blade.php`
+- `resources/views/livewire/admin/armada-table.blade.php`
 
 **Migrations milik Rayfo:**
+- `create_armada_table`
 - `create_rute_table`
 - `create_jadwal_table`
 
 **Models milik Rayfo:**
+- `app/Models/Armada.php`
 - `app/Models/Rute.php`
 - `app/Models/Jadwal.php`
 
 **Seeders milik Rayfo:**
 - `database/seeders/RuteSeeder.php`
+- `database/seeders/ArmadaSeeder.php`
 
 **Form Requests milik Rayfo:**
 - `app/Http/Requests/Admin/StoreRuteRequest.php`
 - `app/Http/Requests/Admin/UpdateRuteRequest.php`
+- `app/Http/Requests/Admin/StoreArmadaRequest.php`
+- `app/Http/Requests/Admin/UpdateArmadaRequest.php`
 - `app/Http/Requests/Admin/StoreJadwalRequest.php`
 - `app/Http/Requests/Admin/UpdateJadwalRequest.php`
 
 **Routes milik Rayfo** (di `routes/web.php` — admin group):
 - `GET /admin/dashboard` → `admin.dashboard`
 - Resource `admin/rute` → `admin.rute.*`
+- Resource `admin/armada` → `admin.armada.*`
 - Resource `admin/jadwal` → `admin.jadwal.*`
 - `PUT /admin/jadwal/{id}/toggle` → `admin.jadwal.toggle`
 - `GET /admin/laporan` → `admin.laporan.index`
@@ -1115,6 +1134,7 @@ Driver group:
 - `PUT /driver/trips/{id}/pickup/{detailId}` → `driver.trips.pickup`
 - `PUT /driver/trips/{id}/dropoff/{detailId}` → `driver.trips.dropoff`
 - `PUT /driver/trips/{id}/complete` → `driver.trips.complete`
+- `PUT /driver/trips/{id}/confirm-payment/{detailId}` → `driver.trips.confirmPayment`
 
 ---
 
@@ -1126,7 +1146,7 @@ File berikut boleh diedit oleh **siapa saja** karena bersifat shared:
 |------|------------|
 | `routes/web.php` | Tambah route di section masing-masing |
 | `database/seeders/DatabaseSeeder.php` | Tambah seeder call |
-| `app/Models/User.php` | Tambah relationship (hasOne Driver) |
+| `app/Models/User.php` | Tambah relationship (hasOne Driver, hasOne Pelanggan) |
 | `resources/css/app.css` | Custom CSS shared |
 | `tailwind.config.js` | Config Tailwind shared |
 
@@ -1153,7 +1173,7 @@ Route::middleware(['auth', 'role:admin'])
 
     // --- Dashboard & Core (Rayfo) ---
     Route::get('/dashboard', [Admin\DashboardController::class, 'index'])->name('dashboard');
-    // ... route Rayfo lainnya
+    // ... route Rayfo lainnya (Rute, Armada, Jadwal, Laporan)
 
     // --- Booking & Payment Management (Nayasha) ---
     // ... route Nayasha

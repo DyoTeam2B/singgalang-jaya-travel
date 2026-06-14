@@ -4,8 +4,8 @@
 
 | Nama | Peran | Area Tanggung Jawab |
 |------|-------|---------------------|
-| **Rayhan** | Developer | Customer Interface (Landing, Booking, Payment, Cek Status) |
-| **Rayfo** | Developer | Admin Core (Dashboard, Rute, Jadwal, Laporan) |
+| **Rayhan** | Developer | Customer Interface (Landing, Booking, Payment, Booking Saya) |
+| **Rayfo** | Developer | Admin Core (Dashboard, Rute, Armada, Jadwal, Laporan) |
 | **Nayasha** | Developer | Auth + Admin Operasional (Booking Mgmt, Payment Mgmt, Driver Mgmt) |
 | **Kevin** | Developer | Trip & Driver Operations (Admin Trip, Driver Panel, Maps) |
 
@@ -27,11 +27,107 @@
 
 ---
 
+## Fitur Per Aktor
+
+### 👤 Pelanggan
+
+#### Navbar Guest (Belum Login)
+
+```text
+Home | Jadwal | Armada & Driver | Charter | Kontak | Login | Register
+```
+
+#### Navbar Setelah Login
+
+```text
+Home | Jadwal | Booking Saya | Charter | Kontak | Profil
+```
+
+#### Dropdown Profil
+
+```text
+Profil Saya | Booking Saya | Logout
+```
+
+#### Fitur Pelanggan
+
+* Register
+* Login
+* Profil Saya
+* Edit Profil
+* Lihat Jadwal
+* Booking Travel
+* Upload Bukti DP
+* Booking Saya (list)
+* Detail Booking
+* Status Booking
+* Informasi Driver (setelah assigned ke trip)
+* Riwayat Booking
+* Logout
+
+---
+
+### 🛠️ Admin
+
+#### Dashboard
+
+* Total Booking
+* Total Trip
+* Total Pendapatan
+* Total Driver
+* Total Armada
+
+#### Master Data
+
+* CRUD Rute
+* CRUD Armada
+* CRUD Driver (link ke armada)
+* CRUD Jadwal
+
+#### Operasional
+
+* Kelola Booking
+* Verifikasi DP
+* Kelola Trip
+* Assign Driver & Armada ke Trip
+* Lihat Manifest
+
+#### Laporan
+
+* Laporan Booking
+* Laporan Trip
+* Laporan Pendapatan
+
+---
+
+### 🚗 Driver
+
+#### Dashboard
+
+* Trip Hari Ini
+* Total Penumpang
+
+#### Operasional
+
+* Lihat Trip
+* Lihat Manifest (daftar penumpang, alamat jemput, titik maps, sisa pembayaran)
+* Lihat Maps
+* Hubungi Penumpang
+* Update Status Trip (Mulai → Menjemput → Berangkat → Tiba → Selesai)
+* Checklist Penumpang (jemput/antar)
+* Konfirmasi Pelunasan
+
+#### Riwayat
+
+* Riwayat Trip
+
+---
+
 ## Daftar Route Lengkap
 
 ### A. PUBLIC / CUSTOMER ROUTES — `Rayhan`
 
-> ⚠️ Booking routes (A3, A4) memerlukan middleware `auth` karena pelanggan WAJIB login.
+> ⚠️ Booking routes memerlukan middleware `auth` karena pelanggan WAJIB login.
 
 #### A1. Landing Page
 
@@ -56,23 +152,6 @@
 > **Livewire option**: Form booking bisa pakai Livewire component `BookingForm` untuk reactivity (hitung tarif = harga rute × jumlah penumpang, map picker).
 > **Auth**: Route booking memerlukan middleware `auth, role:pelanggan`.
 
-#### A3b. Edit Booking (Lokasi Jemput)
-
-| # | Method | URI | Name | Controller/Livewire | View |
-|---|--------|-----|------|---------------------|------|
-| 5b | GET | `/booking/{kode}/edit` | `booking.edit` | `BookingController@edit` | `public.booking.edit` |
-| 5c | PUT | `/booking/{kode}` | `booking.update` | `BookingController@update` | — (redirect) |
-
-> **Catatan**: Pelanggan hanya bisa edit lokasi/alamat jemput selama status booking belum `assigned_to_trip`.
-
-#### A3c. Cancel Booking (Pelanggan)
-
-| # | Method | URI | Name | Controller/Livewire | View |
-|---|--------|-----|------|---------------------|------|
-| 5d | PUT | `/booking/{kode}/cancel` | `booking.cancel` | `BookingController@cancel` | — (redirect) |
-
-> **Catatan**: Pelanggan bisa cancel selama status belum `on_trip`. Notifikasi otomatis ke admin & driver via FonnteAPI.
-
 #### A4. Pembayaran DP (Customer)
 
 | # | Method | URI | Name | Controller/Livewire | View |
@@ -80,12 +159,12 @@
 | 6 | GET | `/booking/{kode}/pembayaran` | `booking.pembayaran` | `PembayaranController@show` | `public.pembayaran.show` |
 | 7 | POST | `/booking/{kode}/pembayaran` | `booking.pembayaran.store` | `PembayaranController@store` | — (redirect) |
 
-#### A5. Cek Status Booking
+#### A5. Booking Saya
 
 | # | Method | URI | Name | Controller/Livewire | View |
 |---|--------|-----|------|---------------------|------|
-| 8 | GET | `/cek-booking` | `cek-booking.index` | `CekBookingController@index` | `public.cek-booking.index` |
-| 9 | POST | `/cek-booking` | `cek-booking.show` | `CekBookingController@show` | `public.cek-booking.show` |
+| 8 | GET | `/booking-saya` | `booking.index` | `BookingController@index` | `public.booking.index` |
+| 9 | GET | `/booking/{kode}` | `booking.show` | `BookingController@show` | `public.booking.show` |
 
 #### A6. AJAX Support (via JadwalPublicController)
 
@@ -94,7 +173,7 @@
 | 10 | GET | `/jadwal/available` | `jadwal.available` | `JadwalPublicController@available` | — (JSON) |
 | 11 | GET | `/jadwal/{id}/check-kuota` | `jadwal.checkKuota` | `JadwalPublicController@checkKuota` | — (JSON) |
 
-> **Total Rayhan: 14 routes** (termasuk edit booking + cancel booking)
+> **Total Rayhan: 11 routes**
 
 ---
 
@@ -144,71 +223,113 @@
 | 26 | PUT | `/admin/rute/{id}` | `admin.rute.update` | `Admin\RuteController@update` | — (redirect) |
 | 27 | DELETE | `/admin/rute/{id}` | `admin.rute.destroy` | `Admin\RuteController@destroy` | — (redirect) |
 
-#### C3. Admin Jadwal Management — `Rayfo`
+#### C3. Admin Armada Management — `Rayfo`
 
 | # | Method | URI | Name | Controller/Livewire | View |
 |---|--------|-----|------|---------------------|------|
-| 28 | GET | `/admin/jadwal` | `admin.jadwal.index` | `Admin\JadwalController@index` | `admin.jadwal.index` |
-| 29 | GET | `/admin/jadwal/create` | `admin.jadwal.create` | `Admin\JadwalController@create` | `admin.jadwal.create` |
-| 30 | POST | `/admin/jadwal` | `admin.jadwal.store` | `Admin\JadwalController@store` | — (redirect) |
-| 31 | GET | `/admin/jadwal/{id}/edit` | `admin.jadwal.edit` | `Admin\JadwalController@edit` | `admin.jadwal.edit` |
-| 32 | PUT | `/admin/jadwal/{id}` | `admin.jadwal.update` | `Admin\JadwalController@update` | — (redirect) |
-| 33 | DELETE | `/admin/jadwal/{id}` | `admin.jadwal.destroy` | `Admin\JadwalController@destroy` | — (redirect) |
-| 34 | PUT | `/admin/jadwal/{id}/toggle` | `admin.jadwal.toggle` | `Admin\JadwalController@toggleStatus` | — (redirect) |
+| 28 | GET | `/admin/armada` | `admin.armada.index` | `Admin\ArmadaController@index` | `admin.armada.index` |
+| 29 | GET | `/admin/armada/create` | `admin.armada.create` | `Admin\ArmadaController@create` | `admin.armada.create` |
+| 30 | POST | `/admin/armada` | `admin.armada.store` | `Admin\ArmadaController@store` | — (redirect) |
+| 31 | GET | `/admin/armada/{id}/edit` | `admin.armada.edit` | `Admin\ArmadaController@edit` | `admin.armada.edit` |
+| 32 | PUT | `/admin/armada/{id}` | `admin.armada.update` | `Admin\ArmadaController@update` | — (redirect) |
+| 33 | DELETE | `/admin/armada/{id}` | `admin.armada.destroy` | `Admin\ArmadaController@destroy` | — (redirect) |
 
-#### C4. Admin Booking Management — `Nayasha`
+#### C4. Admin Jadwal Management — `Rayfo`
 
 | # | Method | URI | Name | Controller/Livewire | View |
 |---|--------|-----|------|---------------------|------|
-| 35 | GET | `/admin/bookings` | `admin.bookings.index` | `Admin\BookingController@index` | `admin.bookings.index` |
-| 36 | GET | `/admin/bookings/{id}` | `admin.bookings.show` | `Admin\BookingController@show` | `admin.bookings.show` |
-| 37 | PUT | `/admin/bookings/{id}/cancel` | `admin.bookings.cancel` | `Admin\BookingController@cancel` | — (redirect) |
+| 34 | GET | `/admin/jadwal` | `admin.jadwal.index` | `Admin\JadwalController@index` | `admin.jadwal.index` |
+| 35 | GET | `/admin/jadwal/create` | `admin.jadwal.create` | `Admin\JadwalController@create` | `admin.jadwal.create` |
+| 36 | POST | `/admin/jadwal` | `admin.jadwal.store` | `Admin\JadwalController@store` | — (redirect) |
+| 37 | GET | `/admin/jadwal/{id}/edit` | `admin.jadwal.edit` | `Admin\JadwalController@edit` | `admin.jadwal.edit` |
+| 38 | PUT | `/admin/jadwal/{id}` | `admin.jadwal.update` | `Admin\JadwalController@update` | — (redirect) |
+| 39 | DELETE | `/admin/jadwal/{id}` | `admin.jadwal.destroy` | `Admin\JadwalController@destroy` | — (redirect) |
+| 40 | PUT | `/admin/jadwal/{id}/toggle` | `admin.jadwal.toggle` | `Admin\JadwalController@toggleStatus` | — (redirect) |
+
+#### C5. Admin Booking Management — `Nayasha`
+
+| # | Method | URI | Name | Controller/Livewire | View |
+|---|--------|-----|------|---------------------|------|
+| 41 | GET | `/admin/bookings` | `admin.bookings.index` | `Admin\BookingController@index` | `admin.bookings.index` |
+| 42 | GET | `/admin/bookings/{id}` | `admin.bookings.show` | `Admin\BookingController@show` | `admin.bookings.show` |
+| 43 | PUT | `/admin/bookings/{id}/cancel` | `admin.bookings.cancel` | `Admin\BookingController@cancel` | — (redirect) |
 
 > **Livewire option**: Tabel booking bisa pakai Livewire `BookingTable` untuk search/filter/pagination realtime.
 
-#### C5. Admin Pembayaran Verification — `Nayasha`
+#### C6. Admin Pembayaran Verification — `Nayasha`
 
 | # | Method | URI | Name | Controller/Livewire | View |
 |---|--------|-----|------|---------------------|------|
-| 38 | GET | `/admin/pembayaran` | `admin.pembayaran.index` | `Admin\PembayaranController@index` | `admin.pembayaran.index` |
-| 39 | GET | `/admin/pembayaran/{id}` | `admin.pembayaran.show` | `Admin\PembayaranController@show` | `admin.pembayaran.show` |
-| 40 | PUT | `/admin/pembayaran/{id}/verify` | `admin.pembayaran.verify` | `Admin\PembayaranController@verify` | — (redirect) |
-| 41 | PUT | `/admin/pembayaran/{id}/reject` | `admin.pembayaran.reject` | `Admin\PembayaranController@reject` | — (redirect) |
+| 44 | GET | `/admin/pembayaran` | `admin.pembayaran.index` | `Admin\PembayaranController@index` | `admin.pembayaran.index` |
+| 45 | GET | `/admin/pembayaran/{id}` | `admin.pembayaran.show` | `Admin\PembayaranController@show` | `admin.pembayaran.show` |
+| 46 | PUT | `/admin/pembayaran/{id}/verify` | `admin.pembayaran.verify` | `Admin\PembayaranController@verify` | — (redirect) |
+| 47 | PUT | `/admin/pembayaran/{id}/reject` | `admin.pembayaran.reject` | `Admin\PembayaranController@reject` | — (redirect) |
 
-#### C6. Admin Driver Management — `Nayasha`
-
-| # | Method | URI | Name | Controller/Livewire | View |
-|---|--------|-----|------|---------------------|------|
-| 42 | GET | `/admin/drivers` | `admin.drivers.index` | `Admin\DriverController@index` | `admin.drivers.index` |
-| 43 | GET | `/admin/drivers/create` | `admin.drivers.create` | `Admin\DriverController@create` | `admin.drivers.create` |
-| 44 | POST | `/admin/drivers` | `admin.drivers.store` | `Admin\DriverController@store` | — (redirect) |
-| 45 | GET | `/admin/drivers/{id}` | `admin.drivers.show` | `Admin\DriverController@show` | `admin.drivers.show` |
-| 46 | GET | `/admin/drivers/{id}/edit` | `admin.drivers.edit` | `Admin\DriverController@edit` | `admin.drivers.edit` |
-| 47 | PUT | `/admin/drivers/{id}` | `admin.drivers.update` | `Admin\DriverController@update` | — (redirect) |
-| 48 | DELETE | `/admin/drivers/{id}` | `admin.drivers.destroy` | `Admin\DriverController@destroy` | — (redirect) |
-
-#### C7. Admin Trip Management — `Kevin`
+#### C7. Admin Driver Management — `Nayasha`
 
 | # | Method | URI | Name | Controller/Livewire | View |
 |---|--------|-----|------|---------------------|------|
-| 49 | GET | `/admin/trips` | `admin.trips.index` | `Admin\TripController@index` | `admin.trips.index` |
-| 50 | GET | `/admin/trips/create` | `admin.trips.create` | `Admin\TripController@create` | `admin.trips.create` |
-| 51 | POST | `/admin/trips` | `admin.trips.store` | `Admin\TripController@store` | — (redirect) |
-| 52 | GET | `/admin/trips/{id}` | `admin.trips.show` | `Admin\TripController@show` | `admin.trips.show` |
-| 53 | PUT | `/admin/trips/{id}` | `admin.trips.update` | `Admin\TripController@update` | — (redirect) |
-| 54 | POST | `/admin/trips/{id}/assign` | `admin.trips.assign` | `Admin\TripController@assignBooking` | — (redirect) |
-| 55 | DELETE | `/admin/trips/{id}/remove/{detailId}` | `admin.trips.remove` | `Admin\TripController@removeBooking` | — (redirect) |
-| 56 | DELETE | `/admin/trips/{id}` | `admin.trips.destroy` | `Admin\TripController@destroy` | — (redirect) |
+| 48 | GET | `/admin/drivers` | `admin.drivers.index` | `Admin\DriverController@index` | `admin.drivers.index` |
+| 49 | GET | `/admin/drivers/create` | `admin.drivers.create` | `Admin\DriverController@create` | `admin.drivers.create` |
+| 50 | POST | `/admin/drivers` | `admin.drivers.store` | `Admin\DriverController@store` | — (redirect) |
+| 51 | GET | `/admin/drivers/{id}` | `admin.drivers.show` | `Admin\DriverController@show` | `admin.drivers.show` |
+| 52 | GET | `/admin/drivers/{id}/edit` | `admin.drivers.edit` | `Admin\DriverController@edit` | `admin.drivers.edit` |
+| 53 | PUT | `/admin/drivers/{id}` | `admin.drivers.update` | `Admin\DriverController@update` | — (redirect) |
+| 54 | DELETE | `/admin/drivers/{id}` | `admin.drivers.destroy` | `Admin\DriverController@destroy` | — (redirect) |
 
-#### C8. Admin Laporan — `Rayfo`
+#### C8. Admin Trip Management — `Kevin`
 
 | # | Method | URI | Name | Controller/Livewire | View |
 |---|--------|-----|------|---------------------|------|
-| 57 | GET | `/admin/laporan` | `admin.laporan.index` | `Admin\LaporanController@index` | `admin.laporan.index` |
-| 58 | GET | `/admin/laporan/export` | `admin.laporan.export` | `Admin\LaporanController@export` | — (download) |
+| 55 | GET | `/admin/trips` | `admin.trips.index` | `Admin\TripController@index` | `admin.trips.index` |
+| 56 | GET | `/admin/trips/create` | `admin.trips.create` | `Admin\TripController@create` | `admin.trips.create` |
+| 57 | POST | `/admin/trips` | `admin.trips.store` | `Admin\TripController@store` | — (redirect) |
+| 58 | GET | `/admin/trips/{id}` | `admin.trips.show` | `Admin\TripController@show` | `admin.trips.show` |
+| 59 | PUT | `/admin/trips/{id}` | `admin.trips.update` | `Admin\TripController@update` | — (redirect) |
+| 60 | POST | `/admin/trips/{id}/assign` | `admin.trips.assign` | `Admin\TripController@assignBooking` | — (redirect) |
+| 61 | DELETE | `/admin/trips/{id}/remove/{detailId}` | `admin.trips.remove` | `Admin\TripController@removeBooking` | — (redirect) |
+| 62 | DELETE | `/admin/trips/{id}` | `admin.trips.destroy` | `Admin\TripController@destroy` | — (redirect) |
 
-> **Total Rayfo: 16 routes** (Dashboard + Rute + Jadwal + Laporan)
+#### C9. Admin Laporan — `Rayfo`
+
+| # | Method | URI | Name | Controller/Livewire | View |
+|---|--------|-----|------|---------------------|------|
+| 63 | GET | `/admin/laporan` | `admin.laporan.index` | `Admin\LaporanController@index` | `admin.laporan.index` |
+| 64 | GET | `/admin/laporan/export` | `admin.laporan.export` | `Admin\LaporanController@export` | — (download) |
+
+> **Total Rayfo: 22 routes** (Dashboard + Rute + Armada + Jadwal + Laporan)
 > **Total Nayasha: 16 routes** (Auth✅done + Booking Mgmt + Pembayaran + Driver)
+
+---
+
+### D. DRIVER ROUTES — Prefix: `/driver` — Middleware: `auth`, `role:driver` — `Kevin`
+
+#### D1. Driver Dashboard
+
+| # | Method | URI | Name | Controller/Livewire | View |
+|---|--------|-----|------|---------------------|------|
+| 65 | GET | `/driver/dashboard` | `driver.dashboard` | `Driver\DashboardController@index` | `driver.dashboard` |
+
+> **Status**: Route ada ✅, view placeholder ⚠️
+
+#### D2. Driver Trip & Manifest
+
+| # | Method | URI | Name | Controller/Livewire | View |
+|---|--------|-----|------|---------------------|------|
+| 66 | GET | `/driver/trips` | `driver.trips.index` | `Driver\TripController@index` | `driver.trips.index` |
+| 67 | GET | `/driver/trips/{id}` | `driver.trips.show` | `Driver\TripController@show` | `driver.trips.show` |
+
+#### D3. Driver Trip Operations
+
+| # | Method | URI | Name | Controller/Livewire | View |
+|---|--------|-----|------|---------------------|------|
+| 68 | PUT | `/driver/trips/{id}/start` | `driver.trips.start` | `Driver\TripController@start` | — (redirect) |
+| 69 | PUT | `/driver/trips/{id}/pickup/{detailId}` | `driver.trips.pickup` | `Driver\TripController@pickup` | — (redirect) |
+| 70 | PUT | `/driver/trips/{id}/dropoff/{detailId}` | `driver.trips.dropoff` | `Driver\TripController@dropoff` | — (redirect) |
+| 71 | PUT | `/driver/trips/{id}/complete` | `driver.trips.complete` | `Driver\TripController@complete` | — (redirect) |
+| 72 | PUT | `/driver/trips/{id}/confirm-payment/{detailId}` | `driver.trips.confirmPayment` | `Driver\TripController@confirmPayment` | — (redirect) |
+
+> **Total Kevin: 16 routes** (Admin Trip + Driver Panel + Confirm Payment)
 
 ---
 
@@ -220,41 +341,9 @@
 |---|---------|--------|-------|-----------|
 | N1 | Booking dibatalkan pelanggan | Admin + Driver (jika assigned) | "Booking {kode} dibatalkan" | Event + FonnteService |
 | N2 | Pagi hari sebelum keberangkatan | Pelanggan | "Konfirmasi keberangkatan Anda hari ini" | Scheduler `06:00` |
-| N3 | Booking hampir expire (optional) | Pelanggan | "Batas bayar DP tinggal X menit" | Scheduler / queue |
 
 **Scheduler Commands**:
-- `booking:expire` — Auto-expire booking yang melebihi 30 menit tanpa bayar (run setiap menit)
 - `booking:send-confirmation` — Kirim WA konfirmasi ulang pagi hari (run jam 06:00)
-
----
-
-### D. DRIVER ROUTES — Prefix: `/driver` — Middleware: `auth`, `role:driver` — `Kevin`
-
-#### D1. Driver Dashboard
-
-| # | Method | URI | Name | Controller/Livewire | View |
-|---|--------|-----|------|---------------------|------|
-| 59 | GET | `/driver/dashboard` | `driver.dashboard` | `Driver\DashboardController@index` | `driver.dashboard` |
-
-> **Status**: Route ada ✅, view placeholder ⚠️
-
-#### D2. Driver Trip & Manifest
-
-| # | Method | URI | Name | Controller/Livewire | View |
-|---|--------|-----|------|---------------------|------|
-| 60 | GET | `/driver/trips` | `driver.trips.index` | `Driver\TripController@index` | `driver.trips.index` |
-| 61 | GET | `/driver/trips/{id}` | `driver.trips.show` | `Driver\TripController@show` | `driver.trips.show` |
-
-#### D3. Driver Trip Operations
-
-| # | Method | URI | Name | Controller/Livewire | View |
-|---|--------|-----|------|---------------------|------|
-| 62 | PUT | `/driver/trips/{id}/start` | `driver.trips.start` | `Driver\TripController@start` | — (redirect) |
-| 63 | PUT | `/driver/trips/{id}/pickup/{detailId}` | `driver.trips.pickup` | `Driver\TripController@pickup` | — (redirect) |
-| 64 | PUT | `/driver/trips/{id}/dropoff/{detailId}` | `driver.trips.dropoff` | `Driver\TripController@dropoff` | — (redirect) |
-| 65 | PUT | `/driver/trips/{id}/complete` | `driver.trips.complete` | `Driver\TripController@complete` | — (redirect) |
-
-> **Total Kevin: 15 routes** (Admin Trip + Driver Panel)
 
 ---
 
@@ -262,11 +351,11 @@
 
 | Nama | Modul | Jumlah Route |
 |------|-------|:------------:|
-| **Rayhan** | Landing, Jadwal Public, Booking, Payment (Customer), Cek Status, API, Edit Booking, Cancel Booking | **14** |
-| **Rayfo** | Admin Dashboard, Admin Rute, Admin Jadwal, Admin Laporan | **16** |
+| **Rayhan** | Landing, Jadwal Public, Booking, Payment (Customer), Booking Saya, API | **11** |
+| **Rayfo** | Admin Dashboard, Admin Rute, Admin Armada, Admin Jadwal, Admin Laporan | **22** |
 | **Nayasha** | Auth (✅done), Admin Booking, Admin Pembayaran, Admin Driver | **16** |
-| **Kevin** | Admin Trip, Driver Dashboard, Driver Trip & Operations | **15** |
-| | **TOTAL** | **61** |
+| **Kevin** | Admin Trip, Driver Dashboard, Driver Trip & Operations | **16** |
+| | **TOTAL** | **65** |
 
 ---
 
@@ -325,6 +414,7 @@
 | `Livewire\BookingForm` | Rayhan | Form booking interaktif (hitung tarif, map) |
 | `Livewire\Admin\BookingTable` | Nayasha | Tabel booking dengan search/filter |
 | `Livewire\Admin\PembayaranTable` | Nayasha | Tabel pembayaran dengan filter |
+| `Livewire\Admin\ArmadaTable` | Rayfo | Tabel armada dengan search |
 | `Livewire\Admin\JadwalTable` | Rayfo | Tabel jadwal dengan filter |
 | `Livewire\Admin\DriverTable` | Nayasha | Tabel driver dengan search |
 | `Livewire\Admin\TripTable` | Kevin | Tabel trip dengan filter |
@@ -340,10 +430,9 @@
 | `public.jadwal.index` | Daftar jadwal keberangkatan |
 | `public.booking.create` | Form booking |
 | `public.booking.review` | Review booking sebelum submit |
-| `public.booking.edit` | Edit lokasi/alamat jemput (sebelum assigned ke trip) |
-| `public.pembayaran.show` | Halaman instruksi & upload DP (timer 30 menit) |
-| `public.cek-booking.index` | Form input kode booking |
-| `public.cek-booking.show` | Detail status booking + timeline |
+| `public.booking.index` | Booking Saya (daftar booking pelanggan) |
+| `public.booking.show` | Detail Booking + Status + Informasi Driver |
+| `public.pembayaran.show` | Halaman instruksi & upload DP |
 
 ### Auth Views — `Nayasha` (Sudah Ada)
 
@@ -361,10 +450,13 @@
 
 | View | PIC | Keterangan |
 |------|-----|------------|
-| `admin.dashboard` | Rayfo | Dashboard + widget statistik (placeholder ✅) |
+| `admin.dashboard` | Rayfo | Dashboard + widget statistik (Total Booking, Trip, Pendapatan, Driver, Armada) |
 | `admin.rute.index` | Rayfo | Tabel daftar rute |
 | `admin.rute.create` | Rayfo | Form tambah rute |
 | `admin.rute.edit` | Rayfo | Form edit rute |
+| `admin.armada.index` | Rayfo | Tabel daftar armada |
+| `admin.armada.create` | Rayfo | Form tambah armada |
+| `admin.armada.edit` | Rayfo | Form edit armada |
 | `admin.jadwal.index` | Rayfo | Tabel daftar jadwal |
 | `admin.jadwal.create` | Rayfo | Form tambah jadwal |
 | `admin.jadwal.edit` | Rayfo | Form edit jadwal |
@@ -374,17 +466,17 @@
 | `admin.pembayaran.index` | Nayasha | Tabel daftar pembayaran |
 | `admin.pembayaran.show` | Nayasha | Detail pembayaran + aksi verify/reject |
 | `admin.drivers.index` | Nayasha | Tabel daftar driver |
-| `admin.drivers.create` | Nayasha | Form tambah driver |
+| `admin.drivers.create` | Nayasha | Form tambah driver (pilih armada) |
 | `admin.drivers.show` | Nayasha | Detail driver |
 | `admin.drivers.edit` | Nayasha | Form edit driver |
 | `admin.trips.index` | Kevin | Tabel daftar trip |
-| `admin.trips.create` | Kevin | Form buat trip + pilih driver |
+| `admin.trips.create` | Kevin | Form buat trip + pilih driver & armada |
 | `admin.trips.show` | Kevin | Detail trip + manifest + assign booking |
 
 ### Driver Views — `Kevin`
 
 | View | Keterangan |
 |------|------------|
-| `driver.dashboard` | Dashboard trip aktif + peta (placeholder ✅) |
-| `driver.trips.index` | Daftar trip (history) |
-| `driver.trips.show` | Detail trip + manifest + aksi pickup/dropoff |
+| `driver.dashboard` | Dashboard trip hari ini + total penumpang |
+| `driver.trips.index` | Riwayat trip |
+| `driver.trips.show` | Detail trip + manifest + aksi pickup/dropoff + konfirmasi pelunasan |

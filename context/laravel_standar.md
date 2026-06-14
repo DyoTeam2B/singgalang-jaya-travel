@@ -10,7 +10,7 @@ Sumber utama:
 
 - Menjaga kode Laravel tetap mudah dibaca, dites, dan dikembangkan oleh tim.
 - Mengurangi logic yang menumpuk di controller, route, dan Blade.
-- Membuat pola implementasi fitur booking, jadwal, pembayaran, driver, dan trip tetap konsisten.
+- Membuat pola implementasi fitur booking, jadwal, pembayaran, armada, driver, dan trip tetap konsisten.
 - Menghindari bug umum seperti N+1 query, validasi tersebar, mass assignment tidak aman, dan pemakaian `.env` langsung di kode aplikasi.
 
 ## Prinsip Wajib
@@ -33,14 +33,14 @@ Ikuti aturan lokal project Singgalang Jaya Travel:
 | Area | Standar |
 |------|---------|
 | Class, method, variable | English, `camelCase` untuk method/variable |
-| Model | Singular, `PascalCase`, contoh `Booking`, `Jadwal`, `Trip` |
-| Controller | Singular + `Controller`, contoh `BookingController`, `JadwalController` |
-| Form Request | Singular dan spesifik, contoh `StoreBookingRequest`, `UpdateJadwalRequest` |
+| Model | Singular, `PascalCase`, contoh `Booking`, `Jadwal`, `Trip`, `Armada` |
+| Controller | Singular + `Controller`, contoh `BookingController`, `JadwalController`, `ArmadaController` |
+| Form Request | Singular dan spesifik, contoh `StoreBookingRequest`, `UpdateJadwalRequest`, `StoreArmadaRequest` |
 | Service | Singular dan spesifik, contoh `BookingService`, `PaymentVerificationService` |
 | Tabel dan kolom operasional | Bahasa Indonesia sesuai ERD project |
 | Kolom default Breeze/users | Biarkan English, contoh `name`, `email`, `password`, `role` |
-| Route URI | Bahasa Indonesia untuk resource utama, contoh `/admin/jadwal` |
-| Route name | Dot notation, contoh `admin.jadwal.index`, `driver.trips.show` |
+| Route URI | Bahasa Indonesia untuk resource utama, contoh `/admin/jadwal`, `/admin/armada` |
+| Route name | Dot notation, contoh `admin.jadwal.index`, `admin.armada.index`, `driver.trips.show` |
 | View Blade | `kebab-case`, contoh `cek-booking.blade.php` |
 | UI label dan pesan validasi | Bahasa Indonesia |
 | Komentar kode | English, singkat, hanya jika membantu |
@@ -85,7 +85,8 @@ Gunakan Form Request untuk:
 - booking pelanggan;
 - upload bukti pembayaran;
 - CRUD jadwal;
-- CRUD driver dan kendaraan;
+- CRUD armada;
+- CRUD driver (dengan assign armada);
 - assign penumpang ke trip;
 - update status penjemputan/pengantaran.
 
@@ -126,11 +127,11 @@ class StoreBookingRequest extends FormRequest
 Gunakan service class saat proses bisnis memiliki beberapa langkah atau dipakai ulang.
 
 Contoh kandidat service:
-- `BookingService`: membuat booking, membuat kode booking, menghitung total, mengurangi kuota jika aturan sudah final.
+- `BookingService`: membuat booking, membuat kode booking, menghitung total (tarif rute × jumlah penumpang).
 - `PaymentVerificationService`: validasi bukti DP dan update status pembayaran.
-- `TripAssignmentService`: mengelompokkan booking ke trip dan menjaga kapasitas kendaraan.
-- `DriverTripService`: update status jemput, antar, dan selesai trip.
-- `FonnteService`: kirim pesan WhatsApp via FonnteAPI (konfirmasi, notifikasi pembatalan, reminder DP).
+- `TripAssignmentService`: mengelompokkan booking ke trip dan menjaga kapasitas armada.
+- `DriverTripService`: update status jemput, antar, konfirmasi pelunasan, dan selesai trip.
+- `FonnteService`: kirim pesan WhatsApp via FonnteAPI (konfirmasi, notifikasi pembatalan).
 
 Service tidak boleh bergantung pada request HTTP mentah. Kirim data bersih dari `$request->validated()`.
 
@@ -142,7 +143,7 @@ class BookingService
         return Booking::create([
             ...$data,
             'kode_booking' => $this->generateBookingCode(),
-            'status' => Booking::STATUS_PENDING,
+            'status_booking' => Booking::STATUS_BOOKING_DIBUAT,
         ]);
     }
 }
@@ -166,7 +167,6 @@ Contoh:
 class Booking extends Model
 {
     public const STATUS_BOOKING_DIBUAT = 'booking_dibuat';
-    public const STATUS_MENUNGGU_PEMBAYARAN = 'menunggu_pembayaran';
     public const STATUS_MENUNGGU_VERIFIKASI = 'menunggu_verifikasi';
     public const STATUS_DIKONFIRMASI = 'dikonfirmasi';
     public const STATUS_ASSIGNED_TO_TRIP = 'assigned_to_trip';
@@ -188,8 +188,6 @@ class Booking extends Model
         'jumlah_penumpang',
         'total_harga',
         'status_booking',
-        'batas_bayar_at',
-        'alasan_pembatalan',
     ];
 
     public function jadwal(): BelongsTo
@@ -263,7 +261,7 @@ Jika ada field sistem, set di service:
 ```php
 $booking = Booking::create([
     ...$data,
-    'status' => Booking::STATUS_PENDING,
+    'status_booking' => Booking::STATUS_BOOKING_DIBUAT,
 ]);
 ```
 
@@ -353,6 +351,7 @@ Route::middleware(['auth', 'role:admin'])
     ->name('admin.')
     ->group(function () {
         Route::resource('jadwal', Admin\JadwalController::class);
+        Route::resource('armada', Admin\ArmadaController::class);
     });
 ```
 
@@ -446,6 +445,7 @@ Prioritas test:
 - upload bukti pembayaran memvalidasi file dan booking;
 - admin bisa verifikasi pembayaran;
 - driver hanya bisa melihat trip miliknya;
+- driver bisa konfirmasi pelunasan;
 - route utama dapat diakses sesuai role;
 - policy menolak akses yang salah.
 
@@ -475,3 +475,4 @@ Repo sumber memakai konvensi Laravel umum. Project ini tetap mengikuti Laravel b
 - UI label, pesan validasi, dan teks tampilan memakai Bahasa Indonesia.
 - Kode PHP tetap memakai English agar konsisten dengan ekosistem Laravel.
 - Struktur admin, driver, dan public mengikuti dokumen context project yang sudah ada.
+- Armada dikelola sebagai entitas terpisah dari driver (tabel `armada` sendiri).
