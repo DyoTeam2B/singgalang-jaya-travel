@@ -14,16 +14,16 @@ class DriverSeeder extends Seeder
      */
     public function run(): void
     {
+        $armadas = \App\Models\Armada::all();
+
         // 1. Hubungkan user driver default dari UserSeeder jika ada
         $defaultDriverUser = User::where('email', 'driver@gmail.com')->first();
-        if ($defaultDriverUser) {
+        if ($defaultDriverUser && $armadas->count() > 0) {
             Driver::create([
                 'user_id' => $defaultDriverUser->id,
+                'armada_id' => $armadas[0]->id,
                 'nama_driver' => 'Driver Singgalang',
                 'no_hp' => '081234567890',
-                'nama_mobil' => 'Toyota Avanza',
-                'nomor_plat' => 'BA 1234 XY',
-                'kapasitas_mobil' => 5,
                 'status_driver' => 'aktif',
             ]);
         }
@@ -35,15 +35,15 @@ class DriverSeeder extends Seeder
             'password' => Hash::make('driver12345'),
             'role' => 'driver',
         ]);
-        Driver::create([
-            'user_id' => $userHendra->id,
-            'nama_driver' => 'Hendra Gunawan',
-            'no_hp' => '081234567891',
-            'nama_mobil' => 'Toyota Avanza',
-            'nomor_plat' => 'BA 5678 ZZ',
-            'kapasitas_mobil' => 5,
-            'status_driver' => 'aktif',
-        ]);
+        if ($armadas->count() > 1) {
+            Driver::create([
+                'user_id' => $userHendra->id,
+                'armada_id' => $armadas[1]->id,
+                'nama_driver' => 'Hendra Gunawan',
+                'no_hp' => '081234567891',
+                'status_driver' => 'aktif',
+            ]);
+        }
 
         // 3. Tambah sample driver: Budi Santoso
         $userBudi = User::create([
@@ -52,14 +52,14 @@ class DriverSeeder extends Seeder
             'password' => Hash::make('driver12345'),
             'role' => 'driver',
         ]);
-        Driver::create([
-            'user_id' => $userBudi->id,
-            'nama_driver' => 'Budi Santoso',
-            'no_hp' => '081356789012',
-            'nama_mobil' => 'Toyota Avanza',
-            'nomor_plat' => 'BA 9999 AA',
-            'kapasitas_mobil' => 5,
-            'status_driver' => 'aktif',
-        ]);
+        if ($armadas->count() > 2) {
+            Driver::create([
+                'user_id' => $userBudi->id,
+                'armada_id' => $armadas[2]->id,
+                'nama_driver' => 'Budi Santoso',
+                'no_hp' => '081356789012',
+                'status_driver' => 'aktif',
+            ]);
+        }
     }
 }

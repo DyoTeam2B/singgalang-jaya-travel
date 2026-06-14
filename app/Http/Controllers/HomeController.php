@@ -32,7 +32,7 @@ class HomeController extends Controller
             ->orderBy('jam_berangkat', 'asc')
             ->get();
 
-        $drivers = \App\Models\Driver::where('status_driver', 'aktif')->take(4)->get();
+        $drivers = \App\Models\Driver::with('armada')->where('status_driver', 'aktif')->take(4)->get();
 
         return view('public.home', compact('schedules', 'drivers'));
     }

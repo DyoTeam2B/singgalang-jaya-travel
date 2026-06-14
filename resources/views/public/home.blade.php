@@ -466,9 +466,9 @@
                 @php
                     $fleetData = collect($drivers ?? [])->map(fn($d) => [
                         'id' => $d->id,
-                        'name' => $d->nama_mobil,
-                        'plate' => $d->nomor_plat,
-                        'capacity' => 'Maks. ' . $d->kapasitas_mobil . ' Penumpang',
+                        'name' => $d->armada->nama_mobil ?? 'Toyota Avanza',
+                        'plate' => $d->armada->nomor_plat ?? '-',
+                        'capacity' => 'Maks. ' . ($d->armada->kapasitas ?? 5) . ' Penumpang',
                         'route' => 'Padang Panjang ↔ Pekanbaru',
                         'status' => $d->dynamic_status === 'tersedia' ? 'Tersedia' : ($d->dynamic_status === 'sedang_bertugas' ? 'Sedang Bertugas' : 'Tidak Aktif')
                     ])->toArray();

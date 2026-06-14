@@ -29,7 +29,7 @@ class PembayaranTable extends Component
     {
         // Set first pending payment as default selected if none is provided
         if (!$this->selectedPaymentId) {
-            $firstPending = Pembayaran::scopeMenunggu(Pembayaran::query())->first();
+            $firstPending = Pembayaran::menunggu()->first();
             if ($firstPending) {
                 $this->selectedPaymentId = $firstPending->id;
             }
@@ -126,7 +126,7 @@ class PembayaranTable extends Component
             $selectedPayment = Pembayaran::with(['booking.pelanggan.user'])->find($this->selectedPaymentId);
         }
 
-        $pendingCount = Pembayaran::scopeMenunggu(Pembayaran::query())->count();
+        $pendingCount = Pembayaran::menunggu()->count();
 
         return view('livewire.admin.pembayaran-table', compact('payments', 'selectedPayment', 'pendingCount'));
     }

@@ -21,14 +21,17 @@ class DriverController extends Controller
         $search = $request->input('search');
         $statusFilter = $request->input('status');
 
-        $query = Driver::query()->with(['user', 'trips']);
+        $query = Driver::query()->with(['user', 'trips', 'armada']);
 
         // Search filter
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('nama_driver', 'like', "%{$search}%")
                   ->orWhere('id', 'like', "%{$search}%")
-                  ->orWhere('nomor_plat', 'like', "%{$search}%")
+                  ->orWhereHas('armada', function ($aq) use ($search) {
+                      $aq->where('nomor_plat', 'like', "%{$search}%")
+                        ->orWhere('nama_mobil', 'like', "%{$search}%");
+                  })
                   ->orWhereHas('user', function ($uq) use ($search) {
                       $uq->where('email', 'like', "%{$search}%");
                   });
@@ -59,14 +62,16 @@ class DriverController extends Controller
         $selectedDriver = null;
 
         if ($selectedDriverId) {
-            $selectedDriver = Driver::with(['user', 'trips.jadwal.rute'])->find($selectedDriverId);
+            $selectedDriver = Driver::with(['user', 'trips.jadwal.rute', 'armada'])->find($selectedDriverId);
         }
 
         if (!$selectedDriver && $drivers->count() > 0) {
-            $selectedDriver = Driver::with(['user', 'trips.jadwal.rute'])->find($drivers->first()->id);
+            $selectedDriver = Driver::with(['user', 'trips.jadwal.rute', 'armada'])->find($drivers->first()->id);
         }
 
-        return view('admin.drivers.index', compact('drivers', 'search', 'statusFilter', 'selectedDriver'));
+        $armadas = \App\Models\Armada::where('status_armada', 'aktif')->get();
+
+        return view('admin.drivers.index', compact('drivers', 'search', 'statusFilter', 'selectedDriver', 'armadas'));
     }
 
     /**
@@ -87,11 +92,9 @@ class DriverController extends Controller
                 // Create the driver data
                 Driver::create([
                     'user_id' => $user->id,
+                    'armada_id' => $request->armada_id,
                     'nama_driver' => $request->nama_driver,
                     'no_hp' => $request->no_hp,
-                    'nama_mobil' => $request->nama_mobil,
-                    'nomor_plat' => $request->nomor_plat,
-                    'kapasitas_mobil' => $request->kapasitas_mobil,
                     'status_driver' => $request->status_driver,
                 ]);
             });
@@ -130,9 +133,7 @@ class DriverController extends Controller
                 $driver->update([
                     'nama_driver' => $request->nama_driver,
                     'no_hp' => $request->no_hp,
-                    'nama_mobil' => $request->nama_mobil,
-                    'nomor_plat' => $request->nomor_plat,
-                    'kapasitas_mobil' => $request->kapasitas_mobil,
+                    'armada_id' => $request->armada_id,
                     'status_driver' => $request->status_driver,
                 ]);
             });

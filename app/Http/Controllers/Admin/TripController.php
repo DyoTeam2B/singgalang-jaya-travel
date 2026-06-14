@@ -28,14 +28,16 @@ class TripController extends Controller
         }
 
         $trips = Trip::query()
-            ->with(['driver', 'jadwal.rute', 'detailTrips.booking.pelanggan'])
+            ->with(['driver', 'jadwal.rute', 'detailTrips.booking.pelanggan', 'armada'])
             ->when($status, function ($query) use ($status) {
                 $query->where('status_trip', $status);
             })
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->whereHas('driver', function ($drvQuery) use ($search) {
-                        $drvQuery->where('nama_driver', 'like', "%{$search}%")
+                        $drvQuery->where('nama_driver', 'like', "%{$search}%");
+                    })->orWhereHas('armada', function ($armQuery) use ($search) {
+                        $armQuery->where('nama_mobil', 'like', "%{$search}%")
                                  ->orWhere('nomor_plat', 'like', "%{$search}%");
                     })->orWhereHas('jadwal.rute', function ($ruteQuery) use ($search) {
                         $ruteQuery->where('asal', 'like', "%{$search}%")
@@ -81,7 +83,12 @@ class TripController extends Controller
             ->latest()
             ->get();
 
-        return view('admin.trips.create', compact('schedules', 'drivers'));
+        // Fetch active armadas
+        $armadas = \App\Models\Armada::where('status_armada', 'aktif')
+            ->latest()
+            ->get();
+
+        return view('admin.trips.create', compact('schedules', 'drivers', 'armadas'));
     }
 
     /**
@@ -92,6 +99,7 @@ class TripController extends Controller
         $trip = Trip::create([
             'jadwal_id' => $request->jadwal_id,
             'driver_id' => $request->driver_id,
+            'armada_id' => $request->armada_id,
             'status_trip' => 'ready',
         ]);
 
@@ -105,15 +113,26 @@ class TripController extends Controller
      */
     public function show(Trip $trip)
     {
-        $trip->load(['driver', 'jadwal.rute', 'detailTrips.booking.pelanggan']);
+        $trip->load(['driver', 'jadwal.rute', 'detailTrips.booking.pelanggan', 'armada']);
 
         // Fetch drivers that are active, and:
         // - Either they don't have any active trip (ready/on_trip) OR they are the current driver of this trip.
-        $drivers = Driver::where('status_driver', 'aktif')
+        $drivers = Driver::with('armada')->where('status_driver', 'aktif')
             ->where(function($query) use ($trip) {
                 $query->whereDoesntHave('trips', function($q) {
                     $q->whereIn('status_trip', ['ready', 'on_trip']);
                 })->orWhere('id', $trip->driver_id);
+            })
+            ->latest()
+            ->get();
+
+        // Fetch armadas that are active, and:
+        // - Either they don't have any active trip (ready/on_trip) OR they are the current armada of this trip.
+        $armadas = \App\Models\Armada::where('status_armada', 'aktif')
+            ->where(function($query) use ($trip) {
+                $query->whereDoesntHave('trips', function($q) {
+                    $q->whereIn('status_trip', ['ready', 'on_trip']);
+                })->orWhere('id', $trip->armada_id);
             })
             ->latest()
             ->get();
@@ -125,7 +144,7 @@ class TripController extends Controller
             ->latest()
             ->get();
 
-        return view('admin.trips.show', compact('trip', 'drivers', 'availableBookings'));
+        return view('admin.trips.show', compact('trip', 'drivers', 'armadas', 'availableBookings'));
     }
 
     /**
@@ -143,6 +162,7 @@ class TripController extends Controller
     {
         $request->validate([
             'driver_id' => 'nullable|exists:drivers,id',
+            'armada_id' => 'nullable|exists:armada,id',
             'status_trip' => 'nullable|in:new,ready,on_trip,completed,cancelled',
         ]);
 
@@ -166,6 +186,26 @@ class TripController extends Controller
             }
 
             $updateData['driver_id'] = $request->driver_id;
+        }
+
+        if ($request->has('armada_id')) {
+            $armada = \App\Models\Armada::findOrFail($request->armada_id);
+
+            if ($armada->status_armada === 'nonaktif') {
+                return redirect()->back()->with('error', 'Armada tidak aktif.');
+            }
+
+            // check if armada is already assigned to another active trip
+            $hasOtherActiveTrip = \App\Models\Trip::where('id', '!=', $trip->id)
+                ->where('armada_id', $request->armada_id)
+                ->whereIn('status_trip', ['ready', 'on_trip'])
+                ->exists();
+
+            if ($hasOtherActiveTrip) {
+                return redirect()->back()->with('error', 'Armada sedang digunakan di trip lain.');
+            }
+
+            $updateData['armada_id'] = $request->armada_id;
         }
 
         if ($request->has('status_trip')) {
@@ -249,7 +289,7 @@ class TripController extends Controller
         $currentPax = $trip->detailTrips->sum(function($dt) {
             return $dt->booking ? $dt->booking->jumlah_penumpang : 0;
         });
-        $capacity = $trip->driver ? $trip->driver->kapasitas_mobil : 5;
+        $capacity = $trip->armada ? $trip->armada->kapasitas : 5;
         $remainingSeats = $capacity - $currentPax;
 
         if ($booking->jumlah_penumpang > $remainingSeats) {

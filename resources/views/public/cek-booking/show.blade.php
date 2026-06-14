@@ -313,7 +313,7 @@
 
                         @if($driver)
                             <p class="text-sm font-medium text-slate-400 mb-5 leading-relaxed">
-                                Perjalanan Anda ditugaskan ke armada {{ $driver->nama_mobil ?? 'Travel' }}. Driver akan segera menghubungi Anda.
+                                Perjalanan Anda ditugaskan ke armada {{ $trip->armada->nama_mobil ?? 'Travel' }}. Driver akan segera menghubungi Anda.
                             </p>
                             <div class="space-y-3">
                                 <div class="flex items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10">
@@ -334,10 +334,10 @@
                                         <p class="text-sm font-bold text-white">{{ $driver->no_hp }}</p>
                                     </div>
                                 </div>
-                                @if($driver->nomor_plat)
+                                @if($trip->armada?->nomor_plat)
                                     <div class="p-3 bg-white/5 rounded-xl border border-white/10 flex justify-between items-center">
                                         <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Nomor Plat</span>
-                                        <span class="bg-blue-800 text-xs px-3 py-1.5 rounded-lg font-mono font-bold text-white">{{ $driver->nomor_plat }}</span>
+                                        <span class="bg-blue-800 text-xs px-3 py-1.5 rounded-lg font-mono font-bold text-white">{{ $trip->armada->nomor_plat }}</span>
                                     </div>
                                 @endif
                             </div>

@@ -288,9 +288,13 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Kendaraan</p>
-                                    <p class="text-xs font-bold text-slate-900">{{ $selectedDriver->nama_mobil }} · <span class="uppercase">{{ $selectedDriver->nomor_plat }}</span></p>
-                                    <p class="text-[10px] font-bold text-slate-400">Kapasitas {{ $selectedDriver->kapasitas_mobil }} penumpang</p>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Kendaraan (Armada)</p>
+                                    @if($selectedDriver->armada)
+                                        <p class="text-xs font-bold text-slate-900">{{ $selectedDriver->armada->nama_mobil }} · <span class="uppercase">{{ $selectedDriver->armada->nomor_plat }}</span></p>
+                                        <p class="text-[10px] font-bold text-slate-400">Kapasitas {{ $selectedDriver->armada->kapasitas }} penumpang</p>
+                                    @else
+                                        <p class="text-xs font-bold text-red-500">Tidak ada armada ditautkan</p>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -309,7 +313,7 @@
                                             <svg class="w-5 h-5 text-blue-200 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124l-.318-5.085a1.875 1.875 0 00-1.875-1.758h-11.5c-.955 0-1.782.686-1.875 1.635l-.178 1.82M12 9.75V3m0 0L8.25 6.75M12 3l3.75 3.75m-9.375 9h15.75"></path>
                                             </svg>
-                                            <span class="text-[11px] font-bold">{{ $selectedDriver->nama_mobil }} (<span class="uppercase">{{ $selectedDriver->nomor_plat }}</span>)</span>
+                                            <span class="text-[11px] font-bold">{{ $selectedDriver->armada->nama_mobil ?? 'Mobil' }} (<span class="uppercase">{{ $selectedDriver->armada->nomor_plat ?? '-' }}</span>)</span>
                                         </div>
                                     </div>
                                     <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl"></div>
@@ -492,63 +496,24 @@
                         @enderror
                     </div>
 
-                    <!-- Informasi Kendaraan -->
-                    <div class="md:col-span-2 p-5 bg-blue-50/40 border border-blue-100 rounded-2xl space-y-4">
-                        <p class="text-[10px] font-black text-blue-700 uppercase tracking-widest flex items-center gap-2">
-                            <!-- Car Icon -->
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124l-.318-5.085a1.875 1.875 0 00-1.875-1.758h-11.5c-.955 0-1.782.686-1.875 1.635l-.178 1.82M12 9.75V3m0 0L8.25 6.75M12 3l3.75 3.75m-9.375 9h15.75"></path>
-                            </svg>
-                            Informasi Kendaraan Driver
-                        </p>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <!-- Nama Mobil -->
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nama Mobil</label>
-                                <input
-                                    required
-                                    type="text"
-                                    name="nama_mobil"
-                                    value="{{ old('action_type') === 'create' ? old('nama_mobil') : 'Toyota Avanza' }}"
-                                    class="w-full px-4 py-3 bg-white border-slate-200 rounded-xl text-xs font-bold outline-none focus:ring-4 focus:ring-blue-600/10 @error('nama_mobil') border-red-500 @enderror"
-                                    placeholder="Toyota Avanza"
-                                />
-                                @error('nama_mobil')
-                                    <p class="text-[10px] text-red-500 font-bold mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <!-- Plat Nomor -->
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Plat Nomor</label>
-                                <input
-                                    required
-                                    type="text"
-                                    name="nomor_plat"
-                                    value="{{ old('action_type') === 'create' ? old('nomor_plat') : '' }}"
-                                    class="w-full px-4 py-3 bg-white border-slate-200 rounded-xl text-xs font-bold outline-none focus:ring-4 focus:ring-blue-600/10 uppercase @error('nomor_plat') border-red-500 @enderror"
-                                    placeholder="BA 1234 XY"
-                                />
-                                @error('nomor_plat')
-                                    <p class="text-[10px] text-red-500 font-bold mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            <!-- Kapasitas -->
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Kapasitas</label>
-                                <input
-                                    required
-                                    type="number"
-                                    name="kapasitas_mobil"
-                                    min="1"
-                                    max="20"
-                                    value="{{ old('action_type') === 'create' ? old('kapasitas_mobil') : 5 }}"
-                                    class="w-full px-4 py-3 bg-white border-slate-200 rounded-xl text-xs font-bold outline-none focus:ring-4 focus:ring-blue-600/10 @error('kapasitas_mobil') border-red-500 @enderror"
-                                />
-                                @error('kapasitas_mobil')
-                                    <p class="text-[10px] text-red-500 font-bold mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
+                    <!-- Pilih Armada -->
+                    <div class="md:col-span-2 space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pilih Armada (Kendaraan)</label>
+                        <select 
+                            required
+                            name="armada_id"
+                            class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold focus:ring-4 focus:ring-slate-900/5 transition-all @error('armada_id') ring-2 ring-red-500 @enderror"
+                        >
+                            <option value="">Pilih Armada...</option>
+                            @foreach($armadas as $armada)
+                                <option value="{{ $armada->id }}" {{ (old('action_type') === 'create' ? old('armada_id') : '') == $armada->id ? 'selected' : '' }}>
+                                    {{ $armada->nama_mobil }} · {{ $armada->nomor_plat }} (Kapasitas: {{ $armada->kapasitas }} Pax)
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('armada_id')
+                            <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Status Awal -->
@@ -724,60 +689,24 @@
                             @enderror
                         </div>
 
-                        <!-- Informasi Kendaraan -->
-                        <div class="md:col-span-2 p-5 bg-blue-50/40 border border-blue-100 rounded-2xl space-y-4">
-                            <p class="text-[10px] font-black text-blue-700 uppercase tracking-widest flex items-center gap-2">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124l-.318-5.085a1.875 1.875 0 00-1.875-1.758h-11.5c-.955 0-1.782.686-1.875 1.635l-.178 1.82M12 9.75V3m0 0L8.25 6.75M12 3l3.75 3.75m-9.375 9h15.75"></path>
-                                </svg>
-                                Informasi Kendaraan Driver
-                            </p>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <!-- Nama Mobil -->
-                                <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nama Mobil</label>
-                                    <input
-                                        required
-                                        type="text"
-                                        name="nama_mobil"
-                                        value="{{ old('action_type') === 'edit' ? old('nama_mobil') : $selectedDriver->nama_mobil }}"
-                                        class="w-full px-4 py-3 bg-white border-slate-200 rounded-xl text-xs font-bold outline-none focus:ring-4 focus:ring-blue-600/10 @error('nama_mobil') border-red-500 @enderror"
-                                    />
-                                    @error('nama_mobil')
-                                        <p class="text-[10px] text-red-500 font-bold mt-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                                <!-- Plat Nomor -->
-                                <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Plat Nomor</label>
-                                    <input
-                                        required
-                                        type="text"
-                                        name="nomor_plat"
-                                        value="{{ old('action_type') === 'edit' ? old('nomor_plat') : $selectedDriver->nomor_plat }}"
-                                        class="w-full px-4 py-3 bg-white border-slate-200 rounded-xl text-xs font-bold outline-none focus:ring-4 focus:ring-blue-600/10 uppercase @error('nomor_plat') border-red-500 @enderror"
-                                    />
-                                    @error('nomor_plat')
-                                        <p class="text-[10px] text-red-500 font-bold mt-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                                <!-- Kapasitas -->
-                                <div class="space-y-2">
-                                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Kapasitas</label>
-                                    <input
-                                        required
-                                        type="number"
-                                        name="kapasitas_mobil"
-                                        min="1"
-                                        max="20"
-                                        value="{{ old('action_type') === 'edit' ? old('kapasitas_mobil') : $selectedDriver->kapasitas_mobil }}"
-                                        class="w-full px-4 py-3 bg-white border-slate-200 rounded-xl text-xs font-bold outline-none focus:ring-4 focus:ring-blue-600/10 @error('kapasitas_mobil') border-red-500 @enderror"
-                                    />
-                                    @error('kapasitas_mobil')
-                                        <p class="text-[10px] text-red-500 font-bold mt-1">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
+                        <!-- Pilih Armada -->
+                        <div class="md:col-span-2 space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pilih Armada (Kendaraan)</label>
+                            <select 
+                                required
+                                name="armada_id"
+                                class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold focus:ring-4 focus:ring-slate-900/5 transition-all @error('armada_id') ring-2 ring-red-500 @enderror"
+                            >
+                                <option value="">Pilih Armada...</option>
+                                @foreach($armadas as $armada)
+                                    <option value="{{ $armada->id }}" {{ (old('action_type') === 'edit' ? old('armada_id') : $selectedDriver->armada_id) == $armada->id ? 'selected' : '' }}>
+                                        {{ $armada->nama_mobil }} · {{ $armada->nomor_plat }} (Kapasitas: {{ $armada->kapasitas }} Pax)
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('armada_id')
+                                <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <!-- Status Driver -->

@@ -2,6 +2,35 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-14] - Rayhan - Sprint 3 (Armada Separation & CRUD)
+
+### Added
+* Migration `2026_06_07_000000_create_armada_table.php` untuk tabel `armada` terpisah.
+* Eloquent model `App\Models\Armada` dengan relasi `driver` dan `trips`.
+* Seeder `Database\Seeders\ArmadaSeeder` untuk menyuntikkan data armada.
+* Controller `App\Http\Controllers\Admin\ArmadaController` untuk operasi CRUD armada.
+* Form request `App\Http\Requests\Admin\StoreArmadaRequest` & `UpdateArmadaRequest` untuk memvalidasi form armada.
+* View `resources/views/admin/armada/index.blade.php` untuk antarmuka CRUD armada menggunakan modal.
+* Tes fitur `Tests\Feature\Admin\ArmadaTest` untuk menjamin kualitas fitur CRUD armada.
+
+### Changed
+* Modifikasi migration `2026_06_07_000004_create_drivers_table.php` untuk menambahkan foreign key `armada_id` dan menghapus kolom spesifikasi kendaraan langsung.
+* Modifikasi migration `2026_06_07_000007_create_trips_table.php` untuk menambahkan foreign key `armada_id`.
+* Modifikasi model `App\Models\Driver` dan `App\Models\Trip` untuk relasi `armada` (`belongsTo`).
+* Modifikasi controller `App\Http\Controllers\Admin\DriverController` dan `App\Http\Controllers\Admin\TripController` untuk menyesuaikan relasi armada yang baru.
+* Modifikasi controller `App\Http\Controllers\HomeController` dan `App\Http\Controllers\CekBookingController` untuk memuat data armada dari relasi.
+* Modifikasi views `admin.drivers.index`, `admin.trips.index`, `admin.trips.create`, `admin.trips.show` agar mengambil detail kendaraan dari relasi `armada`.
+* Modifikasi public views `home.blade.php` (Landing Page) dan `cek-booking.show.blade.php` agar membaca detail armada dari model Armada.
+* Modifikasi driver view `dashboard.blade.php` agar memuat detail armada dari relasi driver.
+* Modifikasi seeder `DriverSeeder` dan `DatabaseSeeder` untuk menautkan driver ke armada yang valid.
+* Modifikasi `routes/web.php` untuk menambahkan resource route `admin.armada`.
+* Modifikasi component `resources/views/components/sidebar-admin.blade.php` untuk mengarahkan link armada ke route `admin.armada.index`.
+* Modifikasi test suite `Tests\Feature\Admin\DriverTest` untuk menyertakan `armada_id` pada factory/seeder driver.
+
+### Fixed
+* Perbaikan method `assignBooking` pada controller dan form action binding di `admin.trips.index` menggunakan dynamic `url()` helper agar dapat berfungsi di subdirektori.
+* Menghindari JavaScript / Alpine.js syntax error pada pencarian driver, armada, dan booking di `admin.trips.show` dengan membalut string data PHP menggunakan `addslashes()`.
+
 ## [2026-06-14] - Nayasha - Sprint 2
 
 ### Added

@@ -285,18 +285,23 @@ flowchart TD
 | Driver Dashboard | Dashboard utama dengan Sidebar layout kustom |
 | Profile | Edit profile page + partials |
 | Livewire directory | `app/Livewire/` (terstruktur), `resources/views/livewire/` |
+| Pemisahan Tabel Armada | Tabel `armada` terpisah, relasi `armada_id` pada `drivers` dan `trips` |
+| CRUD Armada (Admin) | Manajemen armada via modal dialog |
+| Update Driver CRUD | Dropdown pilihan armada terintegrasi |
+| Update Trip CRUD | Dropdown armada terintegrasi dan kapasitas terhitung otomatis |
+| Penyesuaian Flow Booking | Booking tanpa batas 30 menit (DP flat Rp50.000) & tanpa token booking |
 
-### 🔲 Belum Dikerjakan (Perubahan dari Keputusan Final)
+### 🔲 Belum Dikerjakan / Dalam Proses
 
-- Tambah tabel `armada` (terpisah dari driver)
-- Tambah kolom `armada_id` pada tabel `drivers`
-- Tambah kolom `armada_id` pada tabel `trips`
-- CRUD Armada (Admin)
-- Update CRUD Driver (link ke armada)
-- Update Trip management (assign armada)
-- Booking flow tanpa timer 30 menit
-- Hapus konsep token booking
-- Driver konfirmasi pelunasan
+- Booking Saya (halaman list + detail booking pelanggan — pengganti Cek Booking)
+- Driver Dashboard (controller + proper view)
+- Driver Trip operations (TripController, start/pickup/dropoff/complete)
+- Driver Konfirmasi Pelunasan
+- Map Viewer (driver + admin trip)
+- Admin Laporan + Export
+- Status booking auto-update (observer/listener)
+- WhatsApp scheduler (konfirmasi pagi hari)
+- Responsive polish semua halaman
 
 ---
 

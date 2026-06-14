@@ -4,6 +4,7 @@
     <div x-data="{
         scheduleId: '{{ old('jadwal_id', request('jadwal_id')) }}',
         driverId: '{{ old('driver_id') }}',
+        armadaId: '{{ old('armada_id') }}',
         schedules: {{ $schedules->map(fn($s) => [
             'id' => $s->id,
             'date' => $s->tanggal_keberangkatan->format('d M Y'),
@@ -14,15 +15,22 @@
         drivers: {{ $drivers->map(fn($d) => [
             'id' => $d->id,
             'name' => $d->nama_driver,
-            'plate' => $d->nomor_plat,
-            'model' => $d->nama_mobil,
-            'capacity' => $d->kapasitas_mobil
+            'phone' => $d->no_hp
+        ])->toJson() }},
+        armadas: {{ $armadas->map(fn($a) => [
+            'id' => $a->id,
+            'name' => $a->nama_mobil,
+            'plate' => $a->nomor_plat,
+            'capacity' => $a->kapasitas
         ])->toJson() }},
         get selectedSchedule() {
             return this.schedules.find(s => s.id == this.scheduleId);
         },
         get selectedDriver() {
             return this.drivers.find(d => d.id == this.driverId);
+        },
+        get selectedArmada() {
+            return this.armadas.find(a => a.id == this.armadaId);
         }
     }" class="space-y-8 font-poppins max-w-4xl mx-auto py-6">
 
@@ -31,7 +39,7 @@
             <div>
                 <p class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-2">Operasional Trip</p>
                 <h1 class="text-3xl font-black text-slate-900 tracking-tight">Buat Trip Baru</h1>
-                <p class="text-sm font-bold text-slate-400 mt-1">Buat trip baru dengan menautkan jadwal aktif dan driver.</p>
+                <p class="text-sm font-bold text-slate-400 mt-1">Buat trip baru dengan menautkan jadwal aktif, driver, dan armada.</p>
             </div>
             <a href="{{ route('admin.trips.index') }}"
                class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium px-5 py-3 rounded-xl text-xs flex items-center gap-2 transition-all">
@@ -82,11 +90,31 @@
                         <option value="">Pilih Driver Tersedia...</option>
                         @foreach($drivers as $d)
                             <option value="{{ $d->id }}">
-                                {{ $d->nama_driver }} · {{ $d->nomor_plat }} ({{ $d->nama_mobil }})
+                                {{ $d->nama_driver }} · (Armada Default: {{ $d->armada->nama_mobil ?? 'Tidak ada' }} · {{ $d->armada->nomor_plat ?? '-' }})
                             </option>
                         @endforeach
                     </select>
                     @error('driver_id')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Armada Select -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label for="armada_id" class="block text-sm font-medium text-slate-700">Armada (Mobil)</label>
+                        <span class="text-xs font-bold text-slate-400" x-text="armadas.length + ' armada aktif tersedia'"></span>
+                    </div>
+                    <select id="armada_id" name="armada_id" x-model="armadaId"
+                            class="w-full border border-slate-300 rounded-xl h-12 px-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                        <option value="">Pilih Armada Tersedia...</option>
+                        @foreach($armadas as $a)
+                            <option value="{{ $a->id }}">
+                                {{ $a->nama_mobil }} · {{ $a->nomor_plat }} (Kapasitas: {{ $a->kapasitas }} Pax)
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('armada_id')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -112,22 +140,39 @@
                     </div>
                 </template>
 
-                <!-- Driver & Vehicle Live Preview -->
+                <!-- Driver Live Preview -->
                 <template x-if="selectedDriver">
                     <div class="p-5 bg-emerald-50/50 border border-emerald-100 rounded-xl space-y-2 animate-in fade-in duration-300">
-                        <p class="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Detail Driver & Kendaraan</p>
+                        <p class="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Detail Driver</p>
                         <div class="grid grid-cols-2 gap-4 text-xs font-bold text-slate-600">
                             <div>
                                 <p class="text-[10px] font-medium text-slate-400 uppercase">Nama Driver</p>
                                 <p class="text-slate-900 font-extrabold mt-0.5" x-text="selectedDriver.name"></p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-medium text-slate-400 uppercase">Kendaraan (Otomatis)</p>
-                                <p class="text-slate-900 font-extrabold mt-0.5" x-text="selectedDriver.model + ' · ' + selectedDriver.plate"></p>
+                                <p class="text-[10px] font-medium text-slate-400 uppercase">Kontak HP</p>
+                                <p class="text-slate-900 font-extrabold mt-0.5" x-text="selectedDriver.phone"></p>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Armada Live Preview -->
+                <template x-if="selectedArmada">
+                    <div class="p-5 bg-blue-50 border border-blue-100 rounded-xl space-y-2 animate-in fade-in duration-300">
+                        <p class="text-[10px] font-black text-blue-700 uppercase tracking-widest">Detail Kendaraan</p>
+                        <div class="grid grid-cols-2 gap-4 text-xs font-bold text-slate-600">
+                            <div>
+                                <p class="text-[10px] font-medium text-slate-400 uppercase">Mobil / Tipe</p>
+                                <p class="text-slate-900 font-extrabold mt-0.5" x-text="selectedArmada.name"></p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-medium text-slate-400 uppercase">Kapasitas Maksimal</p>
-                                <p class="text-slate-900 font-extrabold mt-0.5" x-text="selectedDriver.capacity + ' Penumpang'"></p>
+                                <p class="text-[10px] font-medium text-slate-400 uppercase">Plat Nomor</p>
+                                <p class="text-slate-900 font-extrabold mt-0.5 x-text" x-text="selectedArmada.plate"></p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-medium text-slate-400 uppercase">Kapasitas Kursi</p>
+                                <p class="text-slate-900 font-extrabold mt-0.5" x-text="selectedArmada.capacity + ' Kursi'"></p>
                             </div>
                         </div>
                     </div>
@@ -139,7 +184,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.063.852l-.708 2.836a.75.75 0 001.063.852l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"></path>
                     </svg>
                     <p class="text-xs font-semibold text-blue-800 leading-relaxed">
-                        Data armada (mobil, plat nomor, kapasitas) secara otomatis mengikuti data profil driver yang dipilih. Pelanggan dapat dialokasikan ke trip ini setelah trip berhasil dibuat.
+                        Data armada (mobil, plat nomor, kapasitas) wajib dispesifikasikan terpisah dari driver. Pelanggan dapat dialokasikan ke trip ini setelah trip berhasil dibuat.
                     </p>
                 </div>
 
@@ -150,7 +195,7 @@
                         Batal
                     </a>
                     <button type="submit"
-                            class="bg-blue-800 hover:bg-blue-900 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm">
+                             class="bg-blue-800 hover:bg-blue-900 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm">
                         Buat Trip
                     </button>
                 </div>

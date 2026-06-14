@@ -72,6 +72,18 @@
             Rute
         </a>
 
+        <!-- Armada Link -->
+        @php
+            $armadaActive = request()->routeIs('admin.armada.*');
+            $armadaUrl = Route::has('admin.armada.index') ? route('admin.armada.index') : '#';
+        @endphp
+        <a href="{{ $armadaUrl }}" class="flex items-center gap-4 px-5 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 group {{ $armadaActive ? 'bg-blue-600 text-white shadow-xl shadow-blue-600/20' : 'text-slate-400 hover:bg-white/5 hover:text-white' }}">
+            <svg class="w-5 h-5 transition-transform duration-300 group-hover:scale-110 {{ $armadaActive ? 'text-white' : 'text-slate-500 group-hover:text-blue-400' }}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124l-.318-5.085a1.875 1.875 0 00-1.875-1.758h-11.5c-.955 0-1.782.686-1.875 1.635l-.178 1.82M12 9.75V3m0 0L8.25 6.75M12 3l3.75 3.75m-9.375 9h15.75"></path>
+            </svg>
+            Armada
+        </a>
+
         <!-- Jadwal Link -->
         @php
             $jadwalActive = request()->routeIs('admin.jadwal.*');

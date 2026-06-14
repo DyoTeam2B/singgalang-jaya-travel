@@ -70,10 +70,6 @@
 
 ### 🔲 Belum Dikerjakan
 
-- Tambah tabel `armada` (terpisah dari driver)
-- Tambah kolom `armada_id` pada `drivers` dan `trips`
-- CRUD Armada (Admin)
-- Update Driver management (link ke armada)
 - Booking Saya (halaman list + detail booking pelanggan — pengganti Cek Booking)
 - Driver Dashboard (controller + proper view)
 - Driver Trip operations (TripController, start/pickup/dropoff/complete)
@@ -112,7 +108,7 @@
 | Admin Dashboard | 1 | 1 | ✅ |
 | Admin Layout + Sidebar | — | 2 | ✅ |
 | Admin Rute CRUD | 6 | 3 | ✅ |
-| Admin Armada CRUD | 6 | 3 | 🔲 |
+| Admin Armada CRUD | 6 | 3 | ✅ |
 | Admin Jadwal CRUD | 7 | 3 | ✅ |
 | Admin Laporan | 2 | 1 | 🔲 |
 
@@ -152,11 +148,11 @@ Semua tugas fondasi telah diselesaikan: Setup project, Breeze auth, RoleMiddlewa
 
 | PIC | Migration | Status |
 |-----|-----------|--------|
-| RYF | `create_armada_table` | 🔲 Perlu dibuat baru |
-| NYS | `create_drivers_table` (update: tambah `armada_id`) | 🔲 Perlu update |
+| RYF | `create_armada_table` | ✅ Selesai |
+| NYS | `create_drivers_table` (update: tambah `armada_id`) | ✅ Selesai |
 | RYF | `create_rute_table`, `create_jadwal_table` | ✅ Selesai |
 | RYH | `create_pelanggan_table`, `create_bookings_table`, `create_pembayaran_table` | ✅ Selesai |
-| KVN | `create_trips_table` (update: tambah `armada_id`), `create_detail_trip_table` | 🔲 Perlu update |
+| KVN | `create_trips_table` (update: tambah `armada_id`), `create_detail_trip_table` | ✅ Selesai |
 | RYH | `create_whatsapp_notifications_table` | ✅ Selesai |
 
 ---
@@ -231,7 +227,7 @@ Semua tugas fondasi telah diselesaikan: Setup project, Breeze auth, RoleMiddlewa
 
 ---
 
-### Sprint 3 — Armada + Driver Operations & Trip 🔲 BELUM
+### Sprint 3 — Armada + Driver Operations & Trip [/] SEDANG BERJALAN
 
 **Durasi**: 5 hari
 
@@ -239,11 +235,11 @@ Semua tugas fondasi telah diselesaikan: Setup project, Breeze auth, RoleMiddlewa
 
 | Task | PIC | Routes | Status |
 |------|-----|--------|--------|
-| Migration `create_armada_table` | RYF | — | 🔲 |
-| Update migration `drivers` (tambah `armada_id`) | NYS | — | 🔲 |
-| Update migration `trips` (tambah `armada_id`) | KVN | — | 🔲 |
-| Admin Armada CRUD | RYF | 6 routes | 🔲 |
-| Update Admin Driver (link ke armada) | NYS | Update existing | 🔲 |
+| Migration `create_armada_table` | RYF | — | ✅ |
+| Update migration `drivers` (tambah `armada_id`) | NYS | — | ✅ |
+| Update migration `trips` (tambah `armada_id`) | KVN | — | ✅ |
+| Admin Armada CRUD | RYF | 6 routes | ✅ |
+| Update Admin Driver (link ke armada) | NYS | Update existing | ✅ |
 | Booking Saya (list + detail, pengganti Cek Booking) | RYH | 2 routes | 🔲 |
 | Driver Dashboard (controller + proper view) | KVN | `driver.dashboard` | 🔲 |
 | Driver Trip List + Detail/Manifest | KVN | 2 routes | 🔲 |
@@ -369,7 +365,7 @@ flowchart LR
 | `app/Http/Controllers/Admin/PembayaranController.php` | NYS | ✅ |
 | `app/Http/Controllers/Admin/DriverController.php` | NYS | ✅ |
 | `app/Http/Controllers/Admin/TripController.php` | KVN | ✅ |
-| `app/Http/Controllers/Admin/ArmadaController.php` | RYF | 🔲 |
+| `app/Http/Controllers/Admin/ArmadaController.php` | RYF | ✅ |
 | `app/Http/Controllers/Admin/LaporanController.php` | RYF | 🔲 |
 | `app/Http/Controllers/Driver/DashboardController.php` | KVN | 🔲 |
 | `app/Http/Controllers/Driver/TripController.php` | KVN | 🔲 |
@@ -381,7 +377,7 @@ flowchart LR
 | `app/Livewire/BookingForm.php` | RYH | ✅ |
 | `app/Livewire/Admin/BookingTable.php` | NYS | ✅ |
 | `app/Livewire/Admin/PembayaranTable.php` | NYS | ✅ |
-| `app/Livewire/Admin/ArmadaTable.php` | RYF | 🔲 |
+| `app/Livewire/Admin/ArmadaTable.php` | RYF | ❌ (Tidak diperlukan, CRUD menggunakan modal) |
 | `app/Livewire/Driver/TripManifest.php` | KVN | 🔲 |
 
 ### Services
@@ -408,7 +404,7 @@ flowchart LR
 | `resources/views/admin/dashboard.blade.php` | RYF | ✅ |
 | `resources/views/admin/rute/*` (3 files) | RYF | ✅ |
 | `resources/views/admin/jadwal/*` (3 files) | RYF | ✅ |
-| `resources/views/admin/armada/*` | RYF | 🔲 |
+| `resources/views/admin/armada/*` | RYF | ✅ (index.blade.php modal CRUD) |
 | `resources/views/admin/laporan/*` | RYF | 🔲 |
 | `resources/views/admin/bookings/index.blade.php` | NYS | ✅ |
 | `resources/views/admin/bookings/show.blade.php` | NYS | ✅ |

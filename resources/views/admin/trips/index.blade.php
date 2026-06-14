@@ -107,9 +107,9 @@
 
                             <!-- Action -->
                             @php
-                                $tripsForThisBooking = \App\Models\Trip::where('jadwal_id', $booking->jadwal_id)
+                                 $tripsForThisBooking = \App\Models\Trip::where('jadwal_id', $booking->jadwal_id)
                                     ->whereIn('status_trip', ['new', 'ready'])
-                                    ->with('driver')
+                                    ->with(['driver', 'armada'])
                                     ->get()
                                     ->map(function($t) {
                                         $currentPax = $t->detailTrips->sum(function($dt) {
@@ -118,8 +118,8 @@
                                         return [
                                             'id' => $t->id,
                                             'driver_name' => $t->driver->nama_driver ?? 'Belum Ditugaskan',
-                                            'plate' => $t->driver->nomor_plat ?? '-',
-                                            'capacity' => $t->driver->kapasitas_mobil ?? 5,
+                                            'plate' => $t->armada->nomor_plat ?? '-',
+                                            'capacity' => $t->armada->kapasitas ?? 5,
                                             'pax' => $currentPax,
                                         ];
                                     });
@@ -186,7 +186,7 @@
                             $totalPax = $trip->detailTrips->sum(function($dt) {
                                 return $dt->booking ? $dt->booking->jumlah_penumpang : 0;
                             });
-                            $capacity = $trip->driver ? $trip->driver->kapasitas_mobil : 5;
+                            $capacity = $trip->armada ? $trip->armada->kapasitas : 5;
                             $isFull = $totalPax >= $capacity;
                             $percentage = min(100, ($totalPax / $capacity) * 100);
                         @endphp
@@ -218,7 +218,7 @@
                                                 <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.129-1.125V11.25c0-.447-.266-.852-.676-1.03l-2.222-.962V5.25a2.25 2.25 0 00-2.25-2.25h-5.25a2.25 2.25 0 00-2.25 2.25v2.607L6.216 9.19a1.125 1.125 0 00-.676 1.03v4.5c0 .621.504 1.125 1.125 1.125h1.125m9.75 0v-4.5M6.75 14.25h12m-.75-3.75h-10.5M12 3v3.75M9.75 6.75H12"></path>
                                                 </svg>
-                                                {{ $trip->driver->nomor_plat ?? '-' }} ({{ $trip->driver->nama_mobil ?? '-' }})
+                                                {{ $trip->armada->nomor_plat ?? '-' }} ({{ $trip->armada->nama_mobil ?? '-' }})
                                             </span>
                                         </div>
                                     </div>
@@ -357,7 +357,7 @@
                                     <p class="text-[9px] font-bold text-slate-500 truncate" x-text="trip.plate"></p>
                                     <span class="inline-flex px-2 py-0.5 rounded-full text-[8px] font-black uppercase bg-blue-50 text-blue-600 border border-blue-100 mt-1.5" x-text="trip.pax + ' / ' + trip.capacity + ' PAX'"></span>
                                 </div>
-                                <form :action="'/admin/trips/' + trip.id + '/assign'" method="POST" class="shrink-0">
+                                <form :action="'{{ url('admin/trips') }}/' + trip.id + '/assign'" method="POST" class="shrink-0">
                                     @csrf
                                     <input type="hidden" name="booking_id" :value="assignBookingId">
                                     <button type="submit" 

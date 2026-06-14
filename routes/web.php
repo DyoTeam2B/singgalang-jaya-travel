@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
          ->group(function () {
              Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
              Route::resource('rute', \App\Http\Controllers\Admin\RuteController::class);
+             Route::resource('armada', \App\Http\Controllers\Admin\ArmadaController::class);
              Route::resource('jadwal', \App\Http\Controllers\Admin\JadwalController::class);
              Route::put('jadwal/{jadwal}/toggle', [\App\Http\Controllers\Admin\JadwalController::class, 'toggleStatus'])->name('jadwal.toggle');
              Route::resource('drivers', \App\Http\Controllers\Admin\DriverController::class);

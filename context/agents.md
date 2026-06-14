@@ -53,34 +53,35 @@ app/Http/Controllers/
 │   ├── PasswordResetLinkController.php
 │   ├── RegisteredUserController.php
 │   └── VerifyEmailController.php
-├── Admin/                             ← 🔲 BUAT BARU
-│   ├── DashboardController.php
-│   ├── RuteController.php
-│   ├── ArmadaController.php
-│   ├── JadwalController.php
-│   ├── BookingController.php
-│   ├── PembayaranController.php
-│   ├── DriverController.php
-│   ├── TripController.php
-│   └── LaporanController.php
+├── Admin/                             ← ✅ SUDAH ADA
+│   ├── DashboardController.php        ← ✅ SUDAH ADA
+│   ├── RuteController.php             ← ✅ SUDAH ADA
+│   ├── ArmadaController.php           ← ✅ SUDAH ADA
+│   ├── JadwalController.php           ← ✅ SUDAH ADA
+│   ├── BookingController.php          ← ✅ SUDAH ADA
+│   ├── PembayaranController.php       ← ✅ SUDAH ADA
+│   ├── DriverController.php           ← ✅ SUDAH ADA
+│   ├── TripController.php             ← ✅ SUDAH ADA
+│   └── LaporanController.php          ← 🔲 BUAT BARU
 ├── Driver/                            ← 🔲 BUAT BARU
-│   ├── DashboardController.php
-│   └── TripController.php
+│   ├── DashboardController.php        ← 🔲 BUAT BARU
+│   └── TripController.php             ← 🔲 BUAT BARU
 
 ├── Controller.php                     ← ✅ SUDAH ADA
 ├── ProfileController.php              ← ✅ SUDAH ADA (Breeze)
-├── HomeController.php                 ← 🔲 BUAT BARU
-├── BookingController.php              ← 🔲 BUAT BARU
-├── PembayaranController.php           ← 🔲 BUAT BARU
-└── JadwalPublicController.php         ← 🔲 BUAT BARU
+├── HomeController.php                 ← ✅ SUDAH ADA
+├── BookingController.php              ← ✅ SUDAH ADA
+├── PembayaranController.php           ← ✅ SUDAH ADA
+├── CekBookingController.php           ← ✅ SUDAH ADA
+└── JadwalPublicController.php         ← ✅ SUDAH ADA
 ```
 
 ### Services
 
 ```
 app/Services/
-├── BookingService.php                  ← 🔲 BUAT BARU
-├── FonnteService.php                   ← 🔲 BUAT BARU (WhatsApp API)
+├── BookingService.php                  ← ✅ SUDAH ADA
+├── FonnteService.php                   ← ✅ SUDAH ADA (WhatsApp API)
 ├── PaymentVerificationService.php      ← 🔲 BUAT BARU
 ├── TripAssignmentService.php           ← 🔲 BUAT BARU
 └── DriverTripService.php               ← 🔲 BUAT BARU
@@ -96,15 +97,15 @@ app/Console/Commands/
 ### Livewire Components
 
 ```
-app/Livewire/                          ← ✅ DIRECTORY ADA (kosong)
-├── BookingForm.php                    ← 🔲 Optional: form booking interaktif
+app/Livewire/                          ← ✅ DIRECTORY ADA
+├── BookingForm.php                    ← ✅ SUDAH ADA
 ├── Admin/
-│   ├── BookingTable.php               ← 🔲 Optional: tabel dengan search/filter
-│   ├── PembayaranTable.php
-│   ├── ArmadaTable.php
-│   ├── JadwalTable.php
-│   ├── DriverTable.php
-│   └── TripTable.php
+│   ├── BookingTable.php               ← ✅ SUDAH ADA
+│   ├── PembayaranTable.php            ← ✅ SUDAH ADA
+│   ├── ArmadaTable.php                ← 🔲 Optional: tabel dengan search/filter
+│   ├── JadwalTable.php                ← 🔲 Optional
+│   ├── DriverTable.php                ← 🔲 Optional
+│   └── TripTable.php                  ← 🔲 Optional
 └── Driver/
     └── TripManifest.php               ← 🔲 Optional: manifest interaktif
 ```
@@ -129,10 +130,10 @@ resources/views/
 │   ├── status-badge.blade.php         ← ✅ SUDAH ADA
 │   ├── alert.blade.php                ← ✅ SUDAH ADA
 │   ├── card.blade.php                 ← ✅ SUDAH ADA
-│   ├── map-picker.blade.php           ← 🔲 BUAT BARU (Leaflet picker)
+│   ├── map-picker.blade.php           ← ✅ SUDAH ADA (Leaflet picker)
 │   ├── map-viewer.blade.php           ← 🔲 BUAT BARU (Leaflet viewer)
 │   └── [Breeze Components...]         ← ✅ 13 komponen Breeze
-├── livewire/                          ← ✅ DIRECTORY ADA (kosong)
+├── livewire/                          ← ✅ DIRECTORY ADA
 ├── auth/                              ← ✅ SUDAH ADA (6 views Breeze)
 ├── profile/                           ← ✅ SUDAH ADA (Breeze profile)
 ├── public/                            ← Halaman Pelanggan (Guest)
@@ -140,41 +141,39 @@ resources/views/
 │   ├── jadwal/
 │   │   └── index.blade.php            ← ✅ SUDAH ADA (Daftar jadwal)
 │   ├── booking/
-│   │   ├── create.blade.php           ← 🔲 BUAT BARU
-│   │   ├── review.blade.php           ← 🔲 BUAT BARU
+│   │   ├── create.blade.php           ← ✅ SUDAH ADA
+│   │   ├── review.blade.php           ← ✅ SUDAH ADA
 │   │   ├── index.blade.php            ← 🔲 BUAT BARU (Booking Saya)
 │   │   └── show.blade.php             ← 🔲 BUAT BARU (Detail Booking)
-│   └── pembayaran/
-│       └── show.blade.php             ← 🔲 BUAT BARU
+│   ├── pembayaran/
+│   │   └── show.blade.php             ← ✅ SUDAH ADA
+│   └── cek-booking/
+│       ├── index.blade.php            ← ✅ SUDAH ADA
+│       └── show.blade.php             ← ✅ SUDAH ADA
 ├── admin/                             ← Halaman Admin
 │   ├── dashboard.blade.php            ← ✅ SUDAH ADA (Dashboard panel)
 │   ├── rute/
-│   │   ├── index.blade.php            ← 🔲 BUAT BARU
-│   │   ├── create.blade.php           ← 🔲 BUAT BARU
-│   │   └── edit.blade.php             ← 🔲 BUAT BARU
+│   │   ├── index.blade.php            ← ✅ SUDAH ADA
+│   │   ├── create.blade.php           ← ✅ SUDAH ADA
+│   │   └── edit.blade.php             ← ✅ SUDAH ADA
 │   ├── armada/
-│   │   ├── index.blade.php            ← 🔲 BUAT BARU
-│   │   ├── create.blade.php           ← 🔲 BUAT BARU
-│   │   └── edit.blade.php             ← 🔲 BUAT BARU
+│   │   └── index.blade.php            ← ✅ SUDAH ADA (modal CRUD)
 │   ├── jadwal/
-│   │   ├── index.blade.php            ← 🔲 BUAT BARU
-│   │   ├── create.blade.php           ← 🔲 BUAT BARU
-│   │   └── edit.blade.php             ← 🔲 BUAT BARU
+│   │   ├── index.blade.php            ← ✅ SUDAH ADA
+│   │   ├── create.blade.php           ← ✅ SUDAH ADA
+│   │   └── edit.blade.php             ← ✅ SUDAH ADA
 │   ├── bookings/
-│   │   ├── index.blade.php            ← 🔲 BUAT BARU
-│   │   └── show.blade.php             ← 🔲 BUAT BARU
+│   │   ├── index.blade.php            ← ✅ SUDAH ADA
+│   │   └── show.blade.php             ← ✅ SUDAH ADA
 │   ├── pembayaran/
-│   │   ├── index.blade.php            ← 🔲 BUAT BARU
+│   │   ├── index.blade.php            ← ✅ SUDAH ADA
 │   │   └── show.blade.php             ← 🔲 BUAT BARU
 │   ├── drivers/
-│   │   ├── index.blade.php            ← 🔲 BUAT BARU
-│   │   ├── create.blade.php           ← 🔲 BUAT BARU
-│   │   ├── edit.blade.php             ← 🔲 BUAT BARU
-│   │   └── show.blade.php             ← 🔲 BUAT BARU
+│   │   └── index.blade.php            ← ✅ SUDAH ADA (modal CRUD)
 │   ├── trips/
-│   │   ├── index.blade.php            ← 🔲 BUAT BARU
-│   │   ├── create.blade.php           ← 🔲 BUAT BARU
-│   │   └── show.blade.php             ← 🔲 BUAT BARU
+│   │   ├── index.blade.php            ← ✅ SUDAH ADA
+│   │   ├── create.blade.php           ← ✅ SUDAH ADA
+│   │   └── show.blade.php             ← ✅ SUDAH ADA
 │   └── laporan/
 │       └── index.blade.php            ← 🔲 BUAT BARU
 ├── driver/                            ← Halaman Driver
@@ -191,16 +190,16 @@ resources/views/
 ```
 app/Models/
 ├── User.php                           ← ✅ SUDAH ADA
-├── Armada.php                         ← 🔲 BUAT BARU
-├── Driver.php                         ← 🔲 BUAT BARU
-├── Rute.php                           ← 🔲 BUAT BARU
-├── Pelanggan.php                      ← 🔲 BUAT BARU
-├── Jadwal.php                         ← 🔲 BUAT BARU
-├── Booking.php                        ← 🔲 BUAT BARU
-├── Pembayaran.php                     ← 🔲 BUAT BARU
-├── Trip.php                           ← 🔲 BUAT BARU
-├── DetailTrip.php                     ← 🔲 BUAT BARU
-└── WhatsappNotification.php            ← 🔲 BUAT BARU
+├── Armada.php                         ← ✅ SUDAH ADA
+├── Driver.php                         ← ✅ SUDAH ADA
+├── Rute.php                           ← ✅ SUDAH ADA
+├── Pelanggan.php                      ← ✅ SUDAH ADA
+├── Jadwal.php                         ← ✅ SUDAH ADA
+├── Booking.php                        ← ✅ SUDAH ADA
+├── Pembayaran.php                     ← ✅ SUDAH ADA
+├── Trip.php                           ← ✅ SUDAH ADA
+├── DetailTrip.php                     ← ✅ SUDAH ADA
+└── WhatsappNotification.php            ← ✅ SUDAH ADA
 ```
 
 ### Middleware

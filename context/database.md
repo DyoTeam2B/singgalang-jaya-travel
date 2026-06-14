@@ -178,7 +178,7 @@ erDiagram
 
 ---
 
-### 2. `armada` — 🔲 BELUM ADA
+### 2. `armada` — ✅ SUDAH ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
@@ -196,7 +196,7 @@ erDiagram
 
 ---
 
-### 3. `drivers` — 🔲 BELUM ADA
+### 3. `drivers` — ✅ SUDAH ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
@@ -217,7 +217,7 @@ erDiagram
 
 ---
 
-### 4. `rute` — 🔲 BELUM ADA
+### 4. `rute` — ✅ SUDAH ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
@@ -238,7 +238,7 @@ erDiagram
 
 ---
 
-### 5. `pelanggan` — 🔲 BELUM ADA
+### 5. `pelanggan` — ✅ SUDAH ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
@@ -257,7 +257,7 @@ erDiagram
 
 ---
 
-### 6. `jadwal` — 🔲 BELUM ADA
+### 6. `jadwal` — ✅ SUDAH ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
@@ -281,7 +281,7 @@ erDiagram
 
 ---
 
-### 7. `bookings` — 🔲 BELUM ADA
+### 7. `bookings` — ✅ SUDAH ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
@@ -329,7 +329,7 @@ erDiagram
 
 ---
 
-### 8. `pembayaran` — 🔲 BELUM ADA
+### 8. `pembayaran` — ✅ SUDAH ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
@@ -355,7 +355,7 @@ erDiagram
 
 ---
 
-### 9. `trips` — 🔲 BELUM ADA
+### 9. `trips` — ✅ SUDAH ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
@@ -377,7 +377,7 @@ erDiagram
 
 ---
 
-### 10. `detail_trip` — 🔲 BELUM ADA
+### 10. `detail_trip` — ✅ SUDAH ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
@@ -399,7 +399,7 @@ erDiagram
 
 ---
 
-### 11. `whatsapp_notifications` — 🔲 BELUM ADA
+### 11. `whatsapp_notifications` — ✅ SUDAH ADA
 
 | Column | Type | Constraint | Keterangan |
 |--------|------|------------|------------|
@@ -450,16 +450,16 @@ erDiagram
 | 2 | `create_cache_table` | `cache`, `cache_locks` | ✅ Sudah ada |
 | 3 | `create_jobs_table` | `jobs`, `job_batches`, `failed_jobs` | ✅ Sudah ada |
 | 4 | `add_role_to_users_table` | `users` (alter) | ✅ Sudah ada |
-| 5 | `create_armada_table` | `armada` | 🔲 |
-| 6 | `create_drivers_table` | `drivers` | 🔲 |
-| 7 | `create_rute_table` | `rute` | 🔲 |
-| 8 | `create_pelanggan_table` | `pelanggan` | 🔲 |
-| 9 | `create_jadwal_table` | `jadwal` | 🔲 |
-| 10 | `create_bookings_table` | `bookings` | 🔲 |
-| 11 | `create_pembayaran_table` | `pembayaran` | 🔲 |
-| 12 | `create_trips_table` | `trips` | 🔲 |
-| 13 | `create_detail_trip_table` | `detail_trip` | 🔲 |
-| 14 | `create_whatsapp_notifications_table` | `whatsapp_notifications` | 🔲 |
+| 5 | `create_armada_table` | `armada` | ✅ |
+| 6 | `create_drivers_table` | `drivers` | ✅ |
+| 7 | `create_rute_table` | `rute` | ✅ |
+| 8 | `create_pelanggan_table` | `pelanggan` | ✅ |
+| 9 | `create_jadwal_table` | `jadwal` | ✅ |
+| 10 | `create_bookings_table` | `bookings` | ✅ |
+| 11 | `create_pembayaran_table` | `pembayaran` | ✅ |
+| 12 | `create_trips_table` | `trips` | ✅ |
+| 13 | `create_detail_trip_table` | `detail_trip` | ✅ |
+| 14 | `create_whatsapp_notifications_table` | `whatsapp_notifications` | ✅ |
 
 ---
 
@@ -468,9 +468,9 @@ erDiagram
 | Seeder | Status | Keterangan |
 |--------|--------|------------|
 | `UserSeeder` | ✅ Sudah ada | Admin + Driver + Pelanggan default |
-| `RuteSeeder` | 🔲 | 2 rute utama (PP↔PKU) |
-| `ArmadaSeeder` | 🔲 | 2-3 sample armada |
-| `DriverSeeder` | 🔲 | 2-3 sample driver + link ke armada |
+| `RuteSeeder` | ✅ | 2 rute utama (PP↔PKU) |
+| `ArmadaSeeder` | ✅ | 2-3 sample armada |
+| `DriverSeeder` | ✅ | 2-3 sample driver + link ke armada |
 | `JadwalSeeder` | 🔲 | Sample jadwal untuk testing |
 | `BookingSeeder` | 🔲 | Sample booking (optional, for dev) |
 
@@ -479,16 +479,16 @@ erDiagram
 ## Model Relationships (Eloquent)
 
 ```
-User        → hasOne(Driver)                                            ✅ Model ada, relationship belum
-User        → hasOne(Pelanggan)                                          🔲
-Armada      → hasOne(Driver), hasMany(Trip)                             🔲
-Driver      → belongsTo(User), belongsTo(Armada), hasMany(Trip)         🔲
-Rute        → hasMany(Jadwal)                                           🔲
-Jadwal      → belongsTo(Rute), hasMany(Booking), hasMany(Trip)          🔲
-Pelanggan   → belongsTo(User), hasMany(Booking)                         🔲
-Booking     → belongsTo(Pelanggan), belongsTo(Jadwal), hasMany(Pembayaran), hasMany(DetailTrip), hasMany(WhatsappNotification)  🔲
-Pembayaran  → belongsTo(Booking)                                        🔲
-Trip        → belongsTo(Jadwal), belongsTo(Driver), belongsTo(Armada), hasMany(DetailTrip)  🔲
-DetailTrip  → belongsTo(Trip), belongsTo(Booking)                       🔲
-WhatsappNotification → belongsTo(Booking)                               🔲
+User        → hasOne(Driver)                                            ✅
+User        → hasOne(Pelanggan)                                          ✅
+Armada      → hasOne(Driver), hasMany(Trip)                             ✅
+Driver      → belongsTo(User), belongsTo(Armada), hasMany(Trip)         ✅
+Rute        → hasMany(Jadwal)                                           ✅
+Jadwal      → belongsTo(Rute), hasMany(Booking), hasMany(Trip)          ✅
+Pelanggan   → belongsTo(User), hasMany(Booking)                         ✅
+Booking     → belongsTo(Pelanggan), belongsTo(Jadwal), hasMany(Pembayaran), hasMany(DetailTrip), hasMany(WhatsappNotification)  ✅
+Pembayaran  → belongsTo(Booking)                                        ✅
+Trip        → belongsTo(Jadwal), belongsTo(Driver), belongsTo(Armada), hasMany(DetailTrip)  ✅
+DetailTrip  → belongsTo(Trip), belongsTo(Booking)                       ✅
+WhatsappNotification → belongsTo(Booking)                               ✅
 ```

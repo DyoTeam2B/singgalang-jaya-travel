@@ -4,6 +4,7 @@ namespace Tests\Feature\Admin;
 
 use App\Models\Driver;
 use App\Models\User;
+use App\Models\Armada;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,6 +13,7 @@ class DriverTest extends TestCase
     use RefreshDatabase;
 
     protected User $adminUser;
+    protected Armada $armada;
 
     protected function setUp(): void
     {
@@ -23,6 +25,14 @@ class DriverTest extends TestCase
             'email' => 'admin@test.com',
             'password' => bcrypt('password123'),
             'role' => 'admin',
+        ]);
+
+        // Create Armada
+        $this->armada = Armada::create([
+            'nama_mobil' => 'Toyota Avanza',
+            'nomor_plat' => 'BA 1234 XY',
+            'kapasitas' => 5,
+            'status_armada' => 'aktif',
         ]);
     }
 
@@ -49,9 +59,7 @@ class DriverTest extends TestCase
             'email' => 'joni@singgalang.com',
             'password' => 'driver12345',
             'no_hp' => '081234567800',
-            'nama_mobil' => 'Toyota Avanza',
-            'nomor_plat' => 'BA 4321 XY',
-            'kapasitas_mobil' => 5,
+            'armada_id' => $this->armada->id,
             'status_driver' => 'aktif',
         ];
 
@@ -73,9 +81,7 @@ class DriverTest extends TestCase
             'user_id' => $user->id,
             'nama_driver' => 'Joni Setiawan',
             'no_hp' => '081234567800',
-            'nama_mobil' => 'Toyota Avanza',
-            'nomor_plat' => 'BA 4321 XY',
-            'kapasitas_mobil' => 5,
+            'armada_id' => $this->armada->id,
             'status_driver' => 'aktif',
         ]);
     }
@@ -97,10 +103,16 @@ class DriverTest extends TestCase
             'user_id' => $driverUser->id,
             'nama_driver' => 'Lama Driver',
             'no_hp' => '081234567809',
-            'nama_mobil' => 'Toyota Avanza',
-            'nomor_plat' => 'BA 1234 XY',
-            'kapasitas_mobil' => 5,
+            'armada_id' => $this->armada->id,
             'status_driver' => 'aktif',
+        ]);
+
+        // Create another armada for updating
+        $baruArmada = Armada::create([
+            'nama_mobil' => 'Suzuki Ertiga',
+            'nomor_plat' => 'BA 9999 ZZ',
+            'kapasitas' => 6,
+            'status_armada' => 'aktif',
         ]);
 
         $updateData = [
@@ -108,9 +120,7 @@ class DriverTest extends TestCase
             'nama_driver' => 'Baru Driver',
             'email' => 'baru@singgalang.com',
             'no_hp' => '081234567899',
-            'nama_mobil' => 'Suzuki Ertiga',
-            'nomor_plat' => 'BA 9999 ZZ',
-            'kapasitas_mobil' => 6,
+            'armada_id' => $baruArmada->id,
             'status_driver' => 'nonaktif',
         ];
 
@@ -129,9 +139,7 @@ class DriverTest extends TestCase
             'id' => $driver->id,
             'nama_driver' => 'Baru Driver',
             'no_hp' => '081234567899',
-            'nama_mobil' => 'Suzuki Ertiga',
-            'nomor_plat' => 'BA 9999 ZZ',
-            'kapasitas_mobil' => 6,
+            'armada_id' => $baruArmada->id,
             'status_driver' => 'nonaktif',
         ]);
     }
@@ -152,9 +160,7 @@ class DriverTest extends TestCase
             'user_id' => $driverUser->id,
             'nama_driver' => 'Hapus Driver',
             'no_hp' => '081234567811',
-            'nama_mobil' => 'Toyota Avanza',
-            'nomor_plat' => 'BA 8888 XY',
-            'kapasitas_mobil' => 5,
+            'armada_id' => $this->armada->id,
             'status_driver' => 'aktif',
         ]);
 

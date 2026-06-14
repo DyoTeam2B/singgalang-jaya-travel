@@ -24,9 +24,7 @@ class StoreDriverRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
             'no_hp' => ['required', 'string', 'max:20'],
-            'nama_mobil' => ['required', 'string', 'max:100'],
-            'nomor_plat' => ['required', 'string', 'max:20'],
-            'kapasitas_mobil' => ['required', 'integer', 'min:1'],
+            'armada_id' => ['required', 'exists:armada,id'],
             'status_driver' => ['required', 'in:aktif,nonaktif'],
         ];
     }
@@ -48,13 +46,8 @@ class StoreDriverRequest extends FormRequest
             'password.min' => 'Password login minimal terdiri dari 8 karakter.',
             'no_hp.required' => 'Nomor HP driver wajib diisi.',
             'no_hp.max' => 'Nomor HP tidak boleh lebih dari 20 karakter.',
-            'nama_mobil.required' => 'Nama kendaraan wajib diisi.',
-            'nama_mobil.max' => 'Nama kendaraan tidak boleh lebih dari 100 karakter.',
-            'nomor_plat.required' => 'Nomor plat kendaraan wajib diisi.',
-            'nomor_plat.max' => 'Nomor plat tidak boleh lebih dari 20 karakter.',
-            'kapasitas_mobil.required' => 'Kapasitas kendaraan wajib diisi.',
-            'kapasitas_mobil.integer' => 'Kapasitas harus berupa angka.',
-            'kapasitas_mobil.min' => 'Kapasitas minimal 1 penumpang.',
+            'armada_id.required' => 'Armada wajib dipilih.',
+            'armada_id.exists' => 'Armada yang dipilih tidak valid.',
             'status_driver.required' => 'Status driver wajib dipilih.',
             'status_driver.in' => 'Status driver tidak valid.',
         ];

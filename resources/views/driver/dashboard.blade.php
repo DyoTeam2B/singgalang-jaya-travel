@@ -38,15 +38,15 @@
                                 <div class="space-y-2 text-xs font-bold text-slate-600">
                                     <div class="flex justify-between">
                                         <span class="text-slate-400 uppercase tracking-wider">Merk Mobil</span>
-                                        <span class="text-slate-800 uppercase">{{ Auth::user()->driver->nama_mobil }}</span>
+                                        <span class="text-slate-800 uppercase">{{ Auth::user()->driver->armada->nama_mobil ?? '-' }}</span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-slate-400 uppercase tracking-wider">Nomor Plat</span>
-                                        <span class="text-slate-800 uppercase">{{ Auth::user()->driver->nomor_plat }}</span>
+                                        <span class="text-slate-800 uppercase">{{ Auth::user()->driver->armada->nomor_plat ?? '-' }}</span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-slate-400 uppercase tracking-wider">Kapasitas</span>
-                                        <span class="text-slate-800 uppercase">{{ Auth::user()->driver->kapasitas_mobil }} Orang</span>
+                                        <span class="text-slate-800 uppercase">{{ Auth::user()->driver->armada->kapasitas ?? '-' }} Orang</span>
                                     </div>
                                 </div>
                             @else

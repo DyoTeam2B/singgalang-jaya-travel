@@ -18,6 +18,7 @@ class Trip extends Model
     protected $fillable = [
         'jadwal_id',
         'driver_id',
+        'armada_id',
         'status_trip',
         'started_at',
         'completed_at',
@@ -34,6 +35,14 @@ class Trip extends Model
     public function driver(): BelongsTo
     {
         return $this->belongsTo(Driver::class);
+    }
+
+    /**
+     * Get the armada associated with the trip.
+     */
+    public function armada(): BelongsTo
+    {
+        return $this->belongsTo(Armada::class);
     }
 
     /**

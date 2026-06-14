@@ -10,11 +10,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'user_id',
+    'armada_id',
     'nama_driver',
     'no_hp',
-    'nama_mobil',
-    'nomor_plat',
-    'kapasitas_mobil',
     'status_driver',
 ])]
 class Driver extends Model
@@ -27,6 +25,14 @@ class Driver extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Get the armada that the driver drives.
+     */
+    public function armada(): BelongsTo
+    {
+        return $this->belongsTo(Armada::class, 'armada_id');
     }
 
     /**
