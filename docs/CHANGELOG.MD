@@ -2,6 +2,169 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-15] - Mini Hackathon - Voucher Lunas 10%
+
+### Added
+* Migration `2026_06_15_000001_add_voucher_discount_to_pembayaran_table.php` untuk menyimpan kode voucher, persentase diskon, dan nominal diskon pada transaksi pembayaran.
+* Opsi pembayaran lunas dengan voucher `LUNAS10` diskon 10% pada halaman pembayaran pelanggan.
+* Helper perhitungan diskon dan nominal pembayaran lunas pada model `App\Models\Pembayaran`.
+* Tampilan informasi voucher dan diskon pada halaman cek booking, detail booking admin, daftar booking admin, dan verifikasi pembayaran admin.
+* Tes fitur untuk memastikan pembayaran lunas menerapkan voucher 10% dari backend.
+
+### Changed
+* Validasi pembayaran kini mewajibkan pilihan jenis pembayaran `dp` atau `pelunasan`.
+* Controller pembayaran menghitung nominal transfer di server agar nilai diskon tidak bergantung pada input frontend.
+* Dashboard admin menghitung revenue booking lunas dari nominal pembayaran setelah diskon.
+
+### Fixed
+* Perbaikan konstanta status `STATUS_MENUNGGU_PAYMENT` menjadi `STATUS_MENUNGGU_PEMBAYARAN` pada halaman cek booking.
+
+## [2026-06-14] - Rayhan - Sprint 3 (Armada Separation & CRUD)
+
+### Added
+* Migration `2026_06_07_000000_create_armada_table.php` untuk tabel `armada` terpisah.
+* Eloquent model `App\Models\Armada` dengan relasi `driver` dan `trips`.
+* Seeder `Database\Seeders\ArmadaSeeder` untuk menyuntikkan data armada.
+* Controller `App\Http\Controllers\Admin\ArmadaController` untuk operasi CRUD armada.
+* Form request `App\Http\Requests\Admin\StoreArmadaRequest` & `UpdateArmadaRequest` untuk memvalidasi form armada.
+* View `resources/views/admin/armada/index.blade.php` untuk antarmuka CRUD armada menggunakan modal.
+* Tes fitur `Tests\Feature\Admin\ArmadaTest` untuk menjamin kualitas fitur CRUD armada.
+
+### Changed
+* Modifikasi migration `2026_06_07_000004_create_drivers_table.php` untuk menambahkan foreign key `armada_id` dan menghapus kolom spesifikasi kendaraan langsung.
+* Modifikasi migration `2026_06_07_000007_create_trips_table.php` untuk menambahkan foreign key `armada_id`.
+* Modifikasi model `App\Models\Driver` dan `App\Models\Trip` untuk relasi `armada` (`belongsTo`).
+* Modifikasi controller `App\Http\Controllers\Admin\DriverController` dan `App\Http\Controllers\Admin\TripController` untuk menyesuaikan relasi armada yang baru.
+* Modifikasi controller `App\Http\Controllers\HomeController` dan `App\Http\Controllers\CekBookingController` untuk memuat data armada dari relasi.
+* Modifikasi views `admin.drivers.index`, `admin.trips.index`, `admin.trips.create`, `admin.trips.show` agar mengambil detail kendaraan dari relasi `armada`.
+* Modifikasi public views `home.blade.php` (Landing Page) dan `cek-booking.show.blade.php` agar membaca detail armada dari model Armada.
+* Modifikasi driver view `dashboard.blade.php` agar memuat detail armada dari relasi driver.
+* Modifikasi seeder `DriverSeeder` dan `DatabaseSeeder` untuk menautkan driver ke armada yang valid.
+* Modifikasi `routes/web.php` untuk menambahkan resource route `admin.armada`.
+* Modifikasi component `resources/views/components/sidebar-admin.blade.php` untuk mengarahkan link armada ke route `admin.armada.index`.
+* Modifikasi test suite `Tests\Feature\Admin\DriverTest` untuk menyertakan `armada_id` pada factory/seeder driver.
+
+### Fixed
+* Perbaikan method `assignBooking` pada controller dan form action binding di `admin.trips.index` menggunakan dynamic `url()` helper agar dapat berfungsi di subdirektori.
+* Menghindari JavaScript / Alpine.js syntax error pada pencarian driver, armada, dan booking di `admin.trips.show` dengan membalut string data PHP menggunakan `addslashes()`.
+
+## [2026-06-14] - Nayasha - Sprint 2
+
+### Added
+
+* Controller `App\Http\Controllers\Admin\BookingController` untuk mengelola booking admin (index, show, cancel).
+* Controller `App\Http\Controllers\Admin\PembayaranController` untuk verifikasi pembayaran admin (index, show, verify, reject).
+* Livewire Component `App\Livewire\Admin\BookingTable` dan view `resources/views/livewire/admin/booking-table.blade.php` untuk antarmuka pencarian, pemfilteran, dan pengiriman WA konfirmasi.
+* Livewire Component `App\Livewire\Admin\PembayaranTable` dan view `resources/views/livewire/admin/pembayaran-table.blade.php` untuk antarmuka split-screen verifikasi pembayaran beserta panel detail interaktif, preview lightbox, modal persetujuan, dan modal alasan penolakan.
+* Blade view `resources/views/admin/bookings/index.blade.php`, `resources/views/admin/bookings/show.blade.php`, dan `resources/views/admin/pembayaran/index.blade.php` untuk halaman admin.
+
+### Changed
+
+* Modifikasi `routes/web.php` untuk mendaftarkan resource route bookings, pembayaran, aksi cancel booking, verifikasi, dan penolakan pembayaran.
+## [2026-06-14] - Kevin - Sprint 2
+
+### Added
+* Berkas view `resources/views/admin/trips/show.blade.php` untuk antarmuka detail trip admin, manifes penumpang, serta modal penugasan driver dan alokasi booking.
+
+### Changed
+* Modifikasi `routes/web.php` untuk menambahkan route POST `trips/{trip}/assign` dan DELETE `trips/{trip}/remove/{detailTrip}` di bawah middleware admin.
+* Modifikasi `app/Http/Controllers/Admin/TripController.php` untuk mengimplementasikan method `show`, `update` (transisi status trip dan penugasan driver), `destroy` (menghapus trip dengan aman), `assignBooking` (penugasan booking ke trip dengan validasi sisa kuota kursi), dan `removeBooking` (pelepasan booking dari trip).
+* Modifikasi `resources/views/admin/trips/index.blade.php` untuk menghubungkan tautan Detail Trip serta mengaktifkan tombol alokasi booking dari panel antrean ke trip terkait.
+* Modifikasi `resources/views/admin/trips/create.blade.php` untuk mendukung pre-seleksi jadwal berdasarkan query parameter `jadwal_id`.
+
+### Notes
+* Fitur alokasi booking ke trip secara otomatis mengintegrasikan data driver dan armada kendaraan, karena informasi armada melekat langsung pada profil driver.
+
+## [2026-06-12] - Rayhan - Sprint 1 (Alignment)
+
+### Added
+
+* Migration `2026_06_07_000009_create_whatsapp_notifications_table.php` untuk tabel `whatsapp_notifications`.
+* Eloquent model `App\Models\WhatsappNotification` dengan relasi `booking`.
+* Service `App\Services\FonnteService` untuk mengirimkan notifikasi WhatsApp via FonnteAPI dengan auto-logging.
+
+### Changed
+
+* Modifikasi migration `2026_06_07_000005_create_bookings_table` untuk memperbarui status booking enum (9 nilai) dan menambahkan kolom `batas_bayar_at` dan `alasan_pembatalan`.
+* Modifikasi migration `2026_06_07_000007_create_trips_table` untuk memperbarui status trip enum (new, ready, on_trip, completed, cancelled).
+* Modifikasi model `App\Models\Booking` untuk menyesuaikan konstanta status, fillable, casts, helper functions, dan relasi `whatsappNotifications()`.
+* Modifikasi model `App\Models\Trip` untuk menyesuaikan konstanta status trip baru.
+* Modifikasi controller `App\Http\Controllers\Admin\DashboardController`, `DriverController`, dan `TripController` agar selaras dengan nama status booking dan status trip baru (`on_trip`, `completed`).
+* Modifikasi component `resources/views/components/status-badge.blade.php` untuk memetakan nama status booking dan trip yang baru ke style Tailwind.
+
+## [2026-06-10] - Nayasha - Sprint 1
+
+### Added
+
+* Controller `App\Http\Controllers\Admin\DriverController` untuk menangani CRUD Driver dan relasi akun login user.
+* Form request `App\Http\Requests\Driver\StoreDriverRequest` & `UpdateDriverRequest` untuk memvalidasi form input tambah/edit driver.
+* Berkas view `resources/views/admin/drivers/index.blade.php` untuk menampilkan antarmuka manajemen driver dengan layout dua kolom (tabel dan detail panel), pencarian, penyaringan status, serta modal input.
+* Tes fitur `Tests\Feature\Admin\DriverTest` untuk menjamin validitas alur CRUD driver secara otomatis.
+
+### Changed
+
+* Modifikasi `routes/web.php` untuk mendaftarkan resource route `drivers` di bawah admin group.
+* Modifikasi `resources/views/components/status-badge.blade.php` untuk memetakan status driver dinamis (`tersedia`, `sedang_bertugas`, `tidak_aktif`) dengan warna badge yang sesuai.
+* Modifikasi model `App\Models\Driver` untuk menambahkan dynamic accessor `getDynamicStatusAttribute()`.
+
+### Notes
+
+* Implementasi menggunakan database transactions (`DB::transaction`) untuk menjaga integritas data relasi 1:1 antara driver dan user login.
+## [2026-06-11] - Kevin - Sprint 1
+
+### Added
+
+* Controller `App\Http\Controllers\Admin\TripController` untuk menangani modul Admin Trip (Index & Create).
+* Form Request `App\Http\Requests\Admin\StoreTripRequest` untuk memvalidasi pembuatan data trip baru.
+* View daftar trip `resources/views/admin/trips/index.blade.php` dengan grid trip berdasarkan status dan sidebar antrean booking.
+* View form pembuatan trip `resources/views/admin/trips/create.blade.php` dengan dropdown jadwal & driver aktif serta panel preview interaktif (Alpine.js).
+
+### Changed
+
+* Modifikasi `routes/web.php` untuk mendaftarkan resource route `trips` admin.
+
+### Notes
+
+* Modul trips admin berjalan secara dinamis dan memiliki safeguard/placeholder untuk fitur show, edit, update, dan destroy yang akan diimplementasikan pada Sprint 2 & 4.
+
+## [2026-06-10] - Rayfo - Sprint 1
+
+### Added
+
+* Controller `App\Http\Controllers\Admin\RuteController` untuk menangani operasi CRUD Rute perjalanan.
+* Controller `App\Http\Controllers\Admin\JadwalController` untuk menangani operasi CRUD & toggle status Jadwal keberangkatan.
+* Form request `App\Http\Requests\Admin\StoreRuteRequest` & `UpdateRuteRequest` untuk validasi form Rute.
+* Form request `App\Http\Requests\Admin\StoreJadwalRequest` & `UpdateJadwalRequest` untuk validasi form Jadwal.
+* View CRUD Rute: `index.blade.php`, `create.blade.php`, `edit.blade.php` di bawah folder `resources/views/admin/rute/`.
+* View CRUD Jadwal: `index.blade.php`, `create.blade.php`, `edit.blade.php` di bawah folder `resources/views/admin/jadwal/`.
+
+### Changed
+
+* Modifikasi `routes/web.php` untuk mendaftarkan resource route Rute & Jadwal, custom route toggle status jadwal, serta mengarahkan dashboard ke `DashboardController`.
+* Modifikasi `App\Http\Controllers\Admin\DashboardController` untuk menghitung statistik widget secara dinamis dari database dan memuat daftar booking terbaru.
+* Modifikasi `resources/views/admin/dashboard.blade.php` untuk menampilkan statistik dinamis dan loop data booking terbaru dari database.
+* Modifikasi `resources/views/components/sidebar-admin.blade.php` untuk menambahkan tautan menu navigasi Rute.
+
+### Fixed
+
+* Mengatasi error autoloading composer PSR-4 dengan melakukan regenerasi file optimized classmap autoload.
+
+### Notes
+
+* Modul Rute, Jadwal, dan Dashboard admin berjalan sepenuhnya secara dinamis dan siap diintegrasikan dengan modul operasional lain.
+
+## [2026-06-07] - Rayhan - Sprint 1
+
+### Added
+* Controller `App\Http\Controllers\HomeController` untuk menangani halaman landing page publik.
+* Controller `App\Http\Controllers\JadwalPublicController` untuk menangani halaman pencarian dan daftar jadwal publik.
+* View `resources/views/public/home.blade.php` sebagai landing page dengan layout responsif (Hero, Features, Schedules, Fleet, Charter, Contact, CTA).
+* View `resources/views/public/jadwal/index.blade.php` sebagai halaman khusus daftar jadwal publik dengan filter pencarian asal, tujuan, dan tanggal.
+* Class view component `App\View\Components\PublicLayout` untuk binding `<x-public-layout>`.
+
+### Changed
+* Modifikasi `routes/web.php` untuk mendaftarkan route landing page (`/` -> `home`) dan jadwal publik (`/jadwal` -> `jadwal.index`).
+
 ## [2026-06-07] - Kevin - Sprint 0
 
 ### Added

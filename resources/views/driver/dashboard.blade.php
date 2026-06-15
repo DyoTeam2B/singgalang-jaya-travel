@@ -1,4 +1,6 @@
-<x-driver-layout>
+@extends('layouts.driver')
+
+@section('content')
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl border border-slate-200">
@@ -36,15 +38,15 @@
                                 <div class="space-y-2 text-xs font-bold text-slate-600">
                                     <div class="flex justify-between">
                                         <span class="text-slate-400 uppercase tracking-wider">Merk Mobil</span>
-                                        <span class="text-slate-800 uppercase">{{ Auth::user()->driver->nama_mobil }}</span>
+                                        <span class="text-slate-800 uppercase">{{ Auth::user()->driver->armada->nama_mobil ?? '-' }}</span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-slate-400 uppercase tracking-wider">Nomor Plat</span>
-                                        <span class="text-slate-800 uppercase">{{ Auth::user()->driver->nomor_plat }}</span>
+                                        <span class="text-slate-800 uppercase">{{ Auth::user()->driver->armada->nomor_plat ?? '-' }}</span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-slate-400 uppercase tracking-wider">Kapasitas</span>
-                                        <span class="text-slate-800 uppercase">{{ Auth::user()->driver->kapasitas_mobil }} Orang</span>
+                                        <span class="text-slate-800 uppercase">{{ Auth::user()->driver->armada->kapasitas ?? '-' }} Orang</span>
                                     </div>
                                 </div>
                             @else
@@ -61,4 +63,4 @@
             </div>
         </div>
     </div>
-</x-driver-layout>
+@endsection

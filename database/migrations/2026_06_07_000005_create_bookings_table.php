@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pelanggan_id')->constrained('pelanggan');
-            $table->foreignId('jadwal_id')->constrained('jadwal')->onDelete('cascade');
+            $table->foreignId('jadwal_id')->constrained('jadwal')->onDelete('restrict');
             $table->string('kode_booking', 20)->unique();
             $table->string('alamat_jemput', 500);
             $table->decimal('latitude_jemput', 10, 8)->nullable();
@@ -25,14 +25,18 @@ return new class extends Migration
             $table->unsignedInteger('jumlah_penumpang')->default(1);
             $table->unsignedInteger('total_harga');
             $table->enum('status_booking', [
+                'booking_dibuat',
                 'menunggu_pembayaran',
                 'menunggu_verifikasi',
                 'dikonfirmasi',
-                'masuk_trip',
-                'dalam_perjalanan',
-                'selesai',
-                'dibatalkan'
+                'assigned_to_trip',
+                'on_trip',
+                'completed',
+                'cancelled',
+                'expired'
             ])->default('menunggu_pembayaran');
+            $table->dateTime('batas_bayar_at')->nullable();
+            $table->text('alasan_pembatalan')->nullable();
             $table->timestamps();
 
             // Indexes

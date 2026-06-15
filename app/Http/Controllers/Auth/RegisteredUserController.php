@@ -40,6 +40,13 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'pelanggan', // explicit role
+        ]);
+
+        \App\Models\Pelanggan::create([
+            'user_id' => $user->id,
+            'nama' => $user->name,
+            'no_hp' => '-', // Placeholder, user will update in profile / booking
         ]);
 
         event(new Registered($user));

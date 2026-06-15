@@ -26,8 +26,15 @@
 @endphp
 
 @if ($config && $message)
-    <div {{ $attributes->merge(['class' => 'flex items-center gap-3 p-4 rounded-xl border ' . $config['classes']]) }}>
+    <div x-data="{ show: true }"
+         x-show="show"
+         x-init="setTimeout(() => show = false, '{{ $type }}' === 'error' ? 8000 : 4000)"
+         x-transition:leave="transition ease-in duration-300"
+         x-transition:leave-start="opacity-100 transform scale-100"
+         x-transition:leave-end="opacity-0 transform scale-95"
+         {{ $attributes->merge(['class' => 'flex items-center gap-3 p-4 rounded-xl border ' . $config['classes']]) }}>
         {!! $config['icon'] !!}
         <p class="text-sm font-medium">{{ $message }}</p>
     </div>
 @endif
+

@@ -16,9 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->unique()->constrained('users')->onDelete('cascade');
             $table->string('nama_driver');
             $table->string('no_hp', 20);
-            $table->string('nama_mobil', 100);
-            $table->string('nomor_plat', 20);
-            $table->unsignedInteger('kapasitas_mobil')->default(5);
+            $table->foreignId('armada_id')->constrained('armada')->onDelete('cascade');
             $table->enum('status_driver', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
         });

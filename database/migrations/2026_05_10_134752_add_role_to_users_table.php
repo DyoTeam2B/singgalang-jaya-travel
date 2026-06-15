@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->enum('role', ['admin','driver'])
-                  ->default('driver')
+            $table->enum('role', ['admin','driver','pelanggan'])
+                  ->default('pelanggan')
                   ->after('password');
         });
     }
