@@ -22,18 +22,7 @@ class StoreTripRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'jadwal_id' => [
-                'required',
-                'exists:jadwal,id',
-                function ($attribute, $value, $fail) {
-                    $exists = \App\Models\Trip::where('jadwal_id', $value)
-                        ->whereNotIn('status_trip', ['cancelled'])
-                        ->exists();
-                    if ($exists) {
-                        $fail('Jadwal keberangkatan ini sudah memiliki trip aktif.');
-                    }
-                }
-            ],
+            'jadwal_id' => ['required', 'exists:jadwal,id'],
             'driver_id' => [
                 'required',
                 'exists:drivers,id',

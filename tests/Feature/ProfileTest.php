@@ -21,6 +21,21 @@ class ProfileTest extends TestCase
         $response->assertOk();
     }
 
+    public function test_customer_profile_uses_public_customer_navbar(): void
+    {
+        $user = User::factory()->create(['role' => 'pelanggan']);
+
+        $response = $this
+            ->actingAs($user)
+            ->get('/profile');
+
+        $response
+            ->assertOk()
+            ->assertSee('Booking Saya')
+            ->assertSee('Profil Saya')
+            ->assertDontSee('Dashboard')
+            ->assertDontSee('Login');
+    }
     public function test_profile_information_can_be_updated(): void
     {
         $user = User::factory()->create();

@@ -107,22 +107,7 @@
 
                             <!-- Action -->
                             @php
-                                 $tripsForThisBooking = \App\Models\Trip::where('jadwal_id', $booking->jadwal_id)
-                                    ->whereIn('status_trip', ['new', 'ready'])
-                                    ->with(['driver', 'armada'])
-                                    ->get()
-                                    ->map(function($t) {
-                                        $currentPax = $t->detailTrips->sum(function($dt) {
-                                            return $dt->booking ? $dt->booking->jumlah_penumpang : 0;
-                                        });
-                                        return [
-                                            'id' => $t->id,
-                                            'driver_name' => $t->driver->nama_driver ?? 'Belum Ditugaskan',
-                                            'plate' => $t->armada->nomor_plat ?? '-',
-                                            'capacity' => $t->armada->kapasitas ?? 5,
-                                            'pax' => $currentPax,
-                                        ];
-                                    });
+                                $tripsForThisBooking = collect($booking->assignable_trips ?? []);
                             @endphp
 
                             @if($tripsForThisBooking->count() > 0)
@@ -310,8 +295,6 @@
                 @endif
 
             </div>
-
-        </div>
 
         </div>
 

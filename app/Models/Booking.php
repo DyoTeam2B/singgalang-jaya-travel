@@ -11,9 +11,7 @@ class Booking extends Model
 {
     use HasFactory;
 
-    // Status Booking Constants
     public const STATUS_BOOKING_DIBUAT = 'booking_dibuat';
-    public const STATUS_MENUNGGU_PEMBAYARAN = 'menunggu_pembayaran';
     public const STATUS_MENUNGGU_VERIFIKASI = 'menunggu_verifikasi';
     public const STATUS_DIKONFIRMASI = 'dikonfirmasi';
     public const STATUS_ASSIGNED_TO_TRIP = 'assigned_to_trip';
@@ -40,7 +38,6 @@ class Booking extends Model
         'jumlah_penumpang',
         'total_harga',
         'status_booking',
-        'batas_bayar_at',
         'alasan_pembatalan',
     ];
 
@@ -56,16 +53,7 @@ class Booking extends Model
         'longitude_tujuan' => 'float',
         'jumlah_penumpang' => 'integer',
         'total_harga' => 'integer',
-        'batas_bayar_at' => 'datetime',
     ];
-
-    /**
-     * Local scope to filter only bookings that are awaiting payment.
-     */
-    public function scopeMenungguPembayaran($query)
-    {
-        return $query->where('status_booking', self::STATUS_MENUNGGU_PEMBAYARAN);
-    }
 
     /**
      * Local scope to filter only confirmed bookings.
@@ -73,14 +61,6 @@ class Booking extends Model
     public function scopeDikonfirmasi($query)
     {
         return $query->where('status_booking', self::STATUS_DIKONFIRMASI);
-    }
-
-    /**
-     * Helper to check if booking is awaiting payment.
-     */
-    public function isMenungguPembayaran(): bool
-    {
-        return $this->status_booking === self::STATUS_MENUNGGU_PEMBAYARAN;
     }
 
     /**

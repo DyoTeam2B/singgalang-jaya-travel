@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreTripRequest;
+use App\Http\Requests\Admin\AssignBookingRequest;
 use App\Models\Trip;
 use App\Models\Jadwal;
 use App\Models\Driver;
@@ -59,10 +60,42 @@ class TripController extends Controller
         ];
 
         // Get bookings waiting to be assigned (status: dikonfirmasi)
-        $bookings = Booking::where('status_booking', 'dikonfirmasi')
+        $bookings = Booking::where('status_booking', Booking::STATUS_DIKONFIRMASI)
             ->with(['pelanggan', 'jadwal.rute'])
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($bookingQuery) use ($search) {
+                    $bookingQuery->where('kode_booking', 'like', "%{$search}%")
+                        ->orWhereHas('pelanggan', function ($pelangganQuery) use ($search) {
+                            $pelangganQuery->where('nama', 'like', "%{$search}%")
+                                ->orWhere('no_hp', 'like', "%{$search}%");
+                        });
+                });
+            })
             ->latest()
             ->get();
+
+        $assignableTrips = Trip::whereIn('jadwal_id', $bookings->pluck('jadwal_id')->unique())
+            ->whereIn('status_trip', [Trip::STATUS_NEW, Trip::STATUS_READY])
+            ->with(['driver', 'armada', 'detailTrips.booking'])
+            ->get()
+            ->groupBy('jadwal_id');
+
+        $bookings->each(function (Booking $booking) use ($assignableTrips) {
+            $booking->setAttribute('assignable_trips', $assignableTrips
+                ->get($booking->jadwal_id, collect())
+                ->map(function (Trip $trip) {
+                    $currentPax = $trip->detailTrips->sum(fn ($detail) => $detail->booking?->jumlah_penumpang ?? 0);
+
+                    return [
+                        'id' => $trip->id,
+                        'driver_name' => $trip->driver->nama_driver ?? 'Belum Ditugaskan',
+                        'plate' => $trip->armada->nomor_plat ?? '-',
+                        'capacity' => $trip->armada->kapasitas ?? 5,
+                        'pax' => $currentPax,
+                    ];
+                })
+                ->values());
+        });
 
         return view('admin.trips.index', compact('trips', 'bookings', 'status', 'search', 'counts'));
     }
@@ -265,13 +298,9 @@ class TripController extends Controller
     /**
      * Assign a booking to the specified trip.
      */
-    public function assignBooking(Request $request, Trip $trip)
+    public function assignBooking(AssignBookingRequest $request, Trip $trip)
     {
-        $request->validate([
-            'booking_id' => 'required|exists:bookings,id',
-        ]);
-
-        $booking = Booking::findOrFail($request->booking_id);
+        $booking = Booking::findOrFail($request->validated()['booking_id']);
 
         if ($booking->jadwal_id !== $trip->jadwal_id) {
             return redirect()->back()->with('error', 'Jadwal booking tidak sesuai dengan jadwal trip.');

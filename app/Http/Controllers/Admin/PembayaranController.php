@@ -65,12 +65,12 @@ class PembayaranController extends Controller
             ]);
 
             $pembayaran->booking->update([
-                'status_booking' => Booking::STATUS_MENUNGGU_PEMBAYARAN,
+                'status_booking' => Booking::STATUS_BOOKING_DIBUAT,
             ]);
         });
 
         return redirect()
             ->route('admin.pembayaran.index', ['payment_id' => $pembayaran->id])
-            ->with('error', 'Pembayaran ditolak. Pelanggan diminta mengunggah ulang bukti pembayaran.');
+            ->with('error', 'Pembayaran ditolak. Pelanggan diminta mengunggah ulang bukti pembayaran DP.');
     }
 }

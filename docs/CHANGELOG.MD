@@ -2,6 +2,23 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-16] - Sprint 0-2 Corrections
+
+### Added
+* Menambahkan route dan view `booking.index` / `booking.show` untuk halaman Booking Saya pelanggan.
+* Menambahkan `AssignBookingRequest` untuk validasi assign booking ke trip.
+
+### Changed
+* Mengarahkan login/register pelanggan ke halaman publik, bukan dashboard driver/default Breeze.
+* Mengubah navbar publik setelah pelanggan login menjadi Home, Jadwal, Booking Saya, Charter, Kontak, dan dropdown Profil.
+* Menyelaraskan flow pembayaran DP ke status final: `booking_dibuat` -> `menunggu_verifikasi` -> `dikonfirmasi` tanpa timer 30 menit.
+* Mengizinkan lebih dari satu trip untuk jadwal yang sama selama driver/armada tidak bentrok di shift yang sama.
+
+### Fixed
+* Memperbaiki tombol Assign Trip admin yang sebelumnya memakai `jadwal_id` sebagai `trip_id`.
+* Menghapus pemakaian status lama `menunggu_pembayaran` dan kolom `batas_bayar_at` dari flow booking.
+* Memindahkan query assignable trip dari Blade ke `Admin\TripController`.
+
 ## [2026-06-14] - Rayhan - Sprint 3 (Armada Separation & CRUD)
 
 ### Added

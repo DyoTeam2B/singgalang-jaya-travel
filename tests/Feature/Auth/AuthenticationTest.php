@@ -30,7 +30,7 @@ class AuthenticationTest extends TestCase
         $expectedRoute = match ($user->role) {
             'admin' => 'admin.dashboard',
             'driver' => 'driver.dashboard',
-            default => 'dashboard',
+            default => 'home',
         };
         $response->assertRedirect(route($expectedRoute, absolute: false));
     }

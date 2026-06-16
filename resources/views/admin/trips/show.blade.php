@@ -571,10 +571,7 @@
                     @forelse($armadas as $armada)
                         @php
                             $isCurrentArmada = ($trip->armada_id === $armada->id);
-                            $isArmadaBusy = \App\Models\Trip::where('id', '!=', $trip->id)
-                                ->where('armada_id', $armada->id)
-                                ->whereIn('status_trip', ['ready', 'on_trip'])
-                                ->exists();
+                            $isArmadaBusy = false;
                             $dynamicStatusArmada = $isArmadaBusy ? 'sibuk' : 'tersedia';
                         @endphp
                         <div x-show="armadaSearch === '' || 

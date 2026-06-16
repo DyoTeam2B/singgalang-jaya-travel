@@ -70,7 +70,6 @@
 
 ### 🔲 Belum Dikerjakan
 
-- Booking Saya (halaman list + detail booking pelanggan — pengganti Cek Booking)
 - Driver Dashboard (controller + proper view)
 - Driver Trip operations (TripController, start/pickup/dropoff/complete)
 - Driver Konfirmasi Pelunasan
@@ -95,7 +94,7 @@
 | Cancel Booking (pelanggan) | 1 | — | ✅ |
 | Pembayaran Customer | 2 | 1 | ✅ |
 | Cek Status Booking | 2 | 2 | ✅ |
-| Booking Saya (list + detail) | 2 | 2 | 🔲 |
+| Booking Saya (list + detail) | 2 | 2 | ? |
 | API (AJAX) | 2 | — | ✅ |
 | Layout Public | — | 1 | ✅ |
 | Map Picker component | — | 1 | ✅ |
@@ -240,7 +239,7 @@ Semua tugas fondasi telah diselesaikan: Setup project, Breeze auth, RoleMiddlewa
 | Update migration `trips` (tambah `armada_id`) | KVN | — | ✅ |
 | Admin Armada CRUD | RYF | 6 routes | ✅ |
 | Update Admin Driver (link ke armada) | NYS | Update existing | ✅ |
-| Booking Saya (list + detail, pengganti Cek Booking) | RYH | 2 routes | 🔲 |
+| Booking Saya (list + detail, pengganti Cek Booking) | RYH | 2 routes | ? |
 | Driver Dashboard (controller + proper view) | KVN | `driver.dashboard` | 🔲 |
 | Driver Trip List + Detail/Manifest | KVN | 2 routes | 🔲 |
 | Driver Start Trip | KVN | `driver.trips.start` | 🔲 |
@@ -399,8 +398,8 @@ flowchart LR
 | `resources/views/public/pembayaran/show.blade.php` | RYH | ✅ |
 | `resources/views/public/cek-booking/index.blade.php` | RYH | ✅ |
 | `resources/views/public/cek-booking/show.blade.php` | RYH | ✅ |
-| `resources/views/public/booking/index.blade.php` | RYH | 🔲 (Booking Saya list) |
-| `resources/views/public/booking/show.blade.php` | RYH | 🔲 (Booking Saya detail) |
+| `resources/views/public/booking/index.blade.php` | RYH | ? |
+| `resources/views/public/booking/show.blade.php` | RYH | ? |
 | `resources/views/admin/dashboard.blade.php` | RYF | ✅ |
 | `resources/views/admin/rute/*` (3 files) | RYF | ✅ |
 | `resources/views/admin/jadwal/*` (3 files) | RYF | ✅ |

@@ -67,7 +67,6 @@ class BookingService
                 'jumlah_penumpang' => $data['jumlah_penumpang'],
                 'total_harga' => $totalHarga,
                 'status_booking' => Booking::STATUS_BOOKING_DIBUAT,
-                'batas_bayar_at' => now()->addMinutes(30),
             ]);
 
             return $booking;

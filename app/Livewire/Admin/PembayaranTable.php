@@ -69,7 +69,7 @@ class PembayaranTable extends Component
     }
 
     /**
-     * Reject payment, save reason, and revert booking status to menunggu_pembayaran
+     * Reject payment, save reason, and return booking to upload state
      */
     public function rejectPayment(): void
     {
@@ -90,13 +90,13 @@ class PembayaranTable extends Component
                 ]);
 
                 $pembayaran->booking->update([
-                    'status_booking' => Booking::STATUS_MENUNGGU_PEMBAYARAN,
+                    'status_booking' => Booking::STATUS_BOOKING_DIBUAT,
                 ]);
             });
 
             $this->isRejectModalOpen = false;
             $this->rejectReason = '';
-            session()->flash('error', 'Bukti pembayaran ditolak. Status booking dikembalikan ke Menunggu Pembayaran.');
+            session()->flash('error', 'Bukti pembayaran ditolak. Status booking dikembalikan ke Booking Dibuat agar pelanggan dapat upload ulang.');
         }
     }
 

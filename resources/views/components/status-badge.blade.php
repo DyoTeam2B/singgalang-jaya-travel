@@ -5,7 +5,6 @@
     $config = match ($status) {
         // Booking Status
         'booking_dibuat' => ['label' => 'Booking Dibuat', 'classes' => 'bg-yellow-100 text-yellow-800 border-yellow-200'],
-        'menunggu_pembayaran' => ['label' => 'Menunggu Pembayaran', 'classes' => 'bg-yellow-100 text-yellow-800 border-yellow-200'],
         'menunggu_verifikasi' => ['label' => 'Menunggu Verifikasi', 'classes' => 'bg-yellow-100 text-yellow-800 border-yellow-200'],
         'dikonfirmasi' => ['label' => 'Dikonfirmasi', 'classes' => 'bg-blue-100 text-blue-800 border-blue-200'],
         'assigned_to_trip' => ['label' => 'Assigned To Trip', 'classes' => 'bg-blue-100 text-blue-800 border-blue-200'],

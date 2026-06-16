@@ -29,7 +29,6 @@
                 >
                     <option value="Semua Status">Semua Status</option>
                     <option value="booking_dibuat">Booking Dibuat</option>
-                    <option value="menunggu_pembayaran">Menunggu Pembayaran</option>
                     <option value="menunggu_verifikasi">Menunggu Verifikasi</option>
                     <option value="dikonfirmasi">Dikonfirmasi</option>
                     <option value="assigned_to_trip">Assigned To Trip</option>
@@ -191,7 +190,7 @@
                                     <!-- Assign Trip Link -->
                                     @if ($b->status_booking === 'dikonfirmasi')
                                         <a 
-                                            href="{{ route('admin.trips.show', $b->jadwal_id) }}"
+                                            href="{{ route('admin.trips.index', ['status' => 'ready', 'search' => $b->kode_booking]) }}"
                                             class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shadow-lg shadow-blue-600/20 active:scale-95"
                                         >
                                             <!-- Clipboard Icon -->

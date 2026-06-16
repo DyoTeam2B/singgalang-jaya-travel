@@ -116,7 +116,7 @@
 
                     {{-- Actions --}}
                     <div class="flex flex-col sm:flex-row gap-4 justify-between pt-4 border-t border-slate-100">
-                        <a href="{{ route('cek-booking.index', ['kode_booking' => $booking->kode_booking]) }}" class="inline-flex justify-center items-center bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium px-6 py-3 rounded-xl transition-colors text-sm gap-2">
+                        <a href="{{ route('booking.show', ['kode' => $booking->kode_booking]) }}" class="inline-flex justify-center items-center bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium px-6 py-3 rounded-xl transition-colors text-sm gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                             Batal
                         </a>

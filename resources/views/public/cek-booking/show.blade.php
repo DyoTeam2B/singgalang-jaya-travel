@@ -40,7 +40,7 @@
                 <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 <div>
                     <h4 class="font-bold text-sm">Pemesanan Kedaluwarsa</h4>
-                    <p class="text-xs mt-0.5">Batas waktu transfer pembayaran DP (30 menit) telah terlampaui. Pemesanan ini tidak aktif.</p>
+                    <p class="text-xs mt-0.5">Pemesanan ini tidak aktif. Silakan lakukan pemesanan ulang jika masih membutuhkan perjalanan.</p>
                 </div>
             </div>
         @elseif($booking->status_booking === \App\Models\Booking::STATUS_CANCELLED)
@@ -68,7 +68,6 @@
                 @php
                     $allowedEdit = in_array($booking->status_booking, [
                         \App\Models\Booking::STATUS_BOOKING_DIBUAT,
-                        \App\Models\Booking::STATUS_MENUNGGU_PEMBAYARAN,
                         \App\Models\Booking::STATUS_MENUNGGU_VERIFIKASI,
                         \App\Models\Booking::STATUS_DIKONFIRMASI
                     ]);
@@ -191,7 +190,7 @@
                                 <span class="text-slate-500 uppercase tracking-wider">Uang Muka (DP)</span>
                                 <span class="inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">Belum Dibayar</span>
                             </div>
-                            @if(auth()->check() && $booking->pelanggan->user_id === auth()->id() && $booking->status_booking === \App\Models\Booking::STATUS_MENUNGGU_PAYMENT)
+                            @if(auth()->check() && $booking->pelanggan->user_id === auth()->id() && $booking->status_booking === \App\Models\Booking::STATUS_BOOKING_DIBUAT)
                                 <a href="{{ route('booking.pembayaran', ['kode' => $booking->kode_booking]) }}" class="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold text-xs px-4 py-2.5 rounded-xl transition-colors shadow-sm">
                                     Bayar Sekarang
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
@@ -215,7 +214,7 @@
                                     <span class="font-bold">Catatan Admin:</span> {{ $pembayaran->catatan }}
                                 </div>
                             @endif
-                            @if(auth()->check() && $booking->pelanggan->user_id === auth()->id() && $pembayaran->status_pembayaran === 'ditolak' && $booking->status_booking === \App\Models\Booking::STATUS_MENUNGGU_PEMBAYARAN)
+                            @if(auth()->check() && $booking->pelanggan->user_id === auth()->id() && $pembayaran->status_pembayaran === 'ditolak' && $booking->status_booking === \App\Models\Booking::STATUS_BOOKING_DIBUAT)
                                 <a href="{{ route('booking.pembayaran', ['kode' => $booking->kode_booking]) }}" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl transition-colors shadow-sm">
                                     Upload Ulang Bukti Pembayaran
                                 </a>
@@ -263,7 +262,7 @@
                         $status = $booking->status_booking;
                         $steps = [
                             ['label' => 'Pemesanan Dibuat', 'desc' => 'Data booking berhasil disimpan.', 'active' => true],
-                            ['label' => 'Menunggu Pembayaran DP', 'desc' => 'Pelanggan harus melunasi DP Rp50.000.', 'active' => in_array($status, ['menunggu_pembayaran', 'menunggu_verifikasi', 'dikonfirmasi', 'assigned_to_trip', 'on_trip', 'completed'])],
+                            ['label' => 'Upload Bukti DP', 'desc' => 'Pelanggan upload bukti DP Rp50.000.', 'active' => in_array($status, ['booking_dibuat', 'menunggu_verifikasi', 'dikonfirmasi', 'assigned_to_trip', 'on_trip', 'completed'])],
                             ['label' => 'Verifikasi Pembayaran', 'desc' => 'Bukti transfer DP sedang ditinjau admin.', 'active' => in_array($status, ['menunggu_verifikasi', 'dikonfirmasi', 'assigned_to_trip', 'on_trip', 'completed'])],
                             ['label' => 'Booking Dikonfirmasi', 'desc' => 'DP terverifikasi. Kursi diamankan.', 'active' => in_array($status, ['dikonfirmasi', 'assigned_to_trip', 'on_trip', 'completed'])],
                             ['label' => 'Penugasan Trip & Driver', 'desc' => 'Booking dimasukkan ke trip perjalanan.', 'active' => in_array($status, ['assigned_to_trip', 'on_trip', 'completed'])],

@@ -89,6 +89,49 @@ class BookingController extends Controller
     }
 
     /**
+     * Display authenticated customer bookings.
+     */
+    public function index()
+    {
+        $pelanggan = auth()->user()->pelanggan;
+
+        $bookings = Booking::with([
+                'jadwal.rute',
+                'pembayaran' => fn ($query) => $query->latest(),
+                'detailTrips.trip.driver',
+                'detailTrips.trip.armada',
+            ])
+            ->where('pelanggan_id', $pelanggan?->id ?? 0)
+            ->latest()
+            ->paginate(10);
+
+        return view('public.booking.index', compact('bookings'));
+    }
+
+    /**
+     * Display one authenticated customer booking.
+     */
+    public function show($kode)
+    {
+        $booking = Booking::with([
+                'pelanggan.user',
+                'jadwal.rute',
+                'pembayaran' => fn ($query) => $query->latest(),
+                'detailTrips.trip.driver',
+                'detailTrips.trip.armada',
+            ])
+            ->where('kode_booking', $kode)
+            ->firstOrFail();
+
+        if ($booking->pelanggan->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $latestPayment = $booking->pembayaran->first();
+
+        return view('public.booking.show', compact('booking', 'latestPayment'));
+    }
+    /**
      * Show the edit lokasi form.
      */
     public function edit($kode)
@@ -104,14 +147,13 @@ class BookingController extends Controller
         // Check restriction: cannot edit if already assigned to trip or further
         $allowedStatuses = [
             Booking::STATUS_BOOKING_DIBUAT,
-            Booking::STATUS_MENUNGGU_PEMBAYARAN,
             Booking::STATUS_MENUNGGU_VERIFIKASI,
             Booking::STATUS_DIKONFIRMASI
         ];
 
         if (!in_array($booking->status_booking, $allowedStatuses)) {
             return redirect()
-                ->route('cek-booking.show', ['kode_booking' => $kode])
+                ->route('booking.show', ['kode' => $kode])
                 ->with('error', 'Lokasi penjemputan tidak dapat diubah karena pesanan sudah masuk ke tahap trip/perjalanan.');
         }
 
@@ -133,14 +175,13 @@ class BookingController extends Controller
 
         $allowedStatuses = [
             Booking::STATUS_BOOKING_DIBUAT,
-            Booking::STATUS_MENUNGGU_PEMBAYARAN,
             Booking::STATUS_MENUNGGU_VERIFIKASI,
             Booking::STATUS_DIKONFIRMASI
         ];
 
         if (!in_array($booking->status_booking, $allowedStatuses)) {
             return redirect()
-                ->route('cek-booking.show', ['kode_booking' => $kode])
+                ->route('booking.show', ['kode' => $kode])
                 ->with('error', 'Lokasi penjemputan tidak dapat diubah karena pesanan sudah masuk ke tahap trip/perjalanan.');
         }
 
@@ -155,9 +196,9 @@ class BookingController extends Controller
 
         $booking->update($validated);
 
-        // Redirect back to check booking page with status parameter to match route binding for CekBooking show method
+        // Redirect back to customer booking detail.
         return redirect()
-            ->route('cek-booking.index', ['kode_booking' => $kode])
+            ->route('booking.show', ['kode' => $kode])
             ->with('success', 'Lokasi penjemputan berhasil diperbarui.');
     }
 
@@ -184,7 +225,7 @@ class BookingController extends Controller
 
         if (in_array($booking->status_booking, $disallowedStatuses)) {
             return redirect()
-                ->route('cek-booking.index', ['kode_booking' => $kode])
+                ->route('booking.show', ['kode' => $kode])
                 ->with('error', 'Pemesanan tidak dapat dibatalkan pada status saat ini.');
         }
 
@@ -215,7 +256,7 @@ class BookingController extends Controller
         }
 
         return redirect()
-            ->route('cek-booking.index', ['kode_booking' => $kode])
+            ->route('booking.show', ['kode' => $kode])
             ->with('success', 'Pemesanan berhasil dibatalkan.');
     }
 }

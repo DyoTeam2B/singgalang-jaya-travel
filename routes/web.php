@@ -25,6 +25,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/booking/{kode}/edit', [\App\Http\Controllers\BookingController::class, 'edit'])->name('booking.edit');
         Route::put('/booking/{kode}', [\App\Http\Controllers\BookingController::class, 'update'])->name('booking.update');
         Route::put('/booking/{kode}/cancel', [\App\Http\Controllers\BookingController::class, 'cancel'])->name('booking.cancel');
+        Route::get('/booking-saya', [\App\Http\Controllers\BookingController::class, 'index'])->name('booking.index');
+        Route::get('/booking/{kode}', [\App\Http\Controllers\BookingController::class, 'show'])->name('booking.show');
     });
 
     // Redirection Dashboard (Breeze Default)
@@ -32,7 +34,12 @@ Route::middleware('auth')->group(function () {
         if (Auth::user()->role === 'admin') {
             return redirect()->route('admin.dashboard');
         }
-        return redirect()->route('driver.dashboard');
+
+        if (Auth::user()->role === 'driver') {
+            return redirect()->route('driver.dashboard');
+        }
+
+        return redirect()->route('home');
     })->name('dashboard');
 
     // Profile Routes
