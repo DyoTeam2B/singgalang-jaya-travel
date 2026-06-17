@@ -6,26 +6,49 @@
 <div class="py-12 md:py-20 bg-slate-50 flex-1">
     <div class="max-w-4xl w-full mx-auto px-6 lg:px-8">
 
-        {{-- Step Indicator --}}
-        <div class="flex items-center justify-center mb-10 overflow-x-auto pb-4">
-            <div class="flex items-center gap-2 sm:gap-4 text-xs font-semibold uppercase tracking-wider min-w-max">
-                <div class="flex items-center gap-2 text-blue-800">
-                    <span class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-800 text-xs font-bold border border-blue-200">1</span>
-                    <span>Pemesanan</span>
+        {{-- Timeline Status --}}
+        @php
+            $timelineSteps = [
+                ['label' => 'Booking Dibuat', 'description' => 'Pesanan berhasil dibuat'],
+                ['label' => 'DP Diupload', 'description' => 'Menunggu verifikasi admin'],
+                ['label' => 'Dikonfirmasi', 'description' => 'Pembayaran DP diterima'],
+                ['label' => 'Masuk Trip', 'description' => 'Driver dan armada ditentukan'],
+                ['label' => 'Perjalanan', 'description' => 'Trip sedang berjalan'],
+                ['label' => 'Selesai', 'description' => 'Perjalanan selesai'],
+            ];
+        @endphp
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-8">
+            <div class="flex items-center justify-between gap-4 mb-6">
+                <div>
+                    <p class="text-xs font-bold text-blue-600 uppercase tracking-widest">Status Booking</p>
+                    <h2 class="text-xl font-bold text-slate-800 mt-1">Timeline Perjalanan</h2>
                 </div>
-                <div class="w-10 h-0.5 bg-blue-300"></div>
-                <div class="flex items-center gap-2 text-blue-800">
-                    <span class="w-8 h-8 rounded-full bg-blue-800 flex items-center justify-center text-white text-xs font-bold shadow-sm">2</span>
-                    <span>Review</span>
-                </div>
-                <div class="w-10 h-0.5 bg-slate-200"></div>
-                <div class="flex items-center gap-2 text-slate-400">
-                    <span class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 text-xs">3</span>
-                    <span>Pembayaran</span>
+                <x-status-badge :status="$booking->status_booking" />
+            </div>
+            <div class="overflow-x-auto pb-2">
+                <div class="min-w-[760px] grid grid-cols-6">
+                    @foreach($timelineSteps as $index => $step)
+                        @php
+                            $isActive = $index === 0;
+                        @endphp
+                        <div class="relative px-2">
+                            @if(!$loop->last)
+                                <div class="absolute top-4 left-1/2 w-full h-1 bg-slate-200"></div>
+                            @endif
+                            <div class="relative z-10 flex flex-col items-center text-center gap-2">
+                                <div class="w-9 h-9 rounded-full border-4 flex items-center justify-center text-[10px] font-black {{ $isActive ? 'bg-blue-600 border-blue-100 text-white shadow-lg shadow-blue-600/20' : 'bg-white border-slate-200 text-slate-400' }}">
+                                    {{ $index + 1 }}
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold {{ $isActive ? 'text-blue-800' : 'text-slate-400' }}">{{ $step['label'] }}</p>
+                                    <p class="text-[10px] font-medium {{ $isActive ? 'text-slate-500' : 'text-slate-300' }} mt-0.5">{{ $step['description'] }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>
-
         {{-- Review Card --}}
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
 

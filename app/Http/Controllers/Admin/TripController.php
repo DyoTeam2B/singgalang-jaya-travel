@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\AssignBookingRequest;
 use App\Models\Trip;
 use App\Models\Jadwal;
 use App\Models\Driver;
+use App\Models\Armada;
 use App\Models\Booking;
 use App\Models\DetailTrip;
 use Illuminate\Support\Facades\DB;
@@ -76,7 +77,7 @@ class TripController extends Controller
 
         $assignableTrips = Trip::whereIn('jadwal_id', $bookings->pluck('jadwal_id')->unique())
             ->whereIn('status_trip', [Trip::STATUS_NEW, Trip::STATUS_READY])
-            ->with(['driver', 'armada', 'detailTrips.booking'])
+            ->with(['driver', 'armada', 'jadwal.rute', 'detailTrips.booking'])
             ->get()
             ->groupBy('jadwal_id');
 
@@ -92,6 +93,9 @@ class TripController extends Controller
                         'plate' => $trip->armada->nomor_plat ?? '-',
                         'capacity' => $trip->armada->kapasitas ?? 5,
                         'pax' => $currentPax,
+                        'departure_date' => $trip->jadwal->tanggal_keberangkatan->format('d M Y'),
+                        'shift' => ucfirst($trip->jadwal->shift),
+                        'time' => $trip->jadwal->jam_berangkat->format('H:i'),
                     ];
                 })
                 ->values());
@@ -117,7 +121,7 @@ class TripController extends Controller
             ->get();
 
         // Fetch active armadas
-        $armadas = \App\Models\Armada::where('status_armada', 'aktif')
+        $armadas = Armada::where('status_armada', 'aktif')
             ->latest()
             ->get();
 
@@ -148,23 +152,23 @@ class TripController extends Controller
     {
         $trip->load(['driver', 'jadwal.rute', 'detailTrips.booking.pelanggan', 'armada']);
 
-        // Fetch drivers that are active, and:
-        // - Either they don't have any active trip (ready/on_trip) OR they are the current driver of this trip.
+        $jadwal = $trip->jadwal;
+
+        // Driver hanya dianggap sibuk jika sudah punya trip pada tanggal dan shift yang sama.
         $drivers = Driver::with('armada')->where('status_driver', 'aktif')
-            ->where(function($query) use ($trip) {
-                $query->whereDoesntHave('trips', function($q) {
-                    $q->whereIn('status_trip', ['ready', 'on_trip']);
+            ->where(function ($query) use ($trip, $jadwal) {
+                $query->whereDoesntHave('trips', function ($tripQuery) use ($trip, $jadwal) {
+                    $this->whereConflictingSchedule($tripQuery, $jadwal, $trip->id);
                 })->orWhere('id', $trip->driver_id);
             })
             ->latest()
             ->get();
 
-        // Fetch armadas that are active, and:
-        // - Either they don't have any active trip (ready/on_trip) OR they are the current armada of this trip.
-        $armadas = \App\Models\Armada::where('status_armada', 'aktif')
-            ->where(function($query) use ($trip) {
-                $query->whereDoesntHave('trips', function($q) {
-                    $q->whereIn('status_trip', ['ready', 'on_trip']);
+        // Armada mengikuti aturan konflik yang sama agar bisa dipakai pada jadwal lain.
+        $armadas = Armada::where('status_armada', 'aktif')
+            ->where(function ($query) use ($trip, $jadwal) {
+                $query->whereDoesntHave('trips', function ($tripQuery) use ($trip, $jadwal) {
+                    $this->whereConflictingSchedule($tripQuery, $jadwal, $trip->id);
                 })->orWhere('id', $trip->armada_id);
             })
             ->latest()
@@ -199,6 +203,7 @@ class TripController extends Controller
             'status_trip' => 'nullable|in:new,ready,on_trip,completed,cancelled',
         ]);
 
+        $trip->loadMissing('jadwal');
         $updateData = [];
 
         if ($request->has('driver_id')) {
@@ -208,34 +213,34 @@ class TripController extends Controller
                 return redirect()->back()->with('error', 'Driver tidak aktif.');
             }
 
-            // check if driver is already assigned to another active trip
-            $hasOtherActiveTrip = $driver->trips()
-                ->where('id', '!=', $trip->id)
-                ->whereIn('status_trip', ['ready', 'on_trip'])
+            $hasScheduleConflict = $driver->trips()
+                ->where(function ($query) use ($trip) {
+                    $this->whereConflictingSchedule($query, $trip->jadwal, $trip->id);
+                })
                 ->exists();
 
-            if ($hasOtherActiveTrip) {
-                return redirect()->back()->with('error', 'Driver sedang bertugas di trip lain.');
+            if ($hasScheduleConflict) {
+                return redirect()->back()->with('error', 'Driver sudah bertugas pada tanggal dan shift yang sama.');
             }
 
             $updateData['driver_id'] = $request->driver_id;
         }
 
         if ($request->has('armada_id')) {
-            $armada = \App\Models\Armada::findOrFail($request->armada_id);
+            $armada = Armada::findOrFail($request->armada_id);
 
             if ($armada->status_armada === 'nonaktif') {
                 return redirect()->back()->with('error', 'Armada tidak aktif.');
             }
 
-            // check if armada is already assigned to another active trip
-            $hasOtherActiveTrip = \App\Models\Trip::where('id', '!=', $trip->id)
-                ->where('armada_id', $request->armada_id)
-                ->whereIn('status_trip', ['ready', 'on_trip'])
+            $hasScheduleConflict = Trip::where('armada_id', $request->armada_id)
+                ->where(function ($query) use ($trip) {
+                    $this->whereConflictingSchedule($query, $trip->jadwal, $trip->id);
+                })
                 ->exists();
 
-            if ($hasOtherActiveTrip) {
-                return redirect()->back()->with('error', 'Armada sedang digunakan di trip lain.');
+            if ($hasScheduleConflict) {
+                return redirect()->back()->with('error', 'Armada sudah digunakan pada tanggal dan shift yang sama.');
             }
 
             $updateData['armada_id'] = $request->armada_id;
@@ -365,5 +370,21 @@ class TripController extends Controller
 
         return redirect()->route('admin.trips.show', $trip->id)
             ->with('success', 'Booking berhasil dikeluarkan dari trip.');
+    }
+
+    /**
+     * Batasi konflik driver/armada pada tanggal dan shift yang sama saja.
+     */
+    private function whereConflictingSchedule($query, Jadwal $jadwal, ?int $ignoreTripId = null): void
+    {
+        if ($ignoreTripId !== null) {
+            $query->where('trips.id', '!=', $ignoreTripId);
+        }
+
+        $query->where('status_trip', '!=', Trip::STATUS_CANCELLED)
+            ->whereHas('jadwal', function ($jadwalQuery) use ($jadwal) {
+                $jadwalQuery->whereDate('tanggal_keberangkatan', $jadwal->tanggal_keberangkatan->toDateString())
+                    ->where('shift', $jadwal->shift);
+            });
     }
 }

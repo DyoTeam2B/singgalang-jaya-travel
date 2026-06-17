@@ -20,6 +20,27 @@
         \App\Models\Booking::STATUS_CANCELLED,
         \App\Models\Booking::STATUS_EXPIRED,
     ]);
+    $timelineSteps = [
+        ['status' => \App\Models\Booking::STATUS_BOOKING_DIBUAT, 'label' => 'Booking Dibuat', 'description' => 'Pesanan berhasil dibuat'],
+        ['status' => \App\Models\Booking::STATUS_MENUNGGU_VERIFIKASI, 'label' => 'DP Diupload', 'description' => 'Menunggu verifikasi admin'],
+        ['status' => \App\Models\Booking::STATUS_DIKONFIRMASI, 'label' => 'Dikonfirmasi', 'description' => 'Pembayaran DP diterima'],
+        ['status' => \App\Models\Booking::STATUS_ASSIGNED_TO_TRIP, 'label' => 'Masuk Trip', 'description' => 'Driver dan armada ditentukan'],
+        ['status' => \App\Models\Booking::STATUS_ON_TRIP, 'label' => 'Perjalanan', 'description' => 'Trip sedang berjalan'],
+        ['status' => \App\Models\Booking::STATUS_COMPLETED, 'label' => 'Selesai', 'description' => 'Perjalanan selesai'],
+    ];
+    $currentStepIndex = collect($timelineSteps)->search(fn ($step) => $step['status'] === $booking->status_booking);
+    $currentStepIndex = $currentStepIndex === false ? 0 : $currentStepIndex;
+    $showDriverInfo = $driver && in_array($booking->status_booking, [
+        \App\Models\Booking::STATUS_ASSIGNED_TO_TRIP,
+        \App\Models\Booking::STATUS_ON_TRIP,
+        \App\Models\Booking::STATUS_COMPLETED,
+    ]);
+    $driverWhatsapp = preg_replace('/\D+/', '', $driver->no_hp ?? '');
+    if ($driverWhatsapp && str_starts_with($driverWhatsapp, '0')) {
+        $driverWhatsapp = '62' . substr($driverWhatsapp, 1);
+    } elseif ($driverWhatsapp && !str_starts_with($driverWhatsapp, '62')) {
+        $driverWhatsapp = '62' . $driverWhatsapp;
+    }
 @endphp
 
 <div class="py-12 md:py-20 bg-slate-50 flex-1">
@@ -38,18 +59,59 @@
 
         <x-alert />
 
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 md:p-8">
+            <div class="flex items-center justify-between gap-4 mb-6">
+                <div>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Progress Booking</p>
+                    <h2 class="text-xl font-bold text-slate-800 mt-1">Timeline Status</h2>
+                </div>
+                <span class="text-xs font-semibold text-slate-400">{{ $booking->updated_at->format('d M Y H:i') }} WIB</span>
+            </div>
+
+            <div class="overflow-x-auto pb-2">
+                <div class="min-w-[760px] grid grid-cols-6">
+                    @foreach($timelineSteps as $index => $step)
+                        @php
+                            $isActive = $index <= $currentStepIndex;
+                            $lineActive = $index < $currentStepIndex;
+                        @endphp
+                        <div class="relative px-2">
+                            @if(!$loop->last)
+                                <div class="absolute top-4 left-1/2 w-full h-1 {{ $lineActive ? 'bg-blue-600' : 'bg-slate-200' }}"></div>
+                            @endif
+                            <div class="relative z-10 flex flex-col items-center text-center gap-2">
+                                <div class="w-9 h-9 rounded-full border-4 flex items-center justify-center text-[10px] font-black {{ $isActive ? 'bg-blue-600 border-blue-100 text-white shadow-lg shadow-blue-600/20' : 'bg-white border-slate-200 text-slate-400' }}">
+                                    {{ $index + 1 }}
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold {{ $isActive ? 'text-blue-800' : 'text-slate-400' }}">{{ $step['label'] }}</p>
+                                    <p class="text-[10px] font-medium {{ $isActive ? 'text-slate-500' : 'text-slate-300' }} mt-0.5">{{ $step['description'] }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             <div class="lg:col-span-8 space-y-6">
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                     <div class="p-8 flex flex-col md:flex-row justify-between gap-6">
                         <div class="space-y-3">
                             <h2 class="text-2xl font-bold text-slate-800">{{ $booking->jadwal->rute->asal ?? '-' }} -> {{ $booking->jadwal->rute->tujuan ?? '-' }}</h2>
-                            <div class="flex flex-wrap items-center gap-4 text-sm text-slate-500">
-                                <span>{{ $booking->jadwal?->tanggal_keberangkatan?->format('d M Y') ?? '-' }}</span>
+                            <div class="flex flex-wrap items-center gap-3 text-sm text-slate-500">
+                                <span class="inline-flex items-center gap-2 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-xl font-semibold">
+                                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    {{ $booking->jadwal?->tanggal_keberangkatan?->format('d M Y') ?? '-' }}
+                                </span>
                                 @if($booking->jadwal)
-                                    <span>Shift {{ ucfirst($booking->jadwal->shift) }} - {{ $booking->jadwal->jam_berangkat->format('H:i') }} WIB</span>
+                                    <span class="inline-flex items-center gap-2 bg-blue-50 text-blue-800 px-3 py-1.5 rounded-xl font-semibold">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6h4m6 0a10 10 0 11-20 0 10 10 0 0120 0z"></path></svg>
+                                        Shift {{ ucfirst($booking->jadwal->shift) }} - {{ $booking->jadwal->jam_berangkat->format('H:i') }} WIB
+                                    </span>
                                 @endif
-                                <span>{{ $booking->jumlah_penumpang }} penumpang</span>
+                                <span class="inline-flex items-center bg-slate-100 text-slate-700 px-3 py-1.5 rounded-xl font-semibold">{{ $booking->jumlah_penumpang }} penumpang</span>
                             </div>
                         </div>
                         <div class="md:text-right">
@@ -144,7 +206,7 @@
                         <h2 class="text-xl font-bold">Informasi Trip</h2>
                     </div>
 
-                    @if($trip && $driver)
+                    @if($showDriverInfo)
                         <div class="space-y-3">
                             <div class="p-4 bg-white/5 rounded-xl border border-white/10">
                                 <p class="text-xs text-slate-400 uppercase tracking-wider">Driver</p>
@@ -156,6 +218,16 @@
                                 <p class="text-sm font-bold mt-1">{{ $armada->nama_mobil ?? '-' }}</p>
                                 <p class="text-xs text-slate-300 mt-1">{{ $armada->nomor_plat ?? '-' }}</p>
                             </div>
+                            <div class="p-4 bg-white/5 rounded-xl border border-white/10">
+                                <p class="text-xs text-slate-400 uppercase tracking-wider">Jadwal Trip</p>
+                                <p class="text-sm font-bold mt-1">{{ $trip->jadwal->tanggal_keberangkatan->format('d M Y') }}</p>
+                                <p class="text-xs text-slate-300 mt-1">Shift {{ ucfirst($trip->jadwal->shift) }} - {{ $trip->jadwal->jam_berangkat->format('H:i') }} WIB</p>
+                            </div>
+                            @if($driverWhatsapp)
+                                <a href="https://wa.me/{{ $driverWhatsapp }}" target="_blank" rel="noopener" class="w-full inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold px-5 py-3 rounded-xl transition-colors text-sm">
+                                    Hubungi Driver via WhatsApp
+                                </a>
+                            @endif
                         </div>
                     @else
                         <p class="text-sm text-slate-300 leading-relaxed">Driver dan armada akan muncul setelah admin memasukkan booking ini ke trip.</p>

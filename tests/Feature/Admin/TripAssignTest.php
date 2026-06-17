@@ -28,7 +28,6 @@ class TripAssignTest extends TestCase
     {
         parent::setUp();
 
-        // Create Admin User
         $this->adminUser = User::create([
             'name' => 'Admin Test',
             'email' => 'admin@test.com',
@@ -36,14 +35,12 @@ class TripAssignTest extends TestCase
             'role' => 'admin',
         ]);
 
-        // Create Rute
         $this->rute = Rute::create([
             'asal' => 'Padang Panjang',
             'tujuan' => 'Pekanbaru',
             'tarif' => 150000,
         ]);
 
-        // Create Jadwal
         $this->jadwal = Jadwal::create([
             'rute_id' => $this->rute->id,
             'tanggal_keberangkatan' => now()->addDays(2)->toDateString(),
@@ -53,7 +50,6 @@ class TripAssignTest extends TestCase
             'status_jadwal' => 'aktif',
         ]);
 
-        // Create Armada
         $this->armada = Armada::create([
             'nama_mobil' => 'Toyota Avanza',
             'nomor_plat' => 'BA 1234 XY',
@@ -61,7 +57,6 @@ class TripAssignTest extends TestCase
             'status_armada' => 'aktif',
         ]);
 
-        // Create Driver User & Driver
         $driverUser = User::create([
             'name' => 'Joni Driver',
             'email' => 'joni@test.com',
@@ -77,7 +72,6 @@ class TripAssignTest extends TestCase
             'status_driver' => 'aktif',
         ]);
 
-        // Create Pelanggan User & Pelanggan
         $pelangganUser = User::create([
             'name' => 'Budi Pelanggan',
             'email' => 'budi@test.com',
@@ -92,12 +86,8 @@ class TripAssignTest extends TestCase
         ]);
     }
 
-    /**
-     * Test admin can assign booking to trip.
-     */
     public function test_admin_can_assign_booking_to_trip(): void
     {
-        // Create a confirmed booking for the schedule
         $booking = Booking::create([
             'pelanggan_id' => $this->pelanggan->id,
             'jadwal_id' => $this->jadwal->id,
@@ -109,15 +99,8 @@ class TripAssignTest extends TestCase
             'status_booking' => Booking::STATUS_DIKONFIRMASI,
         ]);
 
-        // Create a trip for the schedule
-        $trip = Trip::create([
-            'jadwal_id' => $this->jadwal->id,
-            'driver_id' => $this->driver->id,
-            'armada_id' => $this->armada->id,
-            'status_trip' => 'ready',
-        ]);
+        $trip = $this->createTrip($this->jadwal, $this->driver, $this->armada);
 
-        // Assign booking to trip
         $response = $this->actingAs($this->adminUser)
             ->post(route('admin.trips.assign', $trip->id), [
                 'booking_id' => $booking->id,
@@ -126,7 +109,6 @@ class TripAssignTest extends TestCase
         $response->assertRedirect(route('admin.trips.show', $trip->id));
         $response->assertSessionHas('success');
 
-        // Check database status
         $this->assertDatabaseHas('bookings', [
             'id' => $booking->id,
             'status_booking' => Booking::STATUS_ASSIGNED_TO_TRIP,
@@ -137,6 +119,137 @@ class TripAssignTest extends TestCase
             'booking_id' => $booking->id,
             'status_jemput' => 'belum',
             'status_antar' => 'belum',
+        ]);
+    }
+
+    public function test_admin_can_create_second_trip_for_same_schedule_with_different_driver_and_armada(): void
+    {
+        $this->createTrip($this->jadwal, $this->driver, $this->armada);
+        [$secondDriver, $secondArmada] = $this->createDriverWithArmada('Dedi Driver', 'dedi@test.com', 'BA 4321 CD');
+
+        $response = $this->actingAs($this->adminUser)
+            ->post(route('admin.trips.store'), [
+                'jadwal_id' => $this->jadwal->id,
+                'driver_id' => $secondDriver->id,
+                'armada_id' => $secondArmada->id,
+            ]);
+
+        $response->assertRedirect(route('admin.trips.index'));
+        $response->assertSessionHasNoErrors();
+
+        $this->assertSame(2, Trip::where('jadwal_id', $this->jadwal->id)->count());
+    }
+
+    public function test_admin_can_change_driver_when_driver_has_trip_on_different_shift(): void
+    {
+        $targetTrip = $this->createTrip($this->jadwal, $this->driver, $this->armada);
+        [$otherDriver, $otherArmada] = $this->createDriverWithArmada('Riko Driver', 'riko@test.com', 'BA 7777 RK');
+        $differentShift = $this->createSchedule('malam', '20:00');
+        $this->createTrip($differentShift, $otherDriver, $otherArmada);
+
+        $response = $this->actingAs($this->adminUser)
+            ->from(route('admin.trips.show', $targetTrip->id))
+            ->put(route('admin.trips.update', $targetTrip->id), [
+                'driver_id' => $otherDriver->id,
+            ]);
+
+        $response->assertRedirect(route('admin.trips.show', $targetTrip->id));
+        $response->assertSessionMissing('error');
+
+        $this->assertDatabaseHas('trips', [
+            'id' => $targetTrip->id,
+            'driver_id' => $otherDriver->id,
+        ]);
+    }
+
+    public function test_admin_cannot_change_driver_when_driver_has_trip_on_same_date_and_shift(): void
+    {
+        $targetTrip = $this->createTrip($this->jadwal, $this->driver, $this->armada);
+        [$conflictDriver, $conflictArmada] = $this->createDriverWithArmada('Sari Driver', 'sari@test.com', 'BA 8888 SR');
+        $this->createTrip($this->jadwal, $conflictDriver, $conflictArmada);
+
+        $response = $this->actingAs($this->adminUser)
+            ->from(route('admin.trips.show', $targetTrip->id))
+            ->put(route('admin.trips.update', $targetTrip->id), [
+                'driver_id' => $conflictDriver->id,
+            ]);
+
+        $response->assertRedirect(route('admin.trips.show', $targetTrip->id));
+        $response->assertSessionHas('error', 'Driver sudah bertugas pada tanggal dan shift yang sama.');
+
+        $this->assertDatabaseHas('trips', [
+            'id' => $targetTrip->id,
+            'driver_id' => $this->driver->id,
+        ]);
+    }
+
+    public function test_admin_cannot_change_armada_when_armada_has_trip_on_same_date_and_shift(): void
+    {
+        $targetTrip = $this->createTrip($this->jadwal, $this->driver, $this->armada);
+        [$conflictDriver, $conflictArmada] = $this->createDriverWithArmada('Tono Driver', 'tono@test.com', 'BA 9999 TN');
+        $this->createTrip($this->jadwal, $conflictDriver, $conflictArmada);
+
+        $response = $this->actingAs($this->adminUser)
+            ->from(route('admin.trips.show', $targetTrip->id))
+            ->put(route('admin.trips.update', $targetTrip->id), [
+                'armada_id' => $conflictArmada->id,
+            ]);
+
+        $response->assertRedirect(route('admin.trips.show', $targetTrip->id));
+        $response->assertSessionHas('error', 'Armada sudah digunakan pada tanggal dan shift yang sama.');
+
+        $this->assertDatabaseHas('trips', [
+            'id' => $targetTrip->id,
+            'armada_id' => $this->armada->id,
+        ]);
+    }
+
+    private function createDriverWithArmada(string $name, string $email, string $plate): array
+    {
+        $armada = Armada::create([
+            'nama_mobil' => 'Toyota Innova',
+            'nomor_plat' => $plate,
+            'kapasitas' => 6,
+            'status_armada' => 'aktif',
+        ]);
+
+        $user = User::create([
+            'name' => $name,
+            'email' => $email,
+            'password' => bcrypt('password123'),
+            'role' => 'driver',
+        ]);
+
+        $driver = Driver::create([
+            'user_id' => $user->id,
+            'nama_driver' => $name,
+            'no_hp' => '081200000000',
+            'armada_id' => $armada->id,
+            'status_driver' => 'aktif',
+        ]);
+
+        return [$driver, $armada];
+    }
+
+    private function createSchedule(string $shift, string $time): Jadwal
+    {
+        return Jadwal::create([
+            'rute_id' => $this->rute->id,
+            'tanggal_keberangkatan' => $this->jadwal->tanggal_keberangkatan->toDateString(),
+            'shift' => $shift,
+            'jam_berangkat' => $time,
+            'kuota' => 10,
+            'status_jadwal' => 'aktif',
+        ]);
+    }
+
+    private function createTrip(Jadwal $jadwal, Driver $driver, Armada $armada): Trip
+    {
+        return Trip::create([
+            'jadwal_id' => $jadwal->id,
+            'driver_id' => $driver->id,
+            'armada_id' => $armada->id,
+            'status_trip' => Trip::STATUS_READY,
         ]);
     }
 }

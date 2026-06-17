@@ -2,6 +2,17 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-17] - Sprint 0-2 Corrections Follow-up
+
+### Changed
+* Mengubah status booking pelanggan menjadi timeline dengan titik biru untuk progress yang sudah terjadi dan abu-abu untuk langkah berikutnya.
+* Menampilkan jadwal berangkat, shift, dan jam pada detail booking pelanggan serta kartu/detail trip admin.
+* Menampilkan informasi driver, armada, dan tombol WhatsApp driver setelah booking masuk status `assigned_to_trip`.
+
+### Fixed
+* Menyelaraskan validasi ganti driver/armada trip agar konflik hanya dihitung pada tanggal dan shift yang sama.
+* Menambahkan test regresi untuk multi-trip pada satu jadwal dan konflik driver/armada saat assign trip.
+* Menandai halaman `Booking Saya` sebagai selesai di dokumen Sprint 2.
 ## [2026-06-16] - Sprint 0-2 Corrections
 
 ### Added

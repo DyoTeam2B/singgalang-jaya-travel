@@ -93,6 +93,18 @@
                                 </p>
                             </div>
 
+                            <!-- Schedule -->
+                            <div class="grid grid-cols-2 gap-2 text-[10px] font-bold">
+                                <div class="p-3 bg-blue-50 border border-blue-100 rounded-xl text-blue-800">
+                                    <p class="text-[8px] uppercase tracking-widest text-blue-500 mb-1">Tanggal Berangkat</p>
+                                    <p>{{ $booking->jadwal->tanggal_keberangkatan->format('d M Y') }}</p>
+                                </div>
+                                <div class="p-3 bg-slate-50 border border-slate-100 rounded-xl text-slate-700">
+                                    <p class="text-[8px] uppercase tracking-widest text-slate-400 mb-1">Shift / Jam</p>
+                                    <p>{{ ucfirst($booking->jadwal->shift) }} - {{ $booking->jadwal->jam_berangkat->format('H:i') }} WIB</p>
+                                </div>
+                            </div>
+
                             <!-- Addresses -->
                             <div class="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-2 text-[10px] font-bold text-slate-600">
                                 <div class="flex items-start gap-2">
@@ -186,10 +198,13 @@
                                         </svg>
                                     </div>
                                     <div>
-                                        <div class="flex items-center gap-2 mb-1">
+                                        <div class="flex flex-wrap items-center gap-2 mb-1">
                                             <span class="text-lg font-black text-slate-900">TRP-{{ str_pad($trip->id, 3, '0', STR_PAD_LEFT) }}</span>
+                                            <span class="px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase border bg-blue-50 text-blue-700 border-blue-100">
+                                                {{ $trip->jadwal->tanggal_keberangkatan->format('d M Y') }}
+                                            </span>
                                             <span class="px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase border {{ strtolower($trip->jadwal->shift) === 'pagi' ? 'bg-orange-50 text-orange-600 border-orange-100' : 'bg-indigo-50 text-indigo-600 border-indigo-100' }}">
-                                                {{ $trip->jadwal->shift }} ({{ $trip->jadwal->jam_berangkat instanceof \DateTime ? $trip->jadwal->jam_berangkat->format('H:i') : \Carbon\Carbon::parse($trip->jadwal->jam_berangkat)->format('H:i') }})
+                                                Shift {{ ucfirst($trip->jadwal->shift) }} - {{ $trip->jadwal->jam_berangkat instanceof \DateTime ? $trip->jadwal->jam_berangkat->format('H:i') : \Carbon\Carbon::parse($trip->jadwal->jam_berangkat)->format('H:i') }} WIB
                                             </span>
                                         </div>
                                         <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-bold text-slate-500">
@@ -237,6 +252,7 @@
                                             </div>
                                             <div class="min-w-0 flex-1">
                                                 <p class="text-xs font-black text-slate-900 truncate">{{ $detail->booking->pelanggan->nama }}</p>
+                                                <p class="text-[9px] font-bold text-blue-700 truncate mt-0.5">Berangkat: {{ $trip->jadwal->tanggal_keberangkatan->format('d M Y') }} - {{ ucfirst($trip->jadwal->shift) }} {{ $trip->jadwal->jam_berangkat->format('H:i') }} WIB</p>
                                                 <p class="text-[9px] font-bold text-slate-400 truncate mt-0.5">Jemput: {{ $detail->booking->alamat_jemput }}</p>
                                             </div>
                                         </div>
@@ -265,8 +281,10 @@
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                         </svg>
-                                        {{ $trip->status_trip }}
+                                        {{ $trip->jadwal->jam_berangkat instanceof \DateTime ? $trip->jadwal->jam_berangkat->format('H:i') : \Carbon\Carbon::parse($trip->jadwal->jam_berangkat)->format('H:i') }} WIB
                                     </span>
+                                    <span>Â·</span>
+                                    <span>{{ $trip->status_trip }}</span>
                                 </div>
                                 <div class="flex items-center gap-3">
                                     <a href="{{ route('admin.trips.show', $trip->id) }}"
@@ -338,6 +356,7 @@
                                     <p class="text-xs font-black text-slate-900" x-text="'TRP-' + String(trip.id).padStart(3, '0')"></p>
                                     <p class="text-[10px] font-bold text-slate-400 truncate mt-0.5" x-text="trip.driver_name"></p>
                                     <p class="text-[9px] font-bold text-slate-500 truncate" x-text="trip.plate"></p>
+                                    <p class="text-[9px] font-black text-blue-700 truncate mt-1" x-text="trip.departure_date + ' - Shift ' + trip.shift + ' - ' + trip.time + ' WIB'"></p>
                                     <span class="inline-flex px-2 py-0.5 rounded-full text-[8px] font-black uppercase bg-blue-50 text-blue-600 border border-blue-100 mt-1.5" x-text="trip.pax + ' / ' + trip.capacity + ' PAX'"></span>
                                 </div>
                                 <form :action="'{{ url('admin/trips') }}/' + trip.id + '/assign'" method="POST" class="shrink-0">

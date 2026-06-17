@@ -94,7 +94,7 @@
 | Cancel Booking (pelanggan) | 1 | — | ✅ |
 | Pembayaran Customer | 2 | 1 | ✅ |
 | Cek Status Booking | 2 | 2 | ✅ |
-| Booking Saya (list + detail) | 2 | 2 | ? |
+| Booking Saya (list + detail) | 2 | 2 | ✅ |
 | API (AJAX) | 2 | — | ✅ |
 | Layout Public | — | 1 | ✅ |
 | Map Picker component | — | 1 | ✅ |
@@ -398,8 +398,8 @@ flowchart LR
 | `resources/views/public/pembayaran/show.blade.php` | RYH | ✅ |
 | `resources/views/public/cek-booking/index.blade.php` | RYH | ✅ |
 | `resources/views/public/cek-booking/show.blade.php` | RYH | ✅ |
-| `resources/views/public/booking/index.blade.php` | RYH | ? |
-| `resources/views/public/booking/show.blade.php` | RYH | ? |
+| `resources/views/public/booking/index.blade.php` | RYH | ✅ |
+| `resources/views/public/booking/show.blade.php` | RYH | ✅ |
 | `resources/views/admin/dashboard.blade.php` | RYF | ✅ |
 | `resources/views/admin/rute/*` (3 files) | RYF | ✅ |
 | `resources/views/admin/jadwal/*` (3 files) | RYF | ✅ |

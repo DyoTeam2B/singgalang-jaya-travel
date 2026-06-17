@@ -315,6 +315,7 @@
                                     <div>
                                         <p class="text-sm font-black text-slate-800 mb-0.5">{{ $detail->booking->pelanggan->nama }}</p>
                                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ $detail->booking->kode_booking }}</span>
+                                        <p class="text-[10px] font-black text-blue-700 mt-1">Berangkat: {{ $trip->jadwal->tanggal_keberangkatan->format('d M Y') }} - {{ ucfirst($trip->jadwal->shift) }} {{ $trip->jadwal->jam_berangkat->format('H:i') }} WIB</p>
                                     </div>
                                 </td>
                                 <td class="px-6 py-5">
@@ -716,6 +717,7 @@
                                     <span class="text-[9px] font-black text-blue-800 bg-blue-50 px-2 py-0.5 rounded-md uppercase border border-blue-100 shrink-0">{{ $booking->jumlah_penumpang }} PAX</span>
                                 </div>
                                 <h4 class="text-xs font-black text-slate-900 truncate">{{ $booking->pelanggan->nama }}</h4>
+                                <p class="text-[9px] font-black text-blue-700 mt-1">Berangkat: {{ $trip->jadwal->tanggal_keberangkatan->format('d M Y') }} - {{ ucfirst($trip->jadwal->shift) }} {{ $trip->jadwal->jam_berangkat->format('H:i') }} WIB</p>
                                 <div class="mt-2 p-2 bg-slate-50 border border-slate-100 rounded-lg space-y-1 text-[9px] font-bold text-slate-500">
                                     <p class="truncate"><span class="text-[8px] uppercase tracking-wider text-blue-500 font-black">Jemput:</span> {{ $booking->alamat_jemput }}</p>
                                     <p class="truncate"><span class="text-[8px] uppercase tracking-wider text-green-500 font-black">Tujuan:</span> {{ $booking->alamat_tujuan }}</p>
