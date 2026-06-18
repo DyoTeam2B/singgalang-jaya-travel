@@ -261,9 +261,9 @@ flowchart TD
 ---
 
 ## 8. Status Implementasi Saat Ini
-
+ 
 ### ✅ Sudah Selesai
-
+ 
 | Item | Detail |
 |------|--------|
 | Setup Laravel 13 | Project initialized |
@@ -283,17 +283,21 @@ flowchart TD
 | Models & Migrations | Tabel operasional + model & relationships |
 | Admin Dashboard | Dashboard utama dengan Sidebar layout kustom |
 | Driver Dashboard | Dashboard utama dengan Sidebar layout kustom |
-| Profile | Edit profile page + partials |
+| Profile | Edit profile page + partials (custom per role: Admin, Driver, Pelanggan) |
 | Livewire directory | `app/Livewire/` (terstruktur), `resources/views/livewire/` |
 | Pemisahan Tabel Armada | Tabel `armada` terpisah, relasi `armada_id` pada `drivers` dan `trips` |
 | CRUD Armada (Admin) | Manajemen armada via modal dialog |
 | Update Driver CRUD | Dropdown pilihan armada terintegrasi |
 | Update Trip CRUD | Dropdown armada terintegrasi dan kapasitas terhitung otomatis |
 | Penyesuaian Flow Booking | Booking tanpa batas 30 menit (DP flat Rp50.000) & tanpa token booking |
-
+| Booking Saya (Pelanggan) | Halaman daftar booking + detail booking + status timeline |
+| Notifikasi WhatsApp | Integrasi FonnteAPI otomatis saat DP diverifikasi & trip ditugaskan |
+| Single-Pin Map Picker | Leaflet picker lokasi jemput saja, input tujuan teks, koordinat disembunyikan |
+| Responsive Auth Pages | Layout login & register diperbarui dengan visual split-screen responsif |
+| Storage Symlink | Perbaikan link storage agar file bukti pembayaran admin ter-render |
+ 
 ### 🔲 Belum Dikerjakan / Dalam Proses
-
-- Booking Saya (halaman list + detail booking pelanggan — pengganti Cek Booking)
+ 
 - Driver Dashboard (controller + proper view)
 - Driver Trip operations (TripController, start/pickup/dropoff/complete)
 - Driver Konfirmasi Pelunasan
@@ -301,8 +305,8 @@ flowchart TD
 - Admin Laporan + Export
 - Status booking auto-update (observer/listener)
 - WhatsApp scheduler (konfirmasi pagi hari)
-- Responsive polish semua halaman
-
+- Responsive polish sisa halaman (admin/driver panel)
+ 
 ---
 
 ## 9. Scope / Modul Sistem

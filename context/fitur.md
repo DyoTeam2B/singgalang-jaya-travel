@@ -51,19 +51,19 @@ Profil Saya | Booking Saya | Logout
 
 #### Fitur Pelanggan
 
-* Register
-* Login
-* Profil Saya
-* Edit Profil
-* Lihat Jadwal
-* Booking Travel
-* Upload Bukti DP
-* Booking Saya (list)
-* Detail Booking
-* Status Booking
-* Informasi Driver (setelah assigned ke trip)
-* Riwayat Booking
-* Logout
+* Register (✅ Selesai)
+* Login (✅ Selesai)
+* Profil Saya (✅ Selesai)
+* Edit Profil (✅ Selesai)
+* Lihat Jadwal (✅ Selesai)
+* Booking Travel (✅ Selesai)
+* Upload Bukti DP (✅ Selesai)
+* Booking Saya (list) (✅ Selesai)
+* Detail Booking (✅ Selesai)
+* Status Booking (✅ Selesai)
+* Informasi Driver (setelah assigned ke trip) (✅ Selesai)
+* Riwayat Booking (✅ Selesai)
+* Logout (✅ Selesai)
 
 ---
 
@@ -407,32 +407,32 @@ Profil Saya | Booking Saya | Logout
 | `components.alert` | Nayasha | Flash message alert |
 | `components.card` | Rayfo | Card component |
 
-### Livewire Components (Perlu Dibuat)
+### Livewire Components
 
-| Component | PIC | Keterangan |
-|-----------|-----|------------|
-| `Livewire\BookingForm` | Rayhan | Form booking interaktif (hitung tarif, map) |
-| `Livewire\Admin\BookingTable` | Nayasha | Tabel booking dengan search/filter |
-| `Livewire\Admin\PembayaranTable` | Nayasha | Tabel pembayaran dengan filter |
-| `Livewire\Admin\ArmadaTable` | Rayfo | Tabel armada dengan search |
-| `Livewire\Admin\JadwalTable` | Rayfo | Tabel jadwal dengan filter |
-| `Livewire\Admin\DriverTable` | Nayasha | Tabel driver dengan search |
-| `Livewire\Admin\TripTable` | Kevin | Tabel trip dengan filter |
-| `Livewire\Driver\TripManifest` | Kevin | Manifest penumpang interaktif |
+| Component | PIC | Keterangan | Status |
+|-----------|-----|------------|:------:|
+| `Livewire\BookingForm` | Rayhan | Form booking interaktif (hitung tarif, map) | ✅ |
+| `Livewire\Admin\BookingTable` | Nayasha | Tabel booking dengan search/filter | ✅ |
+| `Livewire\Admin\PembayaranTable` | Nayasha | Tabel pembayaran dengan filter | ✅ |
+| `Livewire\Admin\ArmadaTable` | Rayfo | Tabel armada dengan search | ❌ (CRUD modal) |
+| `Livewire\Admin\JadwalTable` | Rayfo | Tabel jadwal dengan filter | ❌ (Tidak perlu) |
+| `Livewire\Admin\DriverTable` | Nayasha | Tabel driver dengan search | ❌ (Tidak perlu) |
+| `Livewire\Admin\TripTable` | Kevin | Tabel trip dengan filter | 🔲 |
+| `Livewire\Driver\TripManifest` | Kevin | Manifest penumpang interaktif | 🔲 |
 
 > **Note**: Livewire components optional per fitur. Kalau fitur simple (CRUD form biasa), cukup pakai Blade + controller biasa. Gunakan Livewire untuk fitur yang butuh **reactivity tanpa full page reload** (search, filter, pagination, auto-calculate).
 
 ### Public Views — `Rayhan`
 
-| View | Keterangan |
-|------|------------|
-| `public.home` | Landing page (Hero, Keunggulan, Jadwal, Armada & Driver, Charter, Kontak, CTA, Footer) |
-| `public.jadwal.index` | Daftar jadwal keberangkatan |
-| `public.booking.create` | Form booking |
-| `public.booking.review` | Review booking sebelum submit |
-| `public.booking.index` | Booking Saya (daftar booking pelanggan) |
-| `public.booking.show` | Detail Booking + Status + Informasi Driver |
-| `public.pembayaran.show` | Halaman instruksi & upload DP |
+| View | Keterangan | Status |
+|------|------------|:------:|
+| `public.home` | Landing page (Hero, Keunggulan, Jadwal, Armada & Driver, Charter, Kontak, CTA, Footer) | ✅ |
+| `public.jadwal.index` | Daftar jadwal keberangkatan | ✅ |
+| `public.booking.create` | Form booking | ✅ |
+| `public.booking.review` | Review booking sebelum submit | ✅ |
+| `public.booking.index` | Booking Saya (daftar booking pelanggan) | ✅ |
+| `public.booking.show` | Detail Booking + Status + Informasi Driver | ✅ |
+| `public.pembayaran.show` | Halaman instruksi & upload DP | ✅ |
 
 ### Auth Views — `Nayasha` (Sudah Ada)
 
@@ -448,35 +448,35 @@ Profil Saya | Booking Saya | Logout
 
 ### Admin Views
 
-| View | PIC | Keterangan |
-|------|-----|------------|
-| `admin.dashboard` | Rayfo | Dashboard + widget statistik (Total Booking, Trip, Pendapatan, Driver, Armada) |
-| `admin.rute.index` | Rayfo | Tabel daftar rute |
-| `admin.rute.create` | Rayfo | Form tambah rute |
-| `admin.rute.edit` | Rayfo | Form edit rute |
-| `admin.armada.index` | Rayfo | Tabel daftar armada |
-| `admin.armada.create` | Rayfo | Form tambah armada |
-| `admin.armada.edit` | Rayfo | Form edit armada |
-| `admin.jadwal.index` | Rayfo | Tabel daftar jadwal |
-| `admin.jadwal.create` | Rayfo | Form tambah jadwal |
-| `admin.jadwal.edit` | Rayfo | Form edit jadwal |
-| `admin.laporan.index` | Rayfo | Halaman laporan + filter |
-| `admin.bookings.index` | Nayasha | Tabel daftar booking |
-| `admin.bookings.show` | Nayasha | Detail booking |
-| `admin.pembayaran.index` | Nayasha | Tabel daftar pembayaran |
-| `admin.pembayaran.show` | Nayasha | Detail pembayaran + aksi verify/reject |
-| `admin.drivers.index` | Nayasha | Tabel daftar driver |
-| `admin.drivers.create` | Nayasha | Form tambah driver (pilih armada) |
-| `admin.drivers.show` | Nayasha | Detail driver |
-| `admin.drivers.edit` | Nayasha | Form edit driver |
-| `admin.trips.index` | Kevin | Tabel daftar trip |
-| `admin.trips.create` | Kevin | Form buat trip + pilih driver & armada |
-| `admin.trips.show` | Kevin | Detail trip + manifest + assign booking |
+| View | PIC | Keterangan | Status |
+|------|-----|------------|:------:|
+| `admin.dashboard` | Rayfo | Dashboard + widget statistik (Total Booking, Trip, Pendapatan, Driver, Armada) | ✅ |
+| `admin.rute.index` | Rayfo | Tabel daftar rute | ✅ |
+| `admin.rute.create` | Rayfo | Form tambah rute | ✅ |
+| `admin.rute.edit` | Rayfo | Form edit rute | ✅ |
+| `admin.armada.index` | Rayfo | Tabel daftar armada | ✅ |
+| `admin.armada.create` | Rayfo | Form tambah armada (CRUD modal) | ✅ |
+| `admin.armada.edit` | Rayfo | Form edit armada (CRUD modal) | ✅ |
+| `admin.jadwal.index` | Rayfo | Tabel daftar jadwal | ✅ |
+| `admin.jadwal.create` | Rayfo | Form tambah jadwal | ✅ |
+| `admin.jadwal.edit` | Rayfo | Form edit jadwal | ✅ |
+| `admin.laporan.index` | Rayfo | Halaman laporan + filter | 🔲 |
+| `admin.bookings.index` | Nayasha | Tabel daftar booking | ✅ |
+| `admin.bookings.show` | Nayasha | Detail booking | ✅ |
+| `admin.pembayaran.index` | Nayasha | Tabel daftar pembayaran | ✅ |
+| `admin.pembayaran.show` | Nayasha | Detail pembayaran + aksi verify/reject (split pane) | ✅ |
+| `admin.drivers.index` | Nayasha | Tabel daftar driver | ✅ |
+| `admin.drivers.create` | Nayasha | Form tambah driver (pilih armada - CRUD modal) | ✅ |
+| `admin.drivers.show` | Nayasha | Detail driver (CRUD modal) | ✅ |
+| `admin.drivers.edit` | Nayasha | Form edit driver (CRUD modal) | ✅ |
+| `admin.trips.index` | Kevin | Tabel daftar trip | ✅ |
+| `admin.trips.create` | Kevin | Form buat trip + pilih driver & armada | ✅ |
+| `admin.trips.show` | Kevin | Detail trip + manifest + assign booking | ✅ |
 
 ### Driver Views — `Kevin`
 
-| View | Keterangan |
-|------|------------|
-| `driver.dashboard` | Dashboard trip hari ini + total penumpang |
-| `driver.trips.index` | Riwayat trip |
-| `driver.trips.show` | Detail trip + manifest + aksi pickup/dropoff + konfirmasi pelunasan |
+| View | Keterangan | Status |
+|------|------------|:------:|
+| `driver.dashboard` | Dashboard trip hari ini + total penumpang | ⚠️ Placeholder |
+| `driver.trips.index` | Riwayat trip | 🔲 |
+| `driver.trips.show` | Detail trip + manifest + aksi pickup/dropoff + konfirmasi pelunasan | 🔲 |

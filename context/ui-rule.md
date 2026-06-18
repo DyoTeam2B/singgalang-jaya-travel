@@ -468,9 +468,9 @@ Mulai Trip → Menjemput → Berangkat → Tiba → Selesai
 ---
 
 # FINAL RULES
-
+ 
 ### ✅ WAJIB
-
+ 
 - Poppins font
 - Navy blue palette (`blue-800` / `blue-900`)
 - Rounded cards (`rounded-2xl`)
@@ -479,9 +479,11 @@ Mulai Trip → Menjemput → Berangkat → Tiba → Selesai
 - Production-ready appearance
 - Konsisten antar Customer, Admin, dan Driver
 - `transition-colors` pada semua interactive elements
-
+- **Single-Pin Map Picker**: Peta Leaflet hanya digunakan untuk melacak/menentukan lokasi Jemput. Lokasi Antar/Tujuan diinput via teks biasa. Koordinat Lat/Lng harus disembunyikan (`hidden`) pada form input pelanggan.
+- **Responsive Auth Layout**: Halaman login & register didesain menggunakan split-screen layout yang responsif (tampilan desktop terbagi dua kolom dengan visual branding, tampilan mobile berupa form terpusat/single column).
+ 
 ### ❌ DILARANG
-
+ 
 - Redesign dari scratch
 - Ubah business logic
 - Ubah page flow / section order
@@ -489,3 +491,4 @@ Mulai Trip → Menjemput → Berangkat → Tiba → Selesai
 - Glassmorphism / neon / heavy shadows
 - Inline styles (pakai Tailwind classes)
 - Warna generik tanpa konsistensi
+ 

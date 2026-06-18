@@ -68,7 +68,7 @@ app/Http/Controllers/
 │   └── TripController.php             ← 🔲 BUAT BARU
 
 ├── Controller.php                     ← ✅ SUDAH ADA
-├── ProfileController.php              ← ✅ SUDAH ADA (Breeze)
+├── ProfileController.php              ← ✅ SUDAH ADA (Disesuaikan Per Role)
 ├── HomeController.php                 ← ✅ SUDAH ADA
 ├── BookingController.php              ← ✅ SUDAH ADA
 ├── PembayaranController.php           ← ✅ SUDAH ADA
@@ -82,6 +82,7 @@ app/Http/Controllers/
 app/Services/
 ├── BookingService.php                  ← ✅ SUDAH ADA
 ├── FonnteService.php                   ← ✅ SUDAH ADA (WhatsApp API)
+├── BookingWhatsappNotificationService.php ← ✅ SUDAH ADA
 ├── PaymentVerificationService.php      ← 🔲 BUAT BARU
 ├── TripAssignmentService.php           ← 🔲 BUAT BARU
 └── DriverTripService.php               ← 🔲 BUAT BARU
@@ -135,7 +136,16 @@ resources/views/
 │   └── [Breeze Components...]         ← ✅ 13 komponen Breeze
 ├── livewire/                          ← ✅ DIRECTORY ADA
 ├── auth/                              ← ✅ SUDAH ADA (6 views Breeze)
-├── profile/                           ← ✅ SUDAH ADA (Breeze profile)
+├── profile/                           ← ✅ SUDAH ADA (Custom role views)
+│   ├── admin-edit.blade.php           ← ✅ SUDAH ADA
+│   ├── driver-edit.blade.php          ← ✅ SUDAH ADA
+│   ├── edit.blade.php                 ← ✅ SUDAH ADA
+│   ├── public-edit.blade.php          ← ✅ SUDAH ADA
+│   └── partials/                      ← ✅ SUDAH ADA
+│       ├── delete-user-form.blade.php
+│       ├── profile-page-content.blade.php
+│       ├── update-password-form.blade.php
+│       └── update-profile-information-form.blade.php
 ├── public/                            ← Halaman Pelanggan (Guest)
 │   ├── home.blade.php                 ← ✅ SUDAH ADA (Landing Page)
 │   ├── jadwal/
@@ -143,8 +153,8 @@ resources/views/
 │   ├── booking/
 │   │   ├── create.blade.php           ← ✅ SUDAH ADA
 │   │   ├── review.blade.php           ← ✅ SUDAH ADA
-│   │   ├── index.blade.php            ← 🔲 BUAT BARU (Booking Saya)
-│   │   └── show.blade.php             ← 🔲 BUAT BARU (Detail Booking)
+│   │   ├── index.blade.php            ← ✅ SUDAH ADA (Booking Saya)
+│   │   └── show.blade.php             ← ✅ SUDAH ADA (Detail Booking)
 │   ├── pembayaran/
 │   │   └── show.blade.php             ← ✅ SUDAH ADA
 │   └── cek-booking/
@@ -825,6 +835,11 @@ public function messages(): array
 
 Default center: Padang Panjang `[-0.4669, 100.3986]`
 
+**Keputusan Desain Map Picker**:
+- Peta Leaflet hanya menampilkan dan menentukan pin **lokasi Jemput** (pickup) pelanggan.
+- **Lokasi Antar/Tujuan** berupa input teks (tanpa interaksi peta).
+- Koordinat Latitude dan Longitude disembunyikan (`hidden`) pada form input untuk kemudahan penggunaan.
+
 ---
 
 ## 16. WhatsApp Integration (FonnteAPI)
@@ -836,11 +851,15 @@ Default center: Padang Panjang `[-0.4669, 100.3986]`
 ```php
 // .env
 FONNTE_TOKEN=your_fonnte_api_token
+FONNTE_COUNTRY_CODE=62
+FONNTE_CONNECT_ONLY=false
 
 // config/services.php
 'fonnte' => [
     'token' => env('FONNTE_TOKEN'),
-    'url' => 'https://api.fonnte.com/send',
+    'url' => env('FONNTE_URL', 'https://api.fonnte.com/send'),
+    'country_code' => env('FONNTE_COUNTRY_CODE', '62'),
+    'connect_only' => env('FONNTE_CONNECT_ONLY', false),
 ],
 ```
 
@@ -850,21 +869,33 @@ FONNTE_TOKEN=your_fonnte_api_token
 // app/Services/FonnteService.php
 namespace App\Services;
 
+use App\Models\WhatsappNotification;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class FonnteService
 {
-    public function sendMessage(string $target, string $message): array
+    public function send(string $target, string $message, string $type, ?int $bookingId = null): bool
     {
-        $response = Http::withHeaders([
-            'Authorization' => config('services.fonnte.token'),
-        ])->asForm()->post(config('services.fonnte.url'), [
-            'target' => $target,
-            'message' => $message,
-        ]);
-
-        return $response->json();
+        // Normalisasi target (awalan 08 / +62 menjadi 628)
+        // Kirim request ke FonnteAPI dengan form-data
+        // Log notifikasi ke tabel whatsapp_notifications
     }
+}
+```
+
+### WhatsApp Booking Notification Service
+
+```php
+// app/Services/BookingWhatsappNotificationService.php
+namespace App\Services;
+
+class BookingWhatsappNotificationService
+{
+    // Mengirim pesan template WhatsApp via FonnteService:
+    // - sendDpVerifiedToCustomer (saat DP diverifikasi admin)
+    // - sendTripAssignedToCustomer (saat booking dimasukkan ke trip)
+    // - sendTripAssignedToDriver (notifikasi ke driver tentang penumpang baru)
 }
 ```
 
@@ -940,6 +971,12 @@ type = feat | fix | refactor | style | docs | test | chore
 - `resources/views/layouts/public.blade.php`
 - `resources/views/public/**` (semua file di folder public)
 - `resources/views/components/map-picker.blade.php`
+- `resources/views/profile/public-edit.blade.php`
+
+**Services milik Rayhan:**
+- `app/Services/BookingService.php`
+- `app/Services/FonnteService.php`
+- `app/Services/BookingWhatsappNotificationService.php`
 
 **Livewire milik Rayhan:**
 - `app/Livewire/BookingForm.php`
@@ -1045,6 +1082,9 @@ type = feat | fix | refactor | style | docs | test | chore
 - `resources/views/admin/bookings/**`
 - `resources/views/admin/pembayaran/**`
 - `resources/views/admin/drivers/**`
+- `resources/views/profile/admin-edit.blade.php`
+- `resources/views/profile/driver-edit.blade.php`
+- `resources/views/profile/partials/profile-page-content.blade.php`
 
 **Livewire milik Nayasha:**
 - `app/Livewire/Admin/BookingTable.php`
