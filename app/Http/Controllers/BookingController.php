@@ -242,7 +242,7 @@ class BookingController extends Controller
 
         // Send WhatsApp notifications via FonnteService
         $adminWA = config('services.fonnte.admin_number');
-        $message = "Pemberitahuan: Booking dengan kode {$booking->kode_booking} (Rute: {$booking->jadwal->rute->asal} -> {$booking->jadwal->rute->tujuan}) telah dibatalkan oleh pelanggan dengan alasan: {$request->alasan_pembatalan}";
+        $message = $this->buildCancellationMessage($booking, $request->alasan_pembatalan);
 
         // 1. Notify Admin
         if ($adminWA) {
@@ -258,5 +258,32 @@ class BookingController extends Controller
         return redirect()
             ->route('booking.show', ['kode' => $kode])
             ->with('success', 'Pemesanan berhasil dibatalkan.');
+    }
+
+    private function buildCancellationMessage(Booking $booking, string $reason): string
+    {
+        $date = $booking->jadwal->tanggal_keberangkatan?->format('d/m/Y') ?? '-';
+        $shift = ucfirst($booking->jadwal->shift ?? '-');
+        $time = $booking->jadwal->jam_berangkat?->format('H:i') ?? '-';
+
+        return implode("\n", [
+            '*SINGGALANG JAYA TRAVEL*',
+            '*BOOKING DIBATALKAN*',
+            '',
+            'Pelanggan membatalkan booking berikut:',
+            '',
+            '*Detail Booking*',
+            "Kode      : {$booking->kode_booking}",
+            "Pelanggan : {$booking->pelanggan->nama}",
+            "No. HP    : {$booking->pelanggan->no_hp}",
+            "Rute      : {$booking->jadwal->rute->asal} -> {$booking->jadwal->rute->tujuan}",
+            "Jadwal    : {$date} - {$shift} {$time} WIB",
+            "Penumpang : {$booking->jumlah_penumpang} orang",
+            '',
+            '*Alasan Pembatalan*',
+            $reason,
+            '',
+            'Silakan cek dashboard untuk tindak lanjut.',
+        ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Pelanggan;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -30,23 +31,34 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'no_hp' => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'name.required' => 'Nama wajib diisi.',
+            'no_hp.required' => 'Nomor telepon wajib diisi.',
+            'no_hp.max' => 'Nomor telepon maksimal 20 karakter.',
+            'no_hp.regex' => 'Nomor telepon hanya boleh berisi angka, spasi, tanda plus, tanda minus, dan tanda kurung.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah terdaftar.',
+            'password.required' => 'Kata sandi wajib diisi.',
+            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
             'role' => 'pelanggan', // explicit role
         ]);
 
-        \App\Models\Pelanggan::create([
+        Pelanggan::create([
             'user_id' => $user->id,
             'nama' => $user->name,
-            'no_hp' => '-', // Placeholder, user will update in profile / booking
+            'no_hp' => $validated['no_hp'],
         ]);
 
         event(new Registered($user));

@@ -16,12 +16,17 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        $view = $request->user()->role === 'pelanggan'
-            ? 'profile.public-edit'
-            : 'profile.edit';
+        $user = $request->user()->loadMissing(['pelanggan', 'driver.armada']);
+
+        $view = match ($user->role) {
+            'admin' => 'profile.admin-edit',
+            'driver' => 'profile.driver-edit',
+            'pelanggan' => 'profile.public-edit',
+            default => 'profile.edit',
+        };
 
         return view($view, [
-            'user' => $request->user(),
+            'user' => $user,
         ]);
     }
 
@@ -30,15 +35,50 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $validated = $request->validated();
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $user->fill([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+        ]);
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
+
+        $this->syncRoleProfile($request, $validated);
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    /**
+     * Keep role-specific profile tables aligned with the account profile.
+     *
+     * @param array<string, mixed> $validated
+     */
+    private function syncRoleProfile(ProfileUpdateRequest $request, array $validated): void
+    {
+        $user = $request->user()->loadMissing(['pelanggan', 'driver']);
+
+        if ($user->role === 'pelanggan' && ($request->has('no_hp') || $user->pelanggan)) {
+            $user->pelanggan()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'nama' => $validated['name'],
+                    'no_hp' => $validated['no_hp'] ?? $user->pelanggan?->no_hp ?? '',
+                ]
+            );
+        }
+
+        if ($user->role === 'driver' && $user->driver) {
+            $user->driver->update([
+                'nama_driver' => $validated['name'],
+                'no_hp' => $validated['no_hp'] ?? $user->driver->no_hp,
+            ]);
+        }
     }
 
     /**

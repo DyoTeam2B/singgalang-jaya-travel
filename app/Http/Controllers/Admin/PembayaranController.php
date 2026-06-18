@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Pembayaran;
 use App\Models\Booking;
+use App\Services\BookingWhatsappNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -30,8 +31,10 @@ class PembayaranController extends Controller
     /**
      * Verify the specified payment.
      */
-    public function verify(Pembayaran $pembayaran)
+    public function verify(Pembayaran $pembayaran, BookingWhatsappNotificationService $whatsappNotificationService)
     {
+        $shouldSendNotification = $pembayaran->status_pembayaran !== Pembayaran::STATUS_TERVERIFIKASI;
+
         DB::transaction(function () use ($pembayaran) {
             $pembayaran->update([
                 'status_pembayaran' => Pembayaran::STATUS_TERVERIFIKASI,
@@ -41,6 +44,14 @@ class PembayaranController extends Controller
                 'status_booking' => Booking::STATUS_DIKONFIRMASI,
             ]);
         });
+
+        $booking = $pembayaran->booking()
+            ->with(['pelanggan', 'jadwal.rute'])
+            ->first();
+
+        if ($shouldSendNotification && $booking) {
+            $whatsappNotificationService->sendDpVerifiedToCustomer($booking);
+        }
 
         return redirect()
             ->route('admin.pembayaran.index', ['payment_id' => $pembayaran->id])

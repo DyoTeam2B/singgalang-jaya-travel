@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\Pembayaran;
 use App\Models\Booking;
+use App\Services\BookingWhatsappNotificationService;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -53,6 +54,8 @@ class PembayaranTable extends Component
 
         $pembayaran = Pembayaran::find($this->selectedPaymentId);
         if ($pembayaran) {
+            $shouldSendNotification = $pembayaran->status_pembayaran !== Pembayaran::STATUS_TERVERIFIKASI;
+
             DB::transaction(function () use ($pembayaran) {
                 $pembayaran->update([
                     'status_pembayaran' => Pembayaran::STATUS_TERVERIFIKASI,
@@ -62,6 +65,14 @@ class PembayaranTable extends Component
                     'status_booking' => Booking::STATUS_DIKONFIRMASI,
                 ]);
             });
+
+            $booking = $pembayaran->booking()
+                ->with(['pelanggan', 'jadwal.rute'])
+                ->first();
+
+            if ($shouldSendNotification && $booking) {
+                app(BookingWhatsappNotificationService::class)->sendDpVerifiedToCustomer($booking);
+            }
 
             $this->isVerifyModalOpen = false;
             session()->flash('success', 'Pembayaran berhasil diverifikasi. Booking ' . $pembayaran->booking->kode_booking . ' status diperbarui menjadi Dikonfirmasi.');

@@ -121,24 +121,10 @@
                     </div>
                     <div class="relative">
                         <svg class="absolute left-4 top-4 w-5 h-5 text-blue-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        <textarea wire:model.defer="alamat_jemput" rows="2" class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder:text-slate-400 resize-none" placeholder="Masukkan alamat lengkap penjemputan..."></textarea>
+                        <textarea id="alamat_jemput" wire:model.defer="alamat_jemput" rows="2" class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder:text-slate-400 resize-none" placeholder="Masukkan alamat lengkap penjemputan..."></textarea>
                     </div>
+                    
                     @error('alamat_jemput')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                {{-- Alamat Tujuan --}}
-                <div class="border-t border-slate-100 pt-6 space-y-4">
-                    <div class="flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>
-                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Titik Antar (Tujuan)</label>
-                    </div>
-                    <div class="relative">
-                        <svg class="absolute left-4 top-4 w-5 h-5 text-green-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        <textarea wire:model.defer="alamat_tujuan" rows="2" class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder:text-slate-400 resize-none" placeholder="Masukkan alamat lengkap tujuan..."></textarea>
-                    </div>
-                    @error('alamat_tujuan')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -149,27 +135,22 @@
                     <x-map-picker
                         latJemputBind="latitude_jemput"
                         lngJemputBind="longitude_jemput"
-                        latTujuanBind="latitude_tujuan"
-                        lngTujuanBind="longitude_tujuan"
                     />
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs font-medium text-slate-500 bg-slate-50 p-3 rounded-xl mt-3 border border-slate-100">
-                        <div>
-                            <span class="block text-slate-400 text-xs">Lat Jemput:</span>
-                            <span>{{ $latitude_jemput ? number_format($latitude_jemput, 6) : '-' }}</span>
-                        </div>
-                        <div>
-                            <span class="block text-slate-400 text-xs">Lng Jemput:</span>
-                            <span>{{ $longitude_jemput ? number_format($longitude_jemput, 6) : '-' }}</span>
-                        </div>
-                        <div>
-                            <span class="block text-slate-400 text-xs">Lat Tujuan:</span>
-                            <span>{{ $latitude_tujuan ? number_format($latitude_tujuan, 6) : '-' }}</span>
-                        </div>
-                        <div>
-                            <span class="block text-slate-400 text-xs">Lng Tujuan:</span>
-                            <span>{{ $longitude_tujuan ? number_format($longitude_tujuan, 6) : '-' }}</span>
-                        </div>
+                </div>
+
+                {{-- Alamat Tujuan --}}
+                <div class="border-t border-slate-100 pt-6 space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>
+                        <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Titik Antar (Tujuan)</label>
                     </div>
+                    <div class="relative">
+                        <svg class="absolute left-4 top-4 w-5 h-5 text-green-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <textarea id="alamat_tujuan" wire:model.defer="alamat_tujuan" rows="2" class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder:text-slate-400 resize-none" placeholder="Masukkan alamat lengkap tujuan..."></textarea>
+                    </div>
+                    @error('alamat_tujuan')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
         </div>

@@ -38,6 +38,8 @@ return [
     'fonnte' => [
         'token' => env('FONNTE_TOKEN'),
         'url' => env('FONNTE_URL', 'https://api.fonnte.com/send'),
+        'country_code' => env('FONNTE_COUNTRY_CODE', '62'),
+        'connect_only' => env('FONNTE_CONNECT_ONLY', false),
         'admin_number' => env('ADMIN_WA_NUMBER', '089508830481'),
     ],
 

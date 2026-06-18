@@ -40,8 +40,44 @@
                     x-data="{
                         latJemput: {{ $booking->latitude_jemput ?? -0.4669 }},
                         lngJemput: {{ $booking->longitude_jemput ?? 100.3986 }},
+                        marker: null,
+                        map: null,
+                        geocodeAddress(address) {
+                            if (!address || address.trim().length < 3) return;
+                            
+                            let query = address;
+                            if (!address.toLowerCase().includes('indonesia')) {
+                                query += ', Indonesia';
+                            }
+
+                            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`)
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data && data.length > 0) {
+                                        const lat = parseFloat(data[0].lat);
+                                        const lon = parseFloat(data[0].lon);
+                                        
+                                        this.latJemput = lat;
+                                        this.lngJemput = lon;
+                                        if (this.marker) {
+                                            this.marker.setLatLng([lat, lon]).bindPopup('<b>Lokasi Jemput Baru</b>').openPopup();
+                                        }
+                                        if (this.map) {
+                                            this.map.setView([lat, lon], 14);
+                                        }
+                                    } else {
+                                        alert('Alamat tidak ditemukan di peta. Silakan cari dengan nama jalan/kota yang lebih spesifik atau geser pin secara manual.');
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error('Geocoding error:', err);
+                                    alert('Gagal menghubungi layanan peta. Silakan geser pin secara manual.');
+                                });
+                        },
                         initMap() {
                             const map = L.map('edit-map-picker').setView([this.latJemput, this.lngJemput], 14);
+                            this.map = map;
+
                             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                                 attribution: '&copy; OpenStreetMap'
                             }).addTo(map);
@@ -57,6 +93,7 @@
 
                             let marker = L.marker([this.latJemput, this.lngJemput], { icon: blueIcon, draggable: true }).addTo(map);
                             marker.bindPopup('<b>Lokasi Jemput Sekarang</b>').openPopup();
+                            this.marker = marker;
 
                             marker.on('dragend', (e) => {
                                 const pos = e.target.getLatLng();
@@ -86,7 +123,20 @@
                         </div>
                         <div class="relative">
                             <svg class="absolute left-4 top-4 w-5 h-5 text-blue-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            <textarea name="alamat_jemput" rows="3" class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder:text-slate-400 resize-none">{{ old('alamat_jemput', $booking->alamat_jemput) }}</textarea>
+                            <textarea id="alamat_jemput" name="alamat_jemput" rows="3" class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder:text-slate-400 resize-none">{{ old('alamat_jemput', $booking->alamat_jemput) }}</textarea>
+                        </div>
+                        <div class="flex flex-wrap gap-2 justify-end mt-1">
+                            <button type="button" @click="document.getElementById('edit-map-picker').scrollIntoView({ behavior: 'smooth' });" class="inline-flex items-center gap-1 text-xs font-bold text-slate-600 hover:text-blue-800 transition-all">
+                                📍 Tentukan Pin Jemput di Peta
+                            </button>
+                            <button type="button" @click="
+                                const addr = document.getElementById('alamat_jemput').value;
+                                if(addr.trim().length < 3) { alert('Silakan isi alamat jemput terlebih dahulu.'); return; }
+                                geocodeAddress(addr);
+                                document.getElementById('edit-map-picker').scrollIntoView({ behavior: 'smooth' });
+                            " class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-800 hover:text-blue-900 transition-all">
+                                🔍 Cari & Set Pin Jemput
+                            </button>
                         </div>
                         @error('alamat_jemput')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -101,17 +151,6 @@
                             <p class="text-xs font-medium text-blue-700">Geser pin biru atau klik di peta untuk menandai titik jemput baru.</p>
                         </div>
                         <div id="edit-map-picker" class="h-80 w-full rounded-2xl border border-slate-200 shadow-sm z-10"></div>
-
-                        <div class="flex gap-6 text-xs font-medium text-slate-500 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                            <div>
-                                <span class="text-slate-400">Latitude Baru:</span>
-                                <span class="font-semibold" x-text="latJemput.toFixed(6)"></span>
-                            </div>
-                            <div>
-                                <span class="text-slate-400">Longitude Baru:</span>
-                                <span class="font-semibold" x-text="lngJemput.toFixed(6)"></span>
-                            </div>
-                        </div>
                     </div>
 
                     {{-- Actions --}}

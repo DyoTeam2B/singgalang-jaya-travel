@@ -2,6 +2,75 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-18] - Role Profile Refresh
+
+### Added
+* Menambahkan halaman profil khusus admin dan driver agar tidak lagi memakai tampilan Breeze default.
+* Menambahkan field `Nomor Telepon / WhatsApp` pada profil pelanggan dan driver.
+
+### Changed
+* Menyelaraskan tampilan profil pelanggan dengan layout publik Singgalang Jaya Travel.
+* Menyinkronkan perubahan nama dan nomor telepon profil ke tabel `pelanggan` dan `drivers` sesuai role akun.
+
+### Tested
+* `php artisan test tests/Feature/ProfileTest.php tests/Feature/Auth/PasswordUpdateTest.php`
+* `npm run build`
+
+## [2026-06-18] - Fonnte Delivery Fix
+
+### Changed
+* Menormalisasi nomor WhatsApp sebelum dikirim ke Fonnte, misalnya `0812...` menjadi `62812...`.
+* Menambahkan payload `countryCode` dan `connectOnly=false` agar request Fonnte tidak langsung ditolak saat device sedang offline.
+* Menambahkan konfigurasi `.env.example` untuk `FONNTE_COUNTRY_CODE` dan `FONNTE_CONNECT_ONLY`.
+* Menyimpan respons Fonnte `process: pending` sebagai status lokal `pending`, bukan `sent`.
+* Mengubah pesan sukses tombol WA manual menjadi informasi antrean Fonnte agar tidak disalahartikan sebagai delivered.
+
+### Tested
+* `php artisan test tests/Feature/FonnteServiceTest.php tests/Feature/Admin/PembayaranNotificationTest.php tests/Feature/Admin/TripAssignTest.php`
+
+## [2026-06-18] - Auth UI Polish
+
+### Added
+* Menambahkan field `Nomor Telepon` pada form register pelanggan dan menyimpannya ke kolom `pelanggan.no_hp`.
+
+### Changed
+* Mempercantik halaman login dan register mengikuti desain export: split screen, branding Singgalang Jaya Travel, Poppins, form card responsif, dan styling navy blue.
+* Menyesuaikan layout guest agar halaman login/register bisa memakai tampilan full-page tanpa merusak halaman Breeze auth lain.
+
+### Tested
+* `php artisan test tests/Feature/Auth/RegistrationTest.php tests/Feature/Auth/AuthenticationTest.php tests/Feature/Auth/PasswordResetTest.php`
+* `npm run build`
+
+## [2026-06-18] - Trip Driver Armada Binding
+
+### Changed
+* Menghapus pilihan armada terpisah pada form buat trip baru. Armada sekarang otomatis mengikuti armada yang terhubung ke driver.
+* Menyesuaikan update driver trip agar `trips.armada_id` ikut berubah ke armada milik driver baru.
+* Menyembunyikan aksi ganti armada terpisah pada detail trip agar driver dan armada tetap satu paket.
+
+### Fixed
+* Menolak pembuatan trip dengan driver nonaktif dari request manual.
+
+### Tested
+* `php artisan test tests/Feature/Admin/TripAssignTest.php`
+* `npm run build`
+
+## [2026-06-18] - WhatsApp Booking Notifications
+
+### Added
+* Mengirim WhatsApp ke pelanggan saat DP diverifikasi admin dan status booking menjadi `dikonfirmasi`.
+* Mengirim WhatsApp ke pelanggan dan driver saat booking ditugaskan ke trip.
+* Menambahkan `BookingWhatsappNotificationService` untuk memusatkan format pesan booking dan pengiriman via Fonnte.
+
+### Changed
+* Menyesuaikan `FonnteService` agar mengirim payload sebagai form request ke API Fonnte.
+
+### Fixed
+* Mencegah pesan WhatsApp verifikasi DP terkirim ulang ketika aksi verifikasi yang sama dipanggil lagi.
+
+### Tested
+* `php artisan test tests/Feature/Admin/PembayaranNotificationTest.php tests/Feature/Admin/TripAssignTest.php`
+
 ## [2026-06-17] - Sprint 0-2 Corrections Follow-up
 
 ### Changed

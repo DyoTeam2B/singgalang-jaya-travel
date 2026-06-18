@@ -10,6 +10,7 @@ use App\Models\Pelanggan;
 use App\Models\Rute;
 use App\Models\Trip;
 use App\Models\User;
+use App\Models\WhatsappNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -27,6 +28,8 @@ class TripAssignTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        config(['services.fonnte.token' => null]);
 
         $this->adminUser = User::create([
             'name' => 'Admin Test',
@@ -120,9 +123,62 @@ class TripAssignTest extends TestCase
             'status_jemput' => 'belum',
             'status_antar' => 'belum',
         ]);
+
+        $this->assertDatabaseHas('whatsapp_notifications', [
+            'booking_id' => $booking->id,
+            'target' => '6281299998888',
+            'type' => WhatsappNotification::TYPE_CUSTOM,
+            'status' => WhatsappNotification::STATUS_SENT,
+        ]);
+
+        $this->assertDatabaseHas('whatsapp_notifications', [
+            'booking_id' => $booking->id,
+            'target' => '6281234567890',
+            'type' => WhatsappNotification::TYPE_CUSTOM,
+            'status' => WhatsappNotification::STATUS_SENT,
+        ]);
+
+        $customerMessage = WhatsappNotification::where('booking_id', $booking->id)
+            ->where('target', '6281299998888')
+            ->firstOrFail()
+            ->message;
+        $driverMessage = WhatsappNotification::where('booking_id', $booking->id)
+            ->where('target', '6281234567890')
+            ->firstOrFail()
+            ->message;
+
+        $this->assertStringContainsString('*TRIP SUDAH DITENTUKAN*', $customerMessage);
+        $this->assertStringContainsString('*Detail Trip*', $customerMessage);
+        $this->assertStringContainsString('*Penjemputan*', $customerMessage);
+        $this->assertStringContainsString('*BOOKING BARU DI TRIP*', $driverMessage);
+        $this->assertStringContainsString('*Data Pelanggan*', $driverMessage);
     }
 
-    public function test_admin_can_create_second_trip_for_same_schedule_with_different_driver_and_armada(): void
+    public function test_trip_create_form_uses_driver_armada_without_armada_select(): void
+    {
+        $response = $this->actingAs($this->adminUser)
+            ->get(route('admin.trips.create'));
+
+        $response->assertOk();
+        $response->assertSee($this->driver->nama_driver);
+        $response->assertSee($this->armada->nomor_plat);
+        $response->assertDontSee('name="armada_id"', false);
+        $response->assertDontSee('Pilih Armada', false);
+    }
+
+    public function test_trip_detail_does_not_show_separate_armada_assignment(): void
+    {
+        $trip = $this->createTrip($this->jadwal, $this->driver, $this->armada);
+
+        $response = $this->actingAs($this->adminUser)
+            ->get(route('admin.trips.show', $trip->id));
+
+        $response->assertOk();
+        $response->assertDontSee('Tugaskan / Ganti Armada', false);
+        $response->assertDontSee('name="armada_id"', false);
+    }
+
+    public function test_admin_can_create_second_trip_for_same_schedule_with_different_driver(): void
     {
         $this->createTrip($this->jadwal, $this->driver, $this->armada);
         [$secondDriver, $secondArmada] = $this->createDriverWithArmada('Dedi Driver', 'dedi@test.com', 'BA 4321 CD');
@@ -131,13 +187,38 @@ class TripAssignTest extends TestCase
             ->post(route('admin.trips.store'), [
                 'jadwal_id' => $this->jadwal->id,
                 'driver_id' => $secondDriver->id,
-                'armada_id' => $secondArmada->id,
             ]);
 
         $response->assertRedirect(route('admin.trips.index'));
         $response->assertSessionHasNoErrors();
 
         $this->assertSame(2, Trip::where('jadwal_id', $this->jadwal->id)->count());
+        $this->assertDatabaseHas('trips', [
+            'jadwal_id' => $this->jadwal->id,
+            'driver_id' => $secondDriver->id,
+            'armada_id' => $secondArmada->id,
+        ]);
+    }
+
+    public function test_admin_cannot_create_trip_with_inactive_driver(): void
+    {
+        [$inactiveDriver] = $this->createDriverWithArmada('Nonaktif Driver', 'nonaktif@test.com', 'BA 4040 ND');
+        $inactiveDriver->update(['status_driver' => 'nonaktif']);
+
+        $response = $this->actingAs($this->adminUser)
+            ->from(route('admin.trips.create'))
+            ->post(route('admin.trips.store'), [
+                'jadwal_id' => $this->jadwal->id,
+                'driver_id' => $inactiveDriver->id,
+            ]);
+
+        $response->assertRedirect(route('admin.trips.create'));
+        $response->assertSessionHasErrors(['driver_id' => 'Driver ini tidak aktif.']);
+
+        $this->assertDatabaseMissing('trips', [
+            'jadwal_id' => $this->jadwal->id,
+            'driver_id' => $inactiveDriver->id,
+        ]);
     }
 
     public function test_admin_can_change_driver_when_driver_has_trip_on_different_shift(): void
@@ -159,6 +240,7 @@ class TripAssignTest extends TestCase
         $this->assertDatabaseHas('trips', [
             'id' => $targetTrip->id,
             'driver_id' => $otherDriver->id,
+            'armada_id' => $otherArmada->id,
         ]);
     }
 
@@ -183,23 +265,39 @@ class TripAssignTest extends TestCase
         ]);
     }
 
-    public function test_admin_cannot_change_armada_when_armada_has_trip_on_same_date_and_shift(): void
+    public function test_admin_cannot_change_to_driver_whose_armada_has_trip_on_same_date_and_shift(): void
     {
         $targetTrip = $this->createTrip($this->jadwal, $this->driver, $this->armada);
         [$conflictDriver, $conflictArmada] = $this->createDriverWithArmada('Tono Driver', 'tono@test.com', 'BA 9999 TN');
         $this->createTrip($this->jadwal, $conflictDriver, $conflictArmada);
 
+        $sharedArmadaUser = User::create([
+            'name' => 'Satu Armada Driver',
+            'email' => 'satu-armada@test.com',
+            'password' => bcrypt('password123'),
+            'role' => 'driver',
+        ]);
+
+        $sharedArmadaDriver = Driver::create([
+            'user_id' => $sharedArmadaUser->id,
+            'nama_driver' => 'Satu Armada Driver',
+            'no_hp' => '081233344455',
+            'armada_id' => $conflictArmada->id,
+            'status_driver' => 'aktif',
+        ]);
+
         $response = $this->actingAs($this->adminUser)
             ->from(route('admin.trips.show', $targetTrip->id))
             ->put(route('admin.trips.update', $targetTrip->id), [
-                'armada_id' => $conflictArmada->id,
+                'driver_id' => $sharedArmadaDriver->id,
             ]);
 
         $response->assertRedirect(route('admin.trips.show', $targetTrip->id));
-        $response->assertSessionHas('error', 'Armada sudah digunakan pada tanggal dan shift yang sama.');
+        $response->assertSessionHas('error', 'Armada milik driver sudah digunakan pada tanggal dan shift yang sama.');
 
         $this->assertDatabaseHas('trips', [
             'id' => $targetTrip->id,
+            'driver_id' => $this->driver->id,
             'armada_id' => $this->armada->id,
         ]);
     }

@@ -77,7 +77,7 @@
 - Admin Laporan + Export
 - Status booking auto-update (observer/listener)
 - WhatsApp scheduler (konfirmasi pagi hari)
-- Responsive polish semua halaman
+- Responsive polish sisa halaman (admin/driver panel)
 
 ---
 
@@ -239,7 +239,7 @@ Semua tugas fondasi telah diselesaikan: Setup project, Breeze auth, RoleMiddlewa
 | Update migration `trips` (tambah `armada_id`) | KVN | — | ✅ |
 | Admin Armada CRUD | RYF | 6 routes | ✅ |
 | Update Admin Driver (link ke armada) | NYS | Update existing | ✅ |
-| Booking Saya (list + detail, pengganti Cek Booking) | RYH | 2 routes | ? |
+| Booking Saya (list + detail, pengganti Cek Booking) | RYH | 2 routes | ✅ |
 | Driver Dashboard (controller + proper view) | KVN | `driver.dashboard` | 🔲 |
 | Driver Trip List + Detail/Manifest | KVN | 2 routes | 🔲 |
 | Driver Start Trip | KVN | `driver.trips.start` | 🔲 |
@@ -249,6 +249,11 @@ Semua tugas fondasi telah diselesaikan: Setup project, Breeze auth, RoleMiddlewa
 | Driver Konfirmasi Pelunasan | KVN | `driver.trips.confirmPayment` | 🔲 |
 | Admin Laporan | RYF | 2 routes | 🔲 |
 | Status booking auto-update | NYS | Observer/listener logic | 🔲 |
+| WhatsApp Booking Notifications (DP verified & Trip assigned) | RYH | — | ✅ |
+| Login & Register Responsive UI Polish | RYH | — | ✅ |
+| Role-Specific Profile Customization (Admin, Driver, Pelanggan) | NYS/RYH | — | ✅ |
+| Single-Pin Map Picker & Hidden Coordinates | RYH | — | ✅ |
+| Admin DP Payment Proof Image Fix (Storage Link) | NYS | — | ✅ |
 
 **Livewire**: `ArmadaTable` (optional), `TripManifest` (driver — interaktif pickup/dropoff + konfirmasi pelunasan)
 
@@ -319,13 +324,13 @@ Semua tugas fondasi telah diselesaikan: Setup project, Breeze auth, RoleMiddlewa
 Sprint 0 ████████████████░░░░░░░░░░ (3 hari)  Foundation ✅ SELESAI
 Sprint 1 ████████████████░░░░░░░░░░ (5 hari)  Admin Core ✅ SELESAI
 Sprint 2 ████████████████░░░░░░░░░░ (5 hari)  Booking & Payment ✅ SELESAI
-Sprint 3 ░░░░░░░░░░░░░░░░███░░░░░░░ (5 hari)  Armada + Driver Ops ← CURRENT
+Sprint 3 ░░░░░░░░░░░░░░░░██████░░░░ (5 hari)  Armada + Driver Ops ← CURRENT
 Sprint 4 ░░░░░░░░░░░░░░░░░░░░██░░░░ (4 hari)  Maps & Integration
 Sprint 5 ░░░░░░░░░░░░░░░░░░░░░░██░░ (4 hari)  Polish & Responsive
 Sprint 6 ░░░░░░░░░░░░░░░░░░░░░░░░██ (3 hari)  Testing & Deploy
 ─────────────────────────────────────────────
 Total: 29 hari kerja (~6 minggu)
-Progress: Sprint 0-2 selesai (13/29 hari = ~45%)
+Progress: Sprint 0-2 selesai, Sprint 3 sebagian selesai (16/29 hari = ~55%)
 ```
 
 ---
@@ -357,6 +362,7 @@ flowchart LR
 | `app/Http/Controllers/PembayaranController.php` | RYH | ✅ |
 | `app/Http/Controllers/CekBookingController.php` | RYH | ✅ |
 | `app/Http/Controllers/JadwalPublicController.php` | RYH | ✅ |
+| `app/Http/Controllers/ProfileController.php` | Semua | ✅ |
 | `app/Http/Controllers/Admin/DashboardController.php` | RYF | ✅ |
 | `app/Http/Controllers/Admin/RuteController.php` | RYF | ✅ |
 | `app/Http/Controllers/Admin/JadwalController.php` | RYF | ✅ |
@@ -385,6 +391,7 @@ flowchart LR
 |------|-----|--------|
 | `app/Services/BookingService.php` | RYH | ✅ |
 | `app/Services/FonnteService.php` | RYH | ✅ |
+| `app/Services/BookingWhatsappNotificationService.php` | RYH | ✅ |
 
 ### Views (Blade)
 
@@ -419,5 +426,9 @@ flowchart LR
 | `resources/views/livewire/booking-form.blade.php` | RYH | ✅ |
 | `resources/views/livewire/admin/booking-table.blade.php` | NYS | ✅ |
 | `resources/views/livewire/admin/pembayaran-table.blade.php` | NYS | ✅ |
+| `resources/views/profile/admin-edit.blade.php` | NYS | ✅ |
+| `resources/views/profile/driver-edit.blade.php` | NYS | ✅ |
+| `resources/views/profile/public-edit.blade.php` | RYH | ✅ |
+| `resources/views/profile/partials/profile-page-content.blade.php` | NYS/RYH | ✅ |
 
-> **Next step**: Mulai Sprint 3 — Migrasi tabel `armada`, Admin Armada CRUD (Rayfo), update Driver management (Nayasha), Driver operations (Kevin), Booking Saya (Rayhan), Admin Laporan (Rayfo).
+> **Next step**: Selesaikan Sprint 3 — Driver Dashboard & operations (Kevin), Admin Laporan (Rayfo), Status booking auto-update (Nayasha).

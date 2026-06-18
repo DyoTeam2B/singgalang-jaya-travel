@@ -35,33 +35,21 @@ class BookingTable extends Component
      */
     public function sendWAConfirm($bookingId): void
     {
-        $booking = Booking::with('pelanggan.user')->find($bookingId);
+        $booking = Booking::with(['pelanggan.user', 'jadwal.rute'])->find($bookingId);
 
-        if (!$booking) {
+        if (! $booking) {
             session()->flash('error', 'Booking tidak ditemukan.');
             return;
         }
 
         $pelanggan = $booking->pelanggan;
-        if (!$pelanggan || !$pelanggan->no_hp) {
+        if (! $pelanggan || ! $pelanggan->no_hp) {
             session()->flash('error', 'Nomor HP pelanggan tidak terdaftar.');
             return;
         }
 
         $target = $pelanggan->no_hp;
-        $rute = $booking->jadwal->rute;
-        $asal = $rute->asal;
-        $tujuan = $rute->tujuan;
-        $tanggal = \Carbon\Carbon::parse($booking->jadwal->tanggal_keberangkatan)->translatedFormat('d F Y');
-        $jam = $booking->jadwal->jam_berangkat;
-
-        $message = "Halo *{$pelanggan->nama}*,\n\nIni adalah konfirmasi untuk keberangkatan perjalanan Anda bersama *Singgalang Jaya Travel*:\n"
-                 . "🎟️ Kode Booking: *{$booking->kode_booking}*\n"
-                 . "🗺️ Rute: *{$asal} -> {$tujuan}*\n"
-                 . "📅 Tanggal: *{$tanggal}*\n"
-                 . "⏰ Jam Keberangkatan: *{$jam} WIB*\n"
-                 . "👥 Penumpang: *{$booking->jumlah_penumpang} Orang*\n\n"
-                 . "Status booking Anda saat ini telah dikonfirmasi. Harap bersiap di lokasi penjemputan 30 menit sebelum jadwal keberangkatan. Terima kasih.";
+        $message = $this->buildWAConfirmMessage($booking);
 
         $fonnteService = new FonnteService();
         $sent = $fonnteService->send(
@@ -72,7 +60,7 @@ class BookingTable extends Component
         );
 
         if ($sent) {
-            session()->flash('success', "Konfirmasi WhatsApp berhasil dikirim ke {$pelanggan->nama} ({$target}).");
+            session()->flash('success', "Permintaan WhatsApp masuk antrean Fonnte untuk {$pelanggan->nama} ({$target}). Cek status delivery di log Fonnte.");
         } else {
             session()->flash('error', "Gagal mengirim konfirmasi WhatsApp ke {$target}. Silakan periksa log.");
         }
@@ -83,20 +71,20 @@ class BookingTable extends Component
         $query = Booking::query()
             ->with(['pelanggan.user', 'jadwal.rute', 'pembayaran', 'whatsappNotifications' => function ($q) {
                 $q->where('type', WhatsappNotification::TYPE_KONFIRMASI_KEBERANGKATAN)
-                  ->where('status', WhatsappNotification::STATUS_SENT)
-                  ->latest();
+                    ->whereIn('status', [WhatsappNotification::STATUS_PENDING, WhatsappNotification::STATUS_SENT])
+                    ->latest();
             }]);
 
         if ($this->search) {
-            $query->where(function($q) {
+            $query->where(function ($q) {
                 $q->where('kode_booking', 'like', '%' . $this->search . '%')
-                  ->orWhereHas('pelanggan', function($qp) {
-                      $qp->where('nama', 'like', '%' . $this->search . '%')
-                         ->orWhere('no_hp', 'like', '%' . $this->search . '%')
-                         ->orWhereHas('user', function($qu) {
-                             $qu->where('email', 'like', '%' . $this->search . '%');
-                         });
-                  });
+                    ->orWhereHas('pelanggan', function ($qp) {
+                        $qp->where('nama', 'like', '%' . $this->search . '%')
+                            ->orWhere('no_hp', 'like', '%' . $this->search . '%')
+                            ->orWhereHas('user', function ($qu) {
+                                $qu->where('email', 'like', '%' . $this->search . '%');
+                            });
+                    });
             });
         }
 
@@ -107,5 +95,35 @@ class BookingTable extends Component
         $bookings = $query->latest()->paginate(10);
 
         return view('livewire.admin.booking-table', compact('bookings'));
+    }
+
+    private function buildWAConfirmMessage(Booking $booking): string
+    {
+        $pelanggan = $booking->pelanggan;
+        $rute = $booking->jadwal->rute;
+        $tanggal = $booking->jadwal->tanggal_keberangkatan?->format('d/m/Y') ?? '-';
+        $shift = ucfirst($booking->jadwal->shift ?? '-');
+        $jam = $booking->jadwal->jam_berangkat?->format('H:i') ?? '-';
+
+        return implode("\n", [
+            '*SINGGALANG JAYA TRAVEL*',
+            '*KONFIRMASI KEBERANGKATAN*',
+            '',
+            "Halo {$pelanggan->nama},",
+            '',
+            'Berikut detail keberangkatan Anda:',
+            '',
+            '*Detail Booking*',
+            "Kode      : {$booking->kode_booking}",
+            "Rute      : {$rute->asal} -> {$rute->tujuan}",
+            "Jadwal    : {$tanggal} - {$shift} {$jam} WIB",
+            "Penumpang : {$booking->jumlah_penumpang} orang",
+            'Status    : Dikonfirmasi',
+            '',
+            'Harap bersiap di lokasi penjemputan 30 menit sebelum jadwal keberangkatan.',
+            '',
+            'Terima kasih,',
+            'Singgalang Jaya Travel',
+        ]);
     }
 }
