@@ -302,6 +302,80 @@ class TripAssignTest extends TestCase
         ]);
     }
 
+    public function test_booking_status_auto_updates_via_observers(): void
+    {
+        $booking = Booking::create([
+            'pelanggan_id' => $this->pelanggan->id,
+            'jadwal_id' => $this->jadwal->id,
+            'kode_booking' => 'SJT-OBS-112233',
+            'alamat_jemput' => 'Alamat Jemput',
+            'alamat_tujuan' => 'Alamat Tujuan',
+            'jumlah_penumpang' => 1,
+            'total_harga' => 150000,
+            'status_booking' => Booking::STATUS_DIKONFIRMASI,
+        ]);
+
+        $trip = $this->createTrip($this->jadwal, $this->driver, $this->armada);
+
+        // 1. Assign booking to trip
+        $detail = $trip->detailTrips()->create([
+            'booking_id' => $booking->id,
+            'status_jemput' => 'belum',
+            'status_antar' => 'belum',
+        ]);
+
+        // Verify status automatically changes to assigned_to_trip
+        $booking->refresh();
+        $this->assertEquals(Booking::STATUS_ASSIGNED_TO_TRIP, $booking->status_booking);
+
+        // 2. Remove booking from trip
+        $detail->delete();
+
+        // Verify status automatically reverts to dikonfirmasi
+        $booking->refresh();
+        $this->assertEquals(Booking::STATUS_DIKONFIRMASI, $booking->status_booking);
+
+        // Re-assign for further testing
+        $detail = $trip->detailTrips()->create([
+            'booking_id' => $booking->id,
+            'status_jemput' => 'belum',
+            'status_antar' => 'belum',
+        ]);
+
+        // 3. Update trip to on_trip
+        $trip->update(['status_trip' => Trip::STATUS_ON_TRIP]);
+
+        // Verify booking status changes to on_trip
+        $booking->refresh();
+        $this->assertEquals(Booking::STATUS_ON_TRIP, $booking->status_booking);
+
+        // 4. Update trip to completed
+        $trip->update(['status_trip' => Trip::STATUS_COMPLETED]);
+
+        // Verify booking status changes to completed
+        $booking->refresh();
+        $this->assertEquals(Booking::STATUS_COMPLETED, $booking->status_booking);
+
+        // 5. Update trip to cancelled
+        $trip->update(['status_trip' => Trip::STATUS_CANCELLED]);
+
+        // Verify booking status changes back to dikonfirmasi
+        $booking->refresh();
+        $this->assertEquals(Booking::STATUS_DIKONFIRMASI, $booking->status_booking);
+
+        // 6. Set to ready, verify status assigned_to_trip
+        $trip->update(['status_trip' => Trip::STATUS_READY]);
+        $booking->refresh();
+        $this->assertEquals(Booking::STATUS_ASSIGNED_TO_TRIP, $booking->status_booking);
+
+        // 7. Delete trip
+        $trip->delete();
+
+        // Verify booking status reverts to dikonfirmasi
+        $booking->refresh();
+        $this->assertEquals(Booking::STATUS_DIKONFIRMASI, $booking->status_booking);
+    }
+
     private function createDriverWithArmada(string $name, string $email, string $plate): array
     {
         $armada = Armada::create([

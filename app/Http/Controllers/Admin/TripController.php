@@ -247,24 +247,6 @@ class TripController extends Controller
                 $updateData['started_at'] = now();
             } elseif ($status === 'completed') {
                 $updateData['completed_at'] = now();
-
-                // Set all bookings to completed
-                DB::transaction(function() use ($trip) {
-                    foreach ($trip->detailTrips as $detail) {
-                        if ($detail->booking) {
-                            $detail->booking->update(['status_booking' => Booking::STATUS_COMPLETED]);
-                        }
-                    }
-                });
-            } elseif ($status === 'cancelled') {
-                // Revert all bookings to dikonfirmasi
-                DB::transaction(function() use ($trip) {
-                    foreach ($trip->detailTrips as $detail) {
-                        if ($detail->booking) {
-                            $detail->booking->update(['status_booking' => Booking::STATUS_DIKONFIRMASI]);
-                        }
-                    }
-                });
             }
         }
 
@@ -279,15 +261,7 @@ class TripController extends Controller
      */
     public function destroy(Trip $trip)
     {
-        DB::transaction(function() use ($trip) {
-            // Revert all bookings in this trip to dikonfirmasi
-            foreach ($trip->detailTrips as $detail) {
-                if ($detail->booking) {
-                    $detail->booking->update(['status_booking' => Booking::STATUS_DIKONFIRMASI]);
-                }
-            }
-            $trip->delete();
-        });
+        $trip->delete();
 
         return redirect()->route('admin.trips.index')
             ->with('success', 'Trip berhasil dihapus dan antrean booking dikembalikan.');
@@ -333,10 +307,6 @@ class TripController extends Controller
                 'status_jemput' => 'belum',
                 'status_antar' => 'belum',
             ]);
-
-            $booking->update([
-                'status_booking' => Booking::STATUS_ASSIGNED_TO_TRIP,
-            ]);
         });
 
         $booking->load(['pelanggan', 'jadwal.rute']);
@@ -361,15 +331,7 @@ class TripController extends Controller
 
         $booking = $detailTrip->booking;
 
-        DB::transaction(function() use ($detailTrip, $booking) {
-            $detailTrip->delete();
-
-            if ($booking) {
-                $booking->update([
-                    'status_booking' => Booking::STATUS_DIKONFIRMASI,
-                ]);
-            }
-        });
+        $detailTrip->delete();
 
         return redirect()->route('admin.trips.show', $trip->id)
             ->with('success', 'Booking berhasil dikeluarkan dari trip.');

@@ -2,6 +2,19 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-19] - Nayasha - Sprint 3
+
+### Added
+* Menambahkan `App\Observers\TripObserver` untuk sinkronisasi otomatis status booking saat status trip di-update (`on_trip`, `completed`, `cancelled`, `ready`, `new`), serta pemulihan status saat trip dihapus.
+* Menambahkan `App\Observers\DetailTripObserver` untuk mengubah status booking menjadi `assigned_to_trip` secara otomatis saat ditugaskan ke trip, dan mengembalikannya ke `dikonfirmasi` saat dihapus/dikeluarkan dari trip.
+
+### Changed
+* Mendaftarkan model observers (`TripObserver` dan `DetailTripObserver`) pada `App\Providers\AppServiceProvider`.
+* Melakukan refaktorisasi `App\Http\Controllers\Admin\TripController` untuk membersihkan kode pembaruan manual status booking dan mendelegasikannya sepenuhnya ke Eloquent Observers.
+
+### Tested
+* `php artisan test --filter test_booking_status_auto_updates_via_observers` (Pass)
+
 ## [2026-06-18] - Role Profile Refresh
 
 ### Added
