@@ -2,6 +2,29 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-19] - Rayfo - Sprint 3
+
+### Added
+
+* Controller `App\Http\Controllers\Admin\LaporanController` untuk menampilkan halaman laporan keuangan admin (index) dan placeholder export (Sprint 4).
+* View `resources/views/admin/laporan/index.blade.php` — halaman laporan keuangan admin dengan:
+  - 4 summary card statistik (Total Booking, Pendapatan Bersih, Total Trip, Okupansi Rata-rata)
+  - Grafik pendapatan harian menggunakan Chart.js via CDN
+  - Tabel rincian laporan harian dengan breakdown booking, trip, pendapatan, dan pembatalan
+  - Modal detail laporan operasional (breakdown DP, pelunasan, sisa pembayaran)
+  - Modal export PDF (placeholder, fungsional dijadwalkan Sprint 4)
+  - Filter periode (Hari Ini, 7 Hari Terakhir, Bulan Ini) dan filter shift (Semua, Pagi, Malam)
+
+### Changed
+
+* Modifikasi `routes/web.php` untuk menambahkan route `admin.laporan.index` dan `admin.laporan.export` di dalam admin group.
+
+### Notes
+
+* Grafik pendapatan menggunakan Chart.js (konversi dari Recharts/React pada design export Figma Make).
+* Export PDF/Excel masih placeholder — implementasi fungsional dijadwalkan Sprint 4.
+* Data laporan dihitung secara dinamis dari tabel `bookings`, `trips`, dan `pembayaran`.
+
 ## [2026-06-18] - Role Profile Refresh
 
 ### Added

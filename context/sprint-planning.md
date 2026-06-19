@@ -109,7 +109,7 @@
 | Admin Rute CRUD | 6 | 3 | ✅ |
 | Admin Armada CRUD | 6 | 3 | ✅ |
 | Admin Jadwal CRUD | 7 | 3 | ✅ |
-| Admin Laporan | 2 | 1 | 🔲 |
+| Admin Laporan | 2 | 1 | ✅ |
 
 ### Nayasha (NYS) — Auth (✅done) + Admin Operasional
 
@@ -247,7 +247,7 @@ Semua tugas fondasi telah diselesaikan: Setup project, Breeze auth, RoleMiddlewa
 | Driver Dropoff Penumpang | KVN | `driver.trips.dropoff` | 🔲 |
 | Driver Complete Trip | KVN | `driver.trips.complete` | 🔲 |
 | Driver Konfirmasi Pelunasan | KVN | `driver.trips.confirmPayment` | 🔲 |
-| Admin Laporan | RYF | 2 routes | 🔲 |
+| Admin Laporan | RYF | 2 routes | ✅ |
 | Status booking auto-update | NYS | Observer/listener logic | 🔲 |
 | WhatsApp Booking Notifications (DP verified & Trip assigned) | RYH | — | ✅ |
 | Login & Register Responsive UI Polish | RYH | — | ✅ |
@@ -371,7 +371,7 @@ flowchart LR
 | `app/Http/Controllers/Admin/DriverController.php` | NYS | ✅ |
 | `app/Http/Controllers/Admin/TripController.php` | KVN | ✅ |
 | `app/Http/Controllers/Admin/ArmadaController.php` | RYF | ✅ |
-| `app/Http/Controllers/Admin/LaporanController.php` | RYF | 🔲 |
+| `app/Http/Controllers/Admin/LaporanController.php` | RYF | ✅ |
 | `app/Http/Controllers/Driver/DashboardController.php` | KVN | 🔲 |
 | `app/Http/Controllers/Driver/TripController.php` | KVN | 🔲 |
 
@@ -411,7 +411,7 @@ flowchart LR
 | `resources/views/admin/rute/*` (3 files) | RYF | ✅ |
 | `resources/views/admin/jadwal/*` (3 files) | RYF | ✅ |
 | `resources/views/admin/armada/*` | RYF | ✅ (index.blade.php modal CRUD) |
-| `resources/views/admin/laporan/*` | RYF | 🔲 |
+| `resources/views/admin/laporan/*` | RYF | ✅ (index.blade.php — laporan keuangan) |
 | `resources/views/admin/bookings/index.blade.php` | NYS | ✅ |
 | `resources/views/admin/bookings/show.blade.php` | NYS | ✅ |
 | `resources/views/admin/pembayaran/index.blade.php` | NYS | ✅ |

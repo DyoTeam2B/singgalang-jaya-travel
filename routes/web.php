@@ -68,6 +68,10 @@ Route::middleware('auth')->group(function () {
              Route::resource('pembayaran', \App\Http\Controllers\Admin\PembayaranController::class)->only(['index', 'show']);
              Route::put('pembayaran/{pembayaran}/verify', [\App\Http\Controllers\Admin\PembayaranController::class, 'verify'])->name('pembayaran.verify');
              Route::put('pembayaran/{pembayaran}/reject', [\App\Http\Controllers\Admin\PembayaranController::class, 'reject'])->name('pembayaran.reject');
+
+             // Admin Laporan (Sprint 3 - Rayfo)
+             Route::get('laporan', [\App\Http\Controllers\Admin\LaporanController::class, 'index'])->name('laporan.index');
+             Route::get('laporan/export', [\App\Http\Controllers\Admin\LaporanController::class, 'export'])->name('laporan.export');
          });
 
     // Driver Routes
