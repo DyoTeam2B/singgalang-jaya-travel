@@ -75,7 +75,7 @@
 - Driver Konfirmasi Pelunasan
 - Map Viewer (driver + admin trip)
 - Admin Laporan + Export
-- Status booking auto-update (observer/listener)
+- Status booking auto-update (observer/listener) (✅ Selesai)
 - WhatsApp scheduler (konfirmasi pagi hari)
 - Responsive polish sisa halaman (admin/driver panel)
 
@@ -248,7 +248,7 @@ Semua tugas fondasi telah diselesaikan: Setup project, Breeze auth, RoleMiddlewa
 | Driver Complete Trip | KVN | `driver.trips.complete` | 🔲 |
 | Driver Konfirmasi Pelunasan | KVN | `driver.trips.confirmPayment` | 🔲 |
 | Admin Laporan | RYF | 2 routes | ✅ |
-| Status booking auto-update | NYS | Observer/listener logic | 🔲 |
+| Status booking auto-update | NYS | Observer/listener logic | ✅ |
 | WhatsApp Booking Notifications (DP verified & Trip assigned) | RYH | — | ✅ |
 | Login & Register Responsive UI Polish | RYH | — | ✅ |
 | Role-Specific Profile Customization (Admin, Driver, Pelanggan) | NYS/RYH | — | ✅ |
@@ -431,4 +431,4 @@ flowchart LR
 | `resources/views/profile/public-edit.blade.php` | RYH | ✅ |
 | `resources/views/profile/partials/profile-page-content.blade.php` | NYS/RYH | ✅ |
 
-> **Next step**: Selesaikan Sprint 3 — Driver Dashboard & operations (Kevin), Admin Laporan (Rayfo), Status booking auto-update (Nayasha).
+> **Next step**: Selesaikan Sprint 3 — Driver Dashboard & operations (Kevin), Admin Laporan (Rayfo).

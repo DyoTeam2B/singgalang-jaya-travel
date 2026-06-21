@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \App\Models\Trip::observe(\App\Observers\TripObserver::class);
+        \App\Models\DetailTrip::observe(\App\Observers\DetailTripObserver::class);
     }
 }
