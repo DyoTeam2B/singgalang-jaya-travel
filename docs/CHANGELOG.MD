@@ -2,6 +2,37 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-22] - Tim - Sprint 4 Maps & Integration
+
+### Added
+
+* Component `resources/views/components/map-viewer.blade.php` sebagai Leaflet map viewer reusable untuk menampilkan titik jemput dan titik antar.
+* Integrasi map viewer pada detail manifest driver dan detail trip admin.
+* Command scheduler `booking:send-confirmation` pada `routes/console.php` untuk mengirim WhatsApp konfirmasi keberangkatan pagi melalui `FonnteService`.
+* Jadwal otomatis `Schedule::command('booking:send-confirmation')->dailyAt('06:00')->timezone('Asia/Jakarta')`.
+* Export laporan admin ke CSV kompatibel Excel tanpa dependency tambahan.
+* Notification bell admin dengan count dinamis untuk pembayaran menunggu, booking perlu verifikasi, dan trip siap berangkat.
+
+### Changed
+
+* Modal export laporan admin diubah dari placeholder PDF menjadi export CSV yang membawa filter periode dan shift aktif.
+* Refactor query laporan admin agar data index dan export memakai helper query yang sama.
+* Memperbarui status Sprint 4 pada `context/sprint-planning.md` menjadi selesai.
+
+### Notes
+
+* WA notifikasi cancel booking sudah tersedia sebelumnya via `FonnteService` pada `BookingController::cancel()` dan tetap dipertahankan.
+* Command WA pagi memakai hari operasional `Asia/Jakarta`, termasuk window anti-duplikasi notifikasi harian.
+
+### Tested
+
+* `php -l routes/console.php` (Pass).
+* `php -l app/Http/Controllers/Admin/LaporanController.php` (Pass).
+* `php artisan view:cache` (Pass).
+* `php artisan booking:send-confirmation --dry-run` (Pass, 0 booking untuk 2026-06-22).
+* `npm run build` (Pass).
+* `php artisan test` (62 passed, 237 assertions).
+
 ## [2026-06-22] - Tim - UAS Documentation & GitHub Action
 
 ### Added

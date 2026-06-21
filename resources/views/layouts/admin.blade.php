@@ -17,7 +17,34 @@
     @livewireStyles
 </head>
 <body class="antialiased font-poppins text-slate-800 bg-slate-50">
-    <div x-data="{ sidebarMobileOpen: false, profileDropdownOpen: false, logoutModalOpen: false }" class="min-h-screen flex relative overflow-x-hidden">
+    @php
+        $pendingPaymentCount = \App\Models\Pembayaran::where('status_pembayaran', \App\Models\Pembayaran::STATUS_MENUNGGU)->count();
+        $pendingBookingCount = \App\Models\Booking::where('status_booking', \App\Models\Booking::STATUS_MENUNGGU_VERIFIKASI)->count();
+        $readyTripCount = \App\Models\Trip::where('status_trip', \App\Models\Trip::STATUS_READY)->count();
+        $notificationItems = collect([
+            [
+                'label' => 'Pembayaran Menunggu',
+                'count' => $pendingPaymentCount,
+                'url' => route('admin.pembayaran.index'),
+                'tone' => 'text-amber-600 bg-amber-50 border-amber-100',
+            ],
+            [
+                'label' => 'Booking Perlu Verifikasi',
+                'count' => $pendingBookingCount,
+                'url' => route('admin.bookings.index'),
+                'tone' => 'text-blue-700 bg-blue-50 border-blue-100',
+            ],
+            [
+                'label' => 'Trip Siap Berangkat',
+                'count' => $readyTripCount,
+                'url' => route('admin.trips.index'),
+                'tone' => 'text-emerald-700 bg-emerald-50 border-emerald-100',
+            ],
+        ])->filter(fn ($item) => $item['count'] > 0)->values();
+        $notificationCount = $notificationItems->sum('count');
+    @endphp
+
+    <div x-data="{ sidebarMobileOpen: false, profileDropdownOpen: false, notificationDropdownOpen: false, logoutModalOpen: false }" class="min-h-screen flex relative overflow-x-hidden">
         
         <!-- Sidebar - Desktop (Static) -->
         <aside class="hidden lg:flex lg:flex-col lg:w-72 lg:fixed lg:inset-y-0 lg:bg-slate-900 lg:text-slate-300 lg:z-50 lg:border-r lg:border-white/10 lg:shadow-2xl">
@@ -92,13 +119,53 @@
 
                 <!-- Right Nav Section -->
                 <div class="flex items-center gap-4 sm:gap-6">
-                    <button class="relative p-2.5 text-slate-500 hover:bg-slate-50 rounded-xl transition-all">
-                        <!-- Bell Icon -->
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                        </svg>
-                        <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white animate-pulse"></span>
-                    </button>
+                    <div class="relative">
+                        <button @click="notificationDropdownOpen = !notificationDropdownOpen; profileDropdownOpen = false"
+                                class="relative p-2.5 text-slate-500 hover:bg-slate-50 rounded-xl transition-all">
+                            <!-- Bell Icon -->
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                            </svg>
+                            @if($notificationCount > 0)
+                                <span class="absolute -top-1 -right-1 min-w-5 h-5 px-1 flex items-center justify-center bg-rose-500 text-white text-[10px] font-black rounded-full border-2 border-white shadow-sm">
+                                    {{ $notificationCount > 99 ? '99+' : $notificationCount }}
+                                </span>
+                            @endif
+                        </button>
+
+                        <div x-show="notificationDropdownOpen"
+                             x-cloak
+                             @click.outside="notificationDropdownOpen = false"
+                             class="absolute right-0 mt-4 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-[2rem] shadow-2xl border border-slate-100 overflow-hidden z-[120]"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95">
+                            <div class="px-6 py-4 border-b border-slate-100">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Notifikasi Admin</p>
+                                <p class="text-sm font-black text-slate-900 mt-1">{{ $notificationCount }} item perlu dicek</p>
+                            </div>
+
+                            <div class="p-3 space-y-2">
+                                @forelse($notificationItems as $item)
+                                    <a href="{{ $item['url'] }}"
+                                       class="flex items-center justify-between gap-4 px-4 py-3 rounded-2xl border {{ $item['tone'] }} hover:brightness-95 transition-all">
+                                        <span class="text-[11px] font-black uppercase tracking-widest leading-tight">{{ $item['label'] }}</span>
+                                        <span class="min-w-8 h-8 px-2 inline-flex items-center justify-center rounded-xl bg-white/80 text-xs font-black border border-white/60">
+                                            {{ $item['count'] }}
+                                        </span>
+                                    </a>
+                                @empty
+                                    <div class="px-4 py-8 text-center">
+                                        <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Tidak ada notifikasi</p>
+                                        <p class="text-[11px] font-semibold text-slate-400 mt-1">Semua item operasional sudah aman.</p>
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="h-8 w-px bg-slate-100 hidden sm:block"></div>
 

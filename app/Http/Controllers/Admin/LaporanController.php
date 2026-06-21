@@ -17,62 +17,26 @@ class LaporanController extends Controller
      */
     public function index(Request $request)
     {
-        // Determine date range from filter
         $period = $request->get('period', '7days');
         $shift = $request->get('shift', 'semua');
 
         $dateRange = $this->getDateRange($period, $request);
-
         $startDate = $dateRange['start'];
         $endDate = $dateRange['end'];
 
-        // Base query scoping by jadwal shift if filtered
-        $bookingQuery = Booking::query()
-            ->whereBetween('bookings.created_at', [$startDate, $endDate]);
+        $bookingQuery = $this->baseBookingQuery($startDate, $endDate, $shift);
+        $tripQuery = $this->baseTripQuery($startDate, $endDate, $shift);
 
-        $tripQuery = Trip::query()
-            ->whereHas('jadwal', function ($q) use ($startDate, $endDate) {
-                $q->whereBetween('tanggal_keberangkatan', [$startDate->toDateString(), $endDate->toDateString()]);
-            });
-
-        if ($shift !== 'semua') {
-            $bookingQuery->whereHas('jadwal', fn($q) => $q->where('shift', $shift));
-            $tripQuery->whereHas('jadwal', fn($q) => $q->where('shift', $shift));
-        }
-
-        // Summary cards
         $totalBookings = (clone $bookingQuery)->count();
         $totalPassengers = (clone $bookingQuery)->sum('jumlah_penumpang');
         $totalRevenue = (clone $bookingQuery)
             ->where('status_booking', Booking::STATUS_COMPLETED)
             ->sum('total_harga');
         $totalTrips = (clone $tripQuery)->count();
-        $completedTrips = (clone $tripQuery)->where('status_trip', Trip::STATUS_COMPLETED)->count();
+        $avgOccupancy = $this->calculateAverageOccupancy($tripQuery);
 
-        // Calculate average occupancy
-        $avgOccupancy = 0;
-        if ($completedTrips > 0) {
-            $completedTripIds = (clone $tripQuery)
-                ->where('status_trip', Trip::STATUS_COMPLETED)
-                ->pluck('trips.id');
-
-            $totalCapacity = Trip::whereIn('trips.id', $completedTripIds)
-                ->join('armada', 'trips.armada_id', '=', 'armada.id')
-                ->sum('armada.kapasitas');
-
-            $totalPassengersInTrips = \App\Models\DetailTrip::whereIn('trip_id', $completedTripIds)->count();
-
-            if ($totalCapacity > 0) {
-                $avgOccupancy = round(($totalPassengersInTrips / $totalCapacity) * 100);
-            }
-        }
-
-        // Revenue chart data (daily)
-        $chartData = Booking::where('status_booking', Booking::STATUS_COMPLETED)
-            ->whereBetween('bookings.created_at', [$startDate, $endDate])
-            ->when($shift !== 'semua', function ($q) use ($shift) {
-                $q->whereHas('jadwal', fn($jq) => $jq->where('shift', $shift));
-            })
+        $chartData = $this->baseBookingQuery($startDate, $endDate, $shift)
+            ->where('status_booking', Booking::STATUS_COMPLETED)
             ->select(
                 DB::raw('DATE(bookings.created_at) as date'),
                 DB::raw('SUM(total_harga) as revenue')
@@ -83,63 +47,8 @@ class LaporanController extends Controller
 
         $chartLabels = $chartData->pluck('date')->map(fn($d) => Carbon::parse($d)->translatedFormat('d M'))->toArray();
         $chartValues = $chartData->pluck('revenue')->toArray();
-
-        // Daily report breakdown
-        $dailyReports = Booking::query()
-            ->whereBetween('bookings.created_at', [$startDate, $endDate])
-            ->when($shift !== 'semua', function ($q) use ($shift) {
-                $q->whereHas('jadwal', fn($jq) => $jq->where('shift', $shift));
-            })
-            ->select(
-                DB::raw('DATE(bookings.created_at) as report_date'),
-                DB::raw('COUNT(*) as total_booking'),
-                DB::raw('SUM(jumlah_penumpang) as total_passengers'),
-                DB::raw("SUM(CASE WHEN status_booking = 'completed' THEN total_harga ELSE 0 END) as revenue"),
-                DB::raw("SUM(CASE WHEN status_booking = 'cancelled' THEN 1 ELSE 0 END) as cancelled")
-            )
-            ->groupBy('report_date')
-            ->orderByDesc('report_date')
-            ->get();
-
-        // Enrich daily reports with trip count and DP/pelunasan breakdown
-        foreach ($dailyReports as $report) {
-            $reportDate = $report->report_date;
-
-            $report->total_trip = Trip::whereHas('jadwal', function ($q) use ($reportDate) {
-                $q->where('tanggal_keberangkatan', $reportDate);
-            })->when($shift !== 'semua', function ($q) use ($shift) {
-                $q->whereHas('jadwal', fn($jq) => $jq->where('shift', $shift));
-            })->count();
-
-            // DP collected (pembayaran type 'dp' and verified)
-            $report->dp_revenue = Pembayaran::where('jenis_pembayaran', 'dp')
-                ->where('status_pembayaran', 'terverifikasi')
-                ->whereHas('booking', function ($q) use ($reportDate) {
-                    $q->whereDate('created_at', $reportDate);
-                })
-                ->sum('jumlah_bayar');
-
-            // Pelunasan collected
-            $report->pelunasan_revenue = Pembayaran::where('jenis_pembayaran', 'pelunasan')
-                ->where('status_pembayaran', 'terverifikasi')
-                ->whereHas('booking', function ($q) use ($reportDate) {
-                    $q->whereDate('created_at', $reportDate);
-                })
-                ->sum('jumlah_bayar');
-        }
-
-        // Trip summary for detail modal (all trips in date range)
-        $tripSummary = Trip::with(['jadwal.rute', 'driver', 'armada', 'detailTrips'])
-            ->whereHas('jadwal', function ($q) use ($startDate, $endDate) {
-                $q->whereBetween('tanggal_keberangkatan', [$startDate->toDateString(), $endDate->toDateString()]);
-            })
-            ->when($shift !== 'semua', function ($q) use ($shift) {
-                $q->whereHas('jadwal', fn($jq) => $jq->where('shift', $shift));
-            })
-            ->orderByDesc('created_at')
-            ->get();
-
-        // Period label for display
+        $dailyReports = $this->buildDailyReports($startDate, $endDate, $shift);
+        $tripSummary = $this->buildTripSummary($startDate, $endDate, $shift);
         $periodLabel = $this->getPeriodLabel($period, $request);
 
         return view('admin.laporan.index', compact(
@@ -161,12 +70,196 @@ class LaporanController extends Controller
     }
 
     /**
-     * Export report as downloadable file (placeholder for Sprint 4).
+     * Export report as CSV compatible with spreadsheet apps.
      */
     public function export(Request $request)
     {
-        // TODO: Implement PDF/Excel export in Sprint 4
-        return back()->with('info', 'Fitur export laporan akan tersedia pada update berikutnya.');
+        $period = $request->get('period', $request->get('export_period', '7days'));
+        $shift = $request->get('shift', 'semua');
+
+        $dateRange = $this->getDateRange($period, $request);
+        $startDate = $dateRange['start'];
+        $endDate = $dateRange['end'];
+
+        $bookingQuery = $this->baseBookingQuery($startDate, $endDate, $shift);
+        $tripQuery = $this->baseTripQuery($startDate, $endDate, $shift);
+        $dailyReports = $this->buildDailyReports($startDate, $endDate, $shift);
+        $tripSummary = $this->buildTripSummary($startDate, $endDate, $shift);
+        $periodLabel = $this->getPeriodLabel($period, $request);
+
+        $summary = [
+            'total_bookings' => (clone $bookingQuery)->count(),
+            'total_passengers' => (clone $bookingQuery)->sum('jumlah_penumpang'),
+            'total_revenue' => (clone $bookingQuery)->where('status_booking', Booking::STATUS_COMPLETED)->sum('total_harga'),
+            'total_trips' => (clone $tripQuery)->count(),
+            'completed_trips' => (clone $tripQuery)->where('status_trip', Trip::STATUS_COMPLETED)->count(),
+            'avg_occupancy' => $this->calculateAverageOccupancy($tripQuery),
+        ];
+
+        $filename = 'laporan-keuangan-'.now()->format('Ymd-His').'.csv';
+
+        return response()->streamDownload(function () use ($periodLabel, $shift, $startDate, $endDate, $summary, $dailyReports, $tripSummary) {
+            $handle = fopen('php://output', 'w');
+
+            fwrite($handle, "\xEF\xBB\xBF");
+            fputcsv($handle, ['Laporan Keuangan Singgalang Jaya Travel']);
+            fputcsv($handle, ['Periode', $periodLabel]);
+            fputcsv($handle, ['Tanggal Mulai', $startDate->format('Y-m-d')]);
+            fputcsv($handle, ['Tanggal Akhir', $endDate->format('Y-m-d')]);
+            fputcsv($handle, ['Shift', $shift === 'semua' ? 'Semua Shift' : ucfirst($shift)]);
+            fputcsv($handle, ['Diexport Pada', now()->format('Y-m-d H:i:s')]);
+            fwrite($handle, "\n");
+
+            fputcsv($handle, ['Ringkasan']);
+            fputcsv($handle, ['Total Booking', $summary['total_bookings']]);
+            fputcsv($handle, ['Total Penumpang', $summary['total_passengers']]);
+            fputcsv($handle, ['Total Pendapatan Completed', $summary['total_revenue']]);
+            fputcsv($handle, ['Total Trip', $summary['total_trips']]);
+            fputcsv($handle, ['Trip Selesai', $summary['completed_trips']]);
+            fputcsv($handle, ['Okupansi Rata-rata (%)', $summary['avg_occupancy']]);
+            fwrite($handle, "\n");
+
+            fputcsv($handle, ['Rincian Harian']);
+            fputcsv($handle, ['Tanggal', 'Booking', 'Penumpang', 'Trip', 'Pendapatan', 'DP Terverifikasi', 'Pelunasan Terverifikasi', 'Booking Batal']);
+
+            foreach ($dailyReports as $report) {
+                fputcsv($handle, [
+                    $report->report_date,
+                    $report->total_booking,
+                    $report->total_passengers ?? 0,
+                    $report->total_trip,
+                    $report->revenue,
+                    $report->dp_revenue,
+                    $report->pelunasan_revenue,
+                    $report->cancelled,
+                ]);
+            }
+
+            fwrite($handle, "\n");
+            fputcsv($handle, ['Rangkuman Trip']);
+            fputcsv($handle, ['Trip', 'Tanggal', 'Jam', 'Rute', 'Shift', 'Driver', 'Armada', 'Pax Manifest', 'Status']);
+
+            foreach ($tripSummary as $trip) {
+                $jadwal = $trip->jadwal;
+                $rute = $jadwal?->rute;
+                $armada = $trip->armada;
+
+                fputcsv($handle, [
+                    'TRP-'.str_pad((string) $trip->id, 3, '0', STR_PAD_LEFT),
+                    $jadwal?->tanggal_keberangkatan?->format('Y-m-d') ?? '-',
+                    $jadwal?->jam_berangkat?->format('H:i') ?? '-',
+                    $rute ? "{$rute->asal} -> {$rute->tujuan}" : '-',
+                    $jadwal?->shift ? ucfirst($jadwal->shift) : '-',
+                    $trip->driver?->nama_driver ?? '-',
+                    $armada ? "{$armada->nama_mobil} ({$armada->nomor_plat})" : '-',
+                    $trip->detailTrips->count(),
+                    $trip->status_trip,
+                ]);
+            }
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
+
+    private function baseBookingQuery(Carbon $startDate, Carbon $endDate, string $shift)
+    {
+        return Booking::query()
+            ->whereBetween('bookings.created_at', [$startDate, $endDate])
+            ->when($shift !== 'semua', function ($query) use ($shift) {
+                $query->whereHas('jadwal', fn($jadwalQuery) => $jadwalQuery->where('shift', $shift));
+            });
+    }
+
+    private function baseTripQuery(Carbon $startDate, Carbon $endDate, string $shift)
+    {
+        return Trip::query()
+            ->whereHas('jadwal', function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('tanggal_keberangkatan', [$startDate->toDateString(), $endDate->toDateString()]);
+            })
+            ->when($shift !== 'semua', function ($query) use ($shift) {
+                $query->whereHas('jadwal', fn($jadwalQuery) => $jadwalQuery->where('shift', $shift));
+            });
+    }
+
+    private function calculateAverageOccupancy($tripQuery): int
+    {
+        $completedTripIds = (clone $tripQuery)
+            ->where('status_trip', Trip::STATUS_COMPLETED)
+            ->pluck('trips.id');
+
+        if ($completedTripIds->isEmpty()) {
+            return 0;
+        }
+
+        $totalCapacity = Trip::whereIn('trips.id', $completedTripIds)
+            ->join('armada', 'trips.armada_id', '=', 'armada.id')
+            ->sum('armada.kapasitas');
+
+        $totalPassengersInTrips = \App\Models\DetailTrip::whereIn('trip_id', $completedTripIds)->count();
+
+        if ($totalCapacity <= 0) {
+            return 0;
+        }
+
+        return (int) round(($totalPassengersInTrips / $totalCapacity) * 100);
+    }
+
+    private function buildDailyReports(Carbon $startDate, Carbon $endDate, string $shift)
+    {
+        $dailyReports = $this->baseBookingQuery($startDate, $endDate, $shift)
+            ->select(
+                DB::raw('DATE(bookings.created_at) as report_date'),
+                DB::raw('COUNT(*) as total_booking'),
+                DB::raw('SUM(jumlah_penumpang) as total_passengers'),
+                DB::raw("SUM(CASE WHEN status_booking = 'completed' THEN total_harga ELSE 0 END) as revenue"),
+                DB::raw("SUM(CASE WHEN status_booking = 'cancelled' THEN 1 ELSE 0 END) as cancelled")
+            )
+            ->groupBy('report_date')
+            ->orderByDesc('report_date')
+            ->get();
+
+        foreach ($dailyReports as $report) {
+            $reportDate = $report->report_date;
+
+            $report->total_trip = Trip::whereHas('jadwal', function ($query) use ($reportDate) {
+                $query->where('tanggal_keberangkatan', $reportDate);
+            })->when($shift !== 'semua', function ($query) use ($shift) {
+                $query->whereHas('jadwal', fn($jadwalQuery) => $jadwalQuery->where('shift', $shift));
+            })->count();
+
+            $report->dp_revenue = $this->paymentTotalForReportDate($reportDate, Pembayaran::JENIS_DP, $shift);
+            $report->pelunasan_revenue = $this->paymentTotalForReportDate($reportDate, Pembayaran::JENIS_PELUNASAN, $shift);
+        }
+
+        return $dailyReports;
+    }
+
+    private function paymentTotalForReportDate(string $reportDate, string $jenisPembayaran, string $shift): int
+    {
+        return (int) Pembayaran::where('jenis_pembayaran', $jenisPembayaran)
+            ->where('status_pembayaran', Pembayaran::STATUS_TERVERIFIKASI)
+            ->whereHas('booking', function ($query) use ($reportDate, $shift) {
+                $query->whereDate('created_at', $reportDate)
+                    ->when($shift !== 'semua', function ($bookingQuery) use ($shift) {
+                        $bookingQuery->whereHas('jadwal', fn($jadwalQuery) => $jadwalQuery->where('shift', $shift));
+                    });
+            })
+            ->sum('jumlah_bayar');
+    }
+
+    private function buildTripSummary(Carbon $startDate, Carbon $endDate, string $shift)
+    {
+        return Trip::with(['jadwal.rute', 'driver', 'armada', 'detailTrips'])
+            ->whereHas('jadwal', function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('tanggal_keberangkatan', [$startDate->toDateString(), $endDate->toDateString()]);
+            })
+            ->when($shift !== 'semua', function ($query) use ($shift) {
+                $query->whereHas('jadwal', fn($jadwalQuery) => $jadwalQuery->where('shift', $shift));
+            })
+            ->orderByDesc('created_at')
+            ->get();
     }
 
     /**
@@ -187,7 +280,7 @@ class LaporanController extends Controller
                 'start' => Carbon::parse($request->get('start_date', Carbon::today()->subDays(6)->toDateString()))->startOfDay(),
                 'end' => Carbon::parse($request->get('end_date', Carbon::today()->toDateString()))->endOfDay(),
             ],
-            default => [ // 7days
+            default => [
                 'start' => Carbon::today()->subDays(6)->startOfDay(),
                 'end' => Carbon::today()->endOfDay(),
             ],

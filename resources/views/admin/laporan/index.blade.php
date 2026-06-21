@@ -53,7 +53,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
-                    Export PDF
+                    Export CSV
                 </button>
 
                 {{-- Export Modal --}}
@@ -77,10 +77,11 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
                                 </svg>
                             </div>
-                            <h3 class="text-xl font-bold text-slate-900 tracking-tight mb-2">Export Laporan PDF</h3>
-                            <p class="text-sm text-slate-500 mb-6 px-4 leading-relaxed">Pilih rentang laporan yang ingin Anda unduh ke format dokumen PDF.</p>
+                            <h3 class="text-xl font-bold text-slate-900 tracking-tight mb-2">Export Laporan CSV</h3>
+                            <p class="text-sm text-slate-500 mb-6 px-4 leading-relaxed">Pilih rentang laporan yang ingin Anda unduh ke format CSV yang bisa dibuka di Excel.</p>
 
                             <form action="{{ route('admin.laporan.export') }}" method="GET" class="space-y-4 mb-6 text-left">
+                                <input type="hidden" name="shift" value="{{ $shift }}">
                                 <div class="space-y-1.5">
                                     <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider px-1">Rentang Waktu</label>
                                     <div class="relative">
@@ -89,9 +90,9 @@
                                         </svg>
                                         <select name="export_period"
                                             class="w-full pl-11 pr-8 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 appearance-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-colors">
-                                            <option value="today">Hari Ini</option>
-                                            <option value="7days" selected>7 Hari Terakhir</option>
-                                            <option value="30days">Bulan Ini</option>
+                                            <option value="today" {{ $period === 'today' ? 'selected' : '' }}>Hari Ini</option>
+                                            <option value="7days" {{ $period === '7days' ? 'selected' : '' }}>7 Hari Terakhir</option>
+                                            <option value="30days" {{ $period === '30days' ? 'selected' : '' }}>Bulan Ini</option>
                                         </select>
                                     </div>
                                 </div>
@@ -113,7 +114,7 @@
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                         </svg>
-                                        Export PDF
+                                        Export CSV
                                     </button>
                                 </div>
                             </form>
@@ -457,12 +458,12 @@
                             class="px-6 py-3 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium rounded-xl text-sm transition-colors">
                             Tutup
                         </button>
-                        <a href="{{ route('admin.laporan.export') }}"
+                        <a href="{{ route('admin.laporan.export', ['period' => $period, 'shift' => $shift]) }}"
                             class="inline-flex items-center gap-2 px-6 py-3 bg-blue-800 hover:bg-blue-900 text-white font-semibold rounded-xl text-sm shadow-sm transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
-                            Cetak Laporan
+                            Unduh CSV
                         </a>
                     </div>
                 </div>

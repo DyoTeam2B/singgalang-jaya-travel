@@ -1,6 +1,40 @@
 @extends('layouts.driver')
 
 @section('content')
+@php
+    $mapPoints = $trip->detailTrips
+        ->filter(fn ($detail) => $detail->booking)
+        ->flatMap(function ($detail) {
+            $booking = $detail->booking;
+            $customerName = $booking->pelanggan->nama ?? 'Penumpang';
+            $points = [];
+
+            if ($booking->latitude_jemput && $booking->longitude_jemput) {
+                $points[] = [
+                    'lat' => $booking->latitude_jemput,
+                    'lng' => $booking->longitude_jemput,
+                    'label' => $customerName,
+                    'type' => 'jemput',
+                    'address' => $booking->alamat_jemput,
+                    'description' => $booking->kode_booking,
+                ];
+            }
+
+            if ($booking->latitude_tujuan && $booking->longitude_tujuan) {
+                $points[] = [
+                    'lat' => $booking->latitude_tujuan,
+                    'lng' => $booking->longitude_tujuan,
+                    'label' => $customerName,
+                    'type' => 'antar',
+                    'address' => $booking->alamat_tujuan,
+                    'description' => $booking->kode_booking,
+                ];
+            }
+
+            return $points;
+        })
+        ->values();
+@endphp
     <div class="max-w-3xl mx-auto space-y-8 font-poppins pb-24">
         
         <!-- Sticky Sub-Header Nav -->
@@ -69,6 +103,13 @@
             </div>
         </div>
 
+        <x-map-viewer
+            :points="$mapPoints"
+            mapId="driver-trip-map-{{ $trip->id }}"
+            height="h-96"
+            title="Peta Manifest"
+            subtitle="Titik jemput dan antar penumpang"
+        />
         <!-- Section Label -->
         <div class="flex items-center justify-between px-2">
             <h3 class="text-xs font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2">

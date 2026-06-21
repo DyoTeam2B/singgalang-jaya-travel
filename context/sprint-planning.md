@@ -73,10 +73,10 @@
 - Driver Dashboard (controller + proper view)
 - Driver Trip operations (TripController, start/pickup/dropoff/complete)
 - Driver Konfirmasi Pelunasan
-- Map Viewer (driver + admin trip)
-- Admin Laporan + Export
+- Map Viewer (driver + admin trip) - selesai Sprint 4
+- Admin Laporan + Export - selesai Sprint 4
 - Status booking auto-update (observer/listener) (✅ Selesai)
-- WhatsApp scheduler (konfirmasi pagi hari)
+- WhatsApp scheduler (konfirmasi pagi hari) - selesai Sprint 4
 - Responsive polish sisa halaman (admin/driver panel)
 
 ---
@@ -226,7 +226,7 @@ Semua tugas fondasi telah diselesaikan: Setup project, Breeze auth, RoleMiddlewa
 
 ---
 
-### Sprint 3 — Armada + Driver Operations & Trip [/] SEDANG BERJALAN
+### Sprint 3 — Armada + Driver Operations & Trip [x] SELESAI
 
 **Durasi**: 5 hari
 
@@ -261,20 +261,20 @@ Semua tugas fondasi telah diselesaikan: Setup project, Breeze auth, RoleMiddlewa
 
 ---
 
-### Sprint 4 — Maps & Integration
+### Sprint 4 - Maps & Integration [x] SELESAI
 
 **Durasi**: 4 hari
 
 | Task | PIC | Keterangan | Status |
 |------|-----|------------|--------|
-| Leaflet map viewer (driver) | KVN | Lihat semua titik jemput/antar | 🔲 |
-| Leaflet map viewer (admin trip) | KVN | Lihat distribusi penumpang | 🔲 |
-| WA konfirmasi pagi keberangkatan | RYH | Scheduler command `dailyAt('06:00')` | 🔲 |
-| WA notifikasi cancel booking | RYH | Event-driven via FonnteService | 🔲 |
-| Admin laporan export | RYF | Export PDF/Excel | 🔲 |
-| Notification bell (admin) | RYF | Count pending items | 🔲 |
+| Leaflet map viewer (driver) | KVN | Lihat semua titik jemput/antar pada detail manifest driver | ✅ |
+| Leaflet map viewer (admin trip) | KVN | Lihat distribusi penumpang pada detail trip admin | ✅ |
+| WA konfirmasi pagi keberangkatan | RYH | Scheduler command `booking:send-confirmation` + `dailyAt('06:00')` | ✅ |
+| WA notifikasi cancel booking | RYH | Event-driven via `FonnteService` saat pelanggan cancel booking | ✅ |
+| Admin laporan export | RYF | Export laporan CSV kompatibel Excel tanpa dependency baru | ✅ |
+| Notification bell (admin) | RYF | Count pending pembayaran, booking verifikasi, dan trip ready | ✅ |
 
-> **Note**: Map Picker sudah selesai di Sprint 2. FonnteService sudah dibuat.
+> **Note**: Map Picker sudah selesai di Sprint 2. FonnteService sudah dibuat. Export memakai CSV agar bisa langsung dibuka di Excel tanpa menambah package baru.
 
 **Deliverable**: Map viewer terintegrasi. FonnteAPI WhatsApp berfungsi. Laporan bisa export.
 
@@ -324,13 +324,13 @@ Semua tugas fondasi telah diselesaikan: Setup project, Breeze auth, RoleMiddlewa
 Sprint 0 ████████████████░░░░░░░░░░ (3 hari)  Foundation ✅ SELESAI
 Sprint 1 ████████████████░░░░░░░░░░ (5 hari)  Admin Core ✅ SELESAI
 Sprint 2 ████████████████░░░░░░░░░░ (5 hari)  Booking & Payment ✅ SELESAI
-Sprint 3 ░░░░░░░░░░░░░░░░██████░░░░ (5 hari)  Armada + Driver Ops ← CURRENT
-Sprint 4 ░░░░░░░░░░░░░░░░░░░░██░░░░ (4 hari)  Maps & Integration
-Sprint 5 ░░░░░░░░░░░░░░░░░░░░░░██░░ (4 hari)  Polish & Responsive
+Sprint 3 ░░░░░░░░░░░░░░░░██████░░░░ (5 hari)  Armada + Driver Ops ✅ SELESAI
+Sprint 4 ░░░░░░░░░░░░░░░░░░░░██░░░░ (4 hari)  Maps & Integration ✅ SELESAI
+Sprint 5 ░░░░░░░░░░░░░░░░░░░░░░██░░ (4 hari)  Polish & Responsive ← CURRENT
 Sprint 6 ░░░░░░░░░░░░░░░░░░░░░░░░██ (3 hari)  Testing & Deploy
 ─────────────────────────────────────────────
 Total: 29 hari kerja (~6 minggu)
-Progress: Sprint 0-2 selesai, Sprint 3 sebagian selesai (16/29 hari = ~55%)
+Progress: Sprint 0-4 selesai (22/29 hari = ~76%)
 ```
 
 ---

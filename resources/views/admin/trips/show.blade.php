@@ -10,6 +10,38 @@
     $estRevenue = $trip->detailTrips->sum(function($dt) {
         return $dt->booking ? $dt->booking->total_harga : 0;
     });
+    $mapPoints = $trip->detailTrips
+        ->filter(fn ($detail) => $detail->booking)
+        ->flatMap(function ($detail) {
+            $booking = $detail->booking;
+            $customerName = $booking->pelanggan->nama ?? 'Penumpang';
+            $points = [];
+
+            if ($booking->latitude_jemput && $booking->longitude_jemput) {
+                $points[] = [
+                    'lat' => $booking->latitude_jemput,
+                    'lng' => $booking->longitude_jemput,
+                    'label' => $customerName,
+                    'type' => 'jemput',
+                    'address' => $booking->alamat_jemput,
+                    'description' => $booking->kode_booking,
+                ];
+            }
+
+            if ($booking->latitude_tujuan && $booking->longitude_tujuan) {
+                $points[] = [
+                    'lat' => $booking->latitude_tujuan,
+                    'lng' => $booking->longitude_tujuan,
+                    'label' => $customerName,
+                    'type' => 'antar',
+                    'address' => $booking->alamat_tujuan,
+                    'description' => $booking->kode_booking,
+                ];
+            }
+
+            return $points;
+        })
+        ->values();
 @endphp
 
 <div x-data="{ 
@@ -279,6 +311,13 @@
         </div>
     </div>
 
+    <x-map-viewer
+        :points="$mapPoints"
+        mapId="admin-trip-map-{{ $trip->id }}"
+        height="h-[420px]"
+        title="Peta Distribusi Penumpang"
+        subtitle="Titik jemput dan antar pada trip ini"
+    />
     <!-- Passenger Manifest Table Card -->
     <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
         <div class="p-6 md:p-8 border-b border-slate-100 flex items-center justify-between gap-4 flex-wrap">
