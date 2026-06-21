@@ -2,6 +2,55 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-22] - Tim - UAS Documentation & GitHub Action
+
+### Added
+
+* Dokumentasi UAS utama pada `docs/UAS-KONSTRUKSI-EVOLUSI-PERANGKAT-LUNAK.md`.
+* Dokumentasi pembagian peran GitHub pada `docs/github-roles.md`.
+* Dokumentasi GitHub Action pada `docs/github-actions.md`.
+* Dokumentasi refactoring pada `docs/refactoring.md`.
+* Workflow CI Laravel pada `.github/workflows/laravel-ci.yml` untuk install dependency, migration, build frontend, dan test otomatis.
+
+### Changed
+
+* Memperbarui `README.md` sebagai indeks proyek dan indeks dokumentasi UAS.
+* Memperbarui `docs/INSTALLATION.MD` agar sesuai dengan `.env.example`, akun seeder, storage link, dan command aktual.
+* Memperbarui `docs/dependencies.md` berdasarkan `composer.json`, `package.json`, CDN, dan layanan eksternal yang digunakan.
+* Memperbarui `docs/features.md` dengan aktor, route, controller, status booking/trip, dan alur fitur proyek.
+
+### Tested
+
+* `npm run build` (Pass).
+* `php artisan test` (62 passed, 237 assertions).
+
+## [2026-06-22] - Kevin - Sprint 3
+
+### Added
+
+* Controller `App\Http\Controllers\Driver\DashboardController` untuk portal utama driver yang menampilkan performa/statistik driver jika tidak ada trip aktif, atau menyajikan panel kontrol trip aktif jika ada trip yang ditugaskan.
+* Controller `App\Http\Controllers\Driver\TripController` untuk operasi perjalanan driver:
+  - `index` untuk menampilkan riwayat trip selesai (estimasi pendapatan cash, total PAX, detail rute/jadwal).
+  - `show` untuk rincian manifest detail penumpang.
+  - `start` untuk memulai trip.
+  - `pickup` untuk menandai penjemputan penumpang.
+  - `dropoff` untuk menandai pengantaran penumpang yang sekaligus otomatis mencatat pelunasan tunai (cash) di database.
+  - `confirmPayment` untuk pencatatan konfirmasi pembayaran pelunasan cash secara terpisah/manual.
+  - `complete` untuk menyelesaikan trip jika semua penumpang telah sampai di tujuan.
+* View `resources/views/driver/trips/index.blade.php` sebagai tabel riwayat perjalanan driver dengan widget statistik ringkasan.
+* View `resources/views/driver/trips/show.blade.php` sebagai rincian manifest penumpang statis.
+* File pengujian `tests/Feature/DriverTripTest.php` untuk memvalidasi alur dashboard driver, startup trip, penjemputan, pengantaran & auto-pelunasan cash, serta penyelesaian trip.
+
+### Changed
+
+* Modifikasi `routes/web.php` untuk mendaftarkan 8 route driver operasional di bawah prefix `driver`, name `driver.`, dan middleware `role:driver`.
+* Modifikasi `resources/views/driver/dashboard.blade.php` menjadi panel kontrol perjalanan driver yang interaktif dengan integrasi Leaflet Map OSM, progress stepper, checklist jemput/antar penumpang, tombol hubungi via WhatsApp, dan modal konfirmasi pembayaran pelunasan cash.
+
+### Tested
+
+* Menjalankan unit test `php artisan test tests/Feature/DriverTripTest.php` (Pass).
+* Menjalankan semua suite pengujian `php artisan test` (60 passed, 100% OK).
+
 ## [2026-06-19] - Rayfo - Sprint 3
 
 ### Added

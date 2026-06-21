@@ -60,8 +60,18 @@ class TripController extends Controller
             'cancelled' => Trip::where('status_trip', 'cancelled')->count(),
         ];
 
-        // Get bookings waiting to be assigned (status: dikonfirmasi)
+        // Get bookings waiting to be assigned (status: dikonfirmasi) that have not departed yet
+        $today = now()->toDateString();
+        $currentTime = now()->toTimeString();
+
         $bookings = Booking::where('status_booking', Booking::STATUS_DIKONFIRMASI)
+            ->whereHas('jadwal', function ($query) use ($today, $currentTime) {
+                $query->where('tanggal_keberangkatan', '>', $today)
+                      ->orWhere(function ($q) use ($today, $currentTime) {
+                          $q->where('tanggal_keberangkatan', '=', $today)
+                             ->where('jam_berangkat', '>', $currentTime);
+                      });
+            })
             ->with(['pelanggan', 'jadwal.rute'])
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($bookingQuery) use ($search) {
@@ -110,7 +120,7 @@ class TripController extends Controller
     public function create()
     {
         // Fetch active schedules
-        $schedules = Jadwal::where('status_jadwal', 'aktif')
+        $schedules = Jadwal::aktif()
             ->with('rute')
             ->latest()
             ->get();
@@ -136,7 +146,7 @@ class TripController extends Controller
             'jadwal_id' => $request->jadwal_id,
             'driver_id' => $driver->id,
             'armada_id' => $driver->armada_id,
-            'status_trip' => 'ready',
+            'status_trip' => Trip::STATUS_NEW,
         ]);
 
         return redirect()

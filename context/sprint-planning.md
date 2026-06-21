@@ -129,11 +129,11 @@
 |-------|:------:|:-----:|:------:|
 | Admin Trip Mgmt (CRUD + assign + remove) | 8 | 3 | ✅ |
 | Driver Layout + Sidebar | — | 2 | ✅ |
-| Driver Dashboard (controller + proper view) | 1 | 1 | 🔲 |
-| Driver Trip & Manifest | 2 | 2 | 🔲 |
-| Driver Operations (start/pickup/dropoff/complete) | 4 | — | 🔲 |
-| Driver Konfirmasi Pelunasan | 1 | — | 🔲 |
-| Map Viewer components | — | 2 | 🔲 |
+| Driver Dashboard (controller + proper view) | 1 | 1 | ✅ |
+| Driver Trip & Manifest | 2 | 2 | ✅ |
+| Driver Operations (start/pickup/dropoff/complete) | 4 | — | ✅ |
+| Driver Konfirmasi Pelunasan | 1 | — | ✅ |
+| Map Viewer components | — | 2 | ✅ |
 
 ---
 
@@ -240,13 +240,13 @@ Semua tugas fondasi telah diselesaikan: Setup project, Breeze auth, RoleMiddlewa
 | Admin Armada CRUD | RYF | 6 routes | ✅ |
 | Update Admin Driver (link ke armada) | NYS | Update existing | ✅ |
 | Booking Saya (list + detail, pengganti Cek Booking) | RYH | 2 routes | ✅ |
-| Driver Dashboard (controller + proper view) | KVN | `driver.dashboard` | 🔲 |
-| Driver Trip List + Detail/Manifest | KVN | 2 routes | 🔲 |
-| Driver Start Trip | KVN | `driver.trips.start` | 🔲 |
-| Driver Pickup Penumpang | KVN | `driver.trips.pickup` | 🔲 |
-| Driver Dropoff Penumpang | KVN | `driver.trips.dropoff` | 🔲 |
-| Driver Complete Trip | KVN | `driver.trips.complete` | 🔲 |
-| Driver Konfirmasi Pelunasan | KVN | `driver.trips.confirmPayment` | 🔲 |
+| Driver Dashboard (controller + proper view) | KVN | `driver.dashboard` | ✅ |
+| Driver Trip List + Detail/Manifest | KVN | 2 routes | ✅ |
+| Driver Start Trip | KVN | `driver.trips.start` | ✅ |
+| Driver Pickup Penumpang | KVN | `driver.trips.pickup` | ✅ |
+| Driver Dropoff Penumpang | KVN | `driver.trips.dropoff` | ✅ |
+| Driver Complete Trip | KVN | `driver.trips.complete` | ✅ |
+| Driver Konfirmasi Pelunasan | KVN | `driver.trips.confirmPayment` | ✅ |
 | Admin Laporan | RYF | 2 routes | ✅ |
 | Status booking auto-update | NYS | Observer/listener logic | ✅ |
 | WhatsApp Booking Notifications (DP verified & Trip assigned) | RYH | — | ✅ |

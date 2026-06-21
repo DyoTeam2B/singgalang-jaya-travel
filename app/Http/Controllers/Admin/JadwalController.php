@@ -33,10 +33,22 @@ class JadwalController extends Controller
                   ->orWhere('shift', 'like', "%{$search}%");
             })
             ->when($tab === 'history', function ($query) use ($today) {
-                $query->where('tanggal_keberangkatan', '<', $today);
+                $query->where(function ($q) use ($today) {
+                    $q->where('tanggal_keberangkatan', '<', $today)
+                      ->orWhere(function ($q2) use ($today) {
+                          $q2->where('tanggal_keberangkatan', '=', $today)
+                             ->where('jam_berangkat', '<=', now()->toTimeString());
+                      });
+                });
             })
             ->when($tab === 'active', function ($query) use ($today) {
-                $query->where('tanggal_keberangkatan', '>=', $today);
+                $query->where(function ($q) use ($today) {
+                    $q->where('tanggal_keberangkatan', '>', $today)
+                      ->orWhere(function ($q2) use ($today) {
+                          $q2->where('tanggal_keberangkatan', '=', $today)
+                             ->where('jam_berangkat', '>', now()->toTimeString());
+                      });
+                });
             })
             ->latest()
             ->paginate(9)

@@ -70,7 +70,9 @@
                 @php
                     $bookedSum = $item->bookings_sum_jumlah_penumpang ?? 0;
                     $displayStatus = $item->status_jadwal;
-                    if ($item->status_jadwal === 'aktif' && $bookedSum >= $item->kuota) {
+                    if ($item->is_expired) {
+                        $displayStatus = 'nonaktif';
+                    } elseif ($item->status_jadwal === 'aktif' && $bookedSum >= $item->kuota) {
                         $displayStatus = 'penuh';
                     }
                 @endphp

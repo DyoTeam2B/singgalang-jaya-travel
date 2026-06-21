@@ -376,6 +376,51 @@ class TripAssignTest extends TestCase
         $this->assertEquals(Booking::STATUS_DIKONFIRMASI, $booking->status_booking);
     }
 
+    public function test_admin_created_trip_starts_with_status_new_and_can_be_approved(): void
+    {
+        $response = $this->actingAs($this->adminUser)
+            ->post(route('admin.trips.store'), [
+                'jadwal_id' => $this->jadwal->id,
+                'driver_id' => $this->driver->id,
+            ]);
+
+        $response->assertRedirect(route('admin.trips.index'));
+        
+        $trip = Trip::where('jadwal_id', $this->jadwal->id)
+            ->where('driver_id', $this->driver->id)
+            ->firstOrFail();
+
+        $this->assertEquals(Trip::STATUS_NEW, $trip->status_trip);
+
+        // Approve trip
+        $responseApprove = $this->actingAs($this->adminUser)
+            ->put(route('admin.trips.update', $trip->id), [
+                'status_trip' => 'ready',
+            ]);
+
+        $responseApprove->assertRedirect(route('admin.trips.show', $trip->id));
+        $this->assertEquals(Trip::STATUS_READY, $trip->fresh()->status_trip);
+    }
+
+    public function test_driver_cannot_start_unapproved_trip(): void
+    {
+        $unapprovedTrip = Trip::create([
+            'jadwal_id' => $this->jadwal->id,
+            'driver_id' => $this->driver->id,
+            'armada_id' => $this->armada->id,
+            'status_trip' => Trip::STATUS_NEW,
+        ]);
+
+        $driverUser = User::find($this->driver->user_id);
+
+        $response = $this->actingAs($driverUser)
+            ->put(route('driver.trips.start', $unapprovedTrip->id));
+
+        $response->assertRedirect();
+        $response->assertSessionHas('error', 'Trip tidak berada dalam status siap berangkat.');
+        $this->assertEquals(Trip::STATUS_NEW, $unapprovedTrip->fresh()->status_trip);
+    }
+
     private function createDriverWithArmada(string $name, string $email, string $plate): array
     {
         $armada = Armada::create([

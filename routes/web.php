@@ -79,9 +79,14 @@ Route::middleware('auth')->group(function () {
          ->prefix('driver')
          ->name('driver.')
          ->group(function () {
-             Route::get('/dashboard', function () {
-                 return view('driver.dashboard');
-             })->name('dashboard');
+             Route::get('/dashboard', [\App\Http\Controllers\Driver\DashboardController::class, 'index'])->name('dashboard');
+             Route::get('/trips', [\App\Http\Controllers\Driver\TripController::class, 'index'])->name('trips.index');
+             Route::get('/trips/{trip}', [\App\Http\Controllers\Driver\TripController::class, 'show'])->name('trips.show');
+             Route::put('/trips/{trip}/start', [\App\Http\Controllers\Driver\TripController::class, 'start'])->name('trips.start');
+             Route::put('/trips/{trip}/pickup/{detailTrip}', [\App\Http\Controllers\Driver\TripController::class, 'pickup'])->name('trips.pickup');
+             Route::put('/trips/{trip}/dropoff/{detailTrip}', [\App\Http\Controllers\Driver\TripController::class, 'dropoff'])->name('trips.dropoff');
+             Route::put('/trips/{trip}/complete', [\App\Http\Controllers\Driver\TripController::class, 'complete'])->name('trips.complete');
+             Route::put('/trips/{trip}/confirm-payment/{detailTrip}', [\App\Http\Controllers\Driver\TripController::class, 'confirmPayment'])->name('trips.confirmPayment');
          });
 });
 

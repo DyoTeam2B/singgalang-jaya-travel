@@ -74,6 +74,23 @@
                 </form>
             @endif
 
+            @if($trip->status_trip === 'new')
+                <!-- Form Setujui Trip -->
+                <form action="{{ route('admin.trips.update', $trip->id) }}" method="POST" class="inline">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="status_trip" value="ready">
+                    <button type="submit" 
+                            class="flex items-center gap-2 px-6 py-3.5 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all active:scale-95 shadow-xl shadow-emerald-800/20">
+                        <!-- Check Icon -->
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+                        </svg>
+                        Setujui Trip
+                    </button>
+                </form>
+            @endif
+
             @if($trip->status_trip === 'ready')
                 <!-- Form Mulai Trip (Transisi ke On Trip oleh Admin jika diperlukan) -->
                 <form action="{{ route('admin.trips.update', $trip->id) }}" method="POST" class="inline">

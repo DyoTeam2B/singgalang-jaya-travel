@@ -50,7 +50,42 @@ class Jadwal extends Model
      */
     public function scopeAktif($query)
     {
-        return $query->where('status_jadwal', self::STATUS_AKTIF);
+        return $query->where('status_jadwal', self::STATUS_AKTIF)
+            ->where(function ($q) {
+                $q->where('tanggal_keberangkatan', '>', now()->toDateString())
+                  ->orWhere(function ($q2) {
+                      $q2->where('tanggal_keberangkatan', '=', now()->toDateString())
+                         ->where('jam_berangkat', '>', now()->toTimeString());
+                  });
+            });
+    }
+
+    /**
+     * Check if the schedule is expired (departure time in the past).
+     */
+    public function getIsExpiredAttribute(): bool
+    {
+        if (!$this->tanggal_keberangkatan || !$this->jam_berangkat) {
+            return false;
+        }
+
+        $departureDate = $this->tanggal_keberangkatan->toDateString();
+        $departureTime = $this->jam_berangkat instanceof \DateTime 
+            ? $this->jam_berangkat->format('H:i:s') 
+            : \Carbon\Carbon::parse($this->jam_berangkat)->toTimeString();
+
+        $now = now();
+        $today = $now->toDateString();
+
+        if ($departureDate < $today) {
+            return true;
+        }
+
+        if ($departureDate === $today && $departureTime <= $now->toTimeString()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
