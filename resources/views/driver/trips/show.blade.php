@@ -54,7 +54,7 @@
         </div>
 
         <!-- Trip Summary Card -->
-        <div class="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-2xl shadow-slate-900/20 relative overflow-hidden">
+        <div class="bg-slate-900 text-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-800 relative overflow-hidden">
             <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-10 -mt-10 blur-2xl"></div>
             
             <div class="relative z-10">
@@ -135,7 +135,7 @@
                     $hasPelunasan = $b->pembayaran()->where('jenis_pembayaran', 'pelunasan')->where('status_pembayaran', 'terverifikasi')->exists();
                     $remainingFare = max(0, $b->total_harga - 50000);
                 @endphp
-                <div class="bg-white rounded-3xl border transition-all duration-300 relative {{ $isDroppedOff ? 'border-emerald-100 bg-slate-50/50' : 'border-slate-200 shadow-sm' }}">
+                <div class="bg-white rounded-2xl border transition-all duration-300 relative {{ $isDroppedOff ? 'border-emerald-100 bg-slate-50/50' : 'border-slate-200 shadow-sm' }}">
                     
                     <div class="p-6">
                         <div class="flex items-start justify-between mb-6">
