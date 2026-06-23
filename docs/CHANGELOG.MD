@@ -23,6 +23,16 @@ Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 * Pembersihan border non-standar (`border-slate-150`) menjadi standard (`border-slate-200`) pada panel driver.
 * Mengurangi bayangan berat (`shadow-2xl`) menjadi soft shadow (`shadow-sm`) untuk mematuhi larangan visual pada [ui-rule.md](file:///d:/pbl/singgalang-jaya-travel/context/ui-rule.md).
 * Pembaruan status file portal driver pada [sprint-planning.md](file:///d:/pbl/singgalang-jaya-travel/context/sprint-planning.md) menjadi selesai (complete).
+## [2026-06-23] - Rayfo - Sprint 5
+
+### Changed
+
+* Memindahkan posisi tombol close (x) pada mobile drawer layout admin (`resources/views/layouts/admin.blade.php`) agar menggunakan posisi absolute (`absolute top-6 right-6`). Hal ini memperbaiki pergeseran visual ke bawah pada header sidebar admin di perangkat mobile.
+* Menambahkan styling `[x-cloak] { display: none !important; }` di `resources/css/app.css` untuk mencegah kedipan (flash) konten drawer/modal saat halaman dimuat pertama kali sebelum Alpine.js terinisialisasi.
+
+### Notes
+
+* Perubahan telah diverifikasi dengan caching view (`php artisan view:cache`) dan pengujian suite (`php artisan test`) yang meluluskan seluruh 62 tes.
 
 ## [2026-06-22] - Tim - Sprint 4 Maps & Integration
 
