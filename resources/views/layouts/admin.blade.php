@@ -76,16 +76,14 @@
                    x-transition:leave-start="translate-x-0"
                    x-transition:leave-end="-translate-x-full">
                 
-                <!-- Close Button -->
-                <div class="flex justify-end p-4 lg:hidden">
-                    <button @click="sidebarMobileOpen = false"
-                            class="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-xl transition-all">
-                        <!-- X Icon -->
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
+                <!-- Close Button (Absolute positioned at top-right of sidebar header) -->
+                <button @click="sidebarMobileOpen = false"
+                        class="absolute top-6 right-6 p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-xl transition-all lg:hidden z-50">
+                    <!-- X Icon -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
                 
                 <x-sidebar-admin />
             </aside>
