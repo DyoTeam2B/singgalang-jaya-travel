@@ -21,5 +21,6 @@ class AppServiceProvider extends ServiceProvider
     {
         \App\Models\Trip::observe(\App\Observers\TripObserver::class);
         \App\Models\DetailTrip::observe(\App\Observers\DetailTripObserver::class);
+        \App\Models\Booking::observe(\App\Observers\BookingObserver::class);
     }
 }

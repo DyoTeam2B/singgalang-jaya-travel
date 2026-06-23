@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\StoreJadwalRequest;
 use App\Http\Requests\Admin\UpdateJadwalRequest;
 use App\Models\Jadwal;
 use App\Models\Rute;
+use App\Models\Trip;
 use Illuminate\Http\Request;
 
 class JadwalController extends Controller
@@ -34,21 +35,35 @@ class JadwalController extends Controller
             })
             ->when($tab === 'history', function ($query) use ($today) {
                 $query->where(function ($q) use ($today) {
+                    // Expired by date/time
                     $q->where('tanggal_keberangkatan', '<', $today)
                       ->orWhere(function ($q2) use ($today) {
                           $q2->where('tanggal_keberangkatan', '=', $today)
                              ->where('jam_berangkat', '<=', now()->toTimeString());
+                      })
+                      // Or has status nonaktif
+                      ->orWhere('status_jadwal', Jadwal::STATUS_NONAKTIF)
+                      // Or has active/completed trip
+                      ->orWhereHas('trips', function ($tripQuery) {
+                          $tripQuery->whereIn('status_trip', [Trip::STATUS_ON_TRIP, Trip::STATUS_COMPLETED]);
                       });
                 });
             })
             ->when($tab === 'active', function ($query) use ($today) {
-                $query->where(function ($q) use ($today) {
-                    $q->where('tanggal_keberangkatan', '>', $today)
-                      ->orWhere(function ($q2) use ($today) {
-                          $q2->where('tanggal_keberangkatan', '=', $today)
-                             ->where('jam_berangkat', '>', now()->toTimeString());
+                // Must not be nonaktif
+                $query->where('status_jadwal', '!=', Jadwal::STATUS_NONAKTIF)
+                      // Must not have active/completed trip
+                      ->whereDoesntHave('trips', function ($tripQuery) {
+                          $tripQuery->whereIn('status_trip', [Trip::STATUS_ON_TRIP, Trip::STATUS_COMPLETED]);
+                      })
+                      // Must not be expired by date/time
+                      ->where(function ($q) use ($today) {
+                          $q->where('tanggal_keberangkatan', '>', $today)
+                            ->orWhere(function ($q2) use ($today) {
+                                $q2->where('tanggal_keberangkatan', '=', $today)
+                                   ->where('jam_berangkat', '>', now()->toTimeString());
+                            });
                       });
-                });
             })
             ->latest()
             ->paginate(9)

@@ -82,11 +82,18 @@
                     </div>
 
                     @if($selectedJadwalId && $tarif_per_orang > 0)
-                        <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-start gap-3">
-                            <svg class="w-5 h-5 text-blue-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <p class="text-xs font-medium text-blue-700 leading-relaxed">
-                                Harga tiket flat <span class="font-bold">Rp {{ number_format($tarif_per_orang, 0, ',', '.') }}</span> per orang. Down Payment (DP) hanya <span class="font-bold">Rp 50.000</span> per booking.
-                            </p>
+                        <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex flex-col gap-2.5 text-blue-700">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-blue-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <p class="text-xs font-medium leading-relaxed">
+                                    Harga tiket flat <span class="font-bold">Rp {{ number_format($tarif_per_orang, 0, ',', '.') }}</span> per orang. Down Payment (DP) hanya <span class="font-bold">Rp 50.000</span> per booking.
+                                </p>
+                            </div>
+                            <div class="border-t border-blue-200/50 pt-2 text-xs font-semibold space-y-1.5 pl-8">
+                                <p>• Sisa pembayaran akan dilunasi saat keberangkatan/ke driver.</p>
+                                <p>• Booking Anda akan diproses setelah bukti pembayaran DP diverifikasi oleh admin.</p>
+                                <p class="text-amber-700">• DP tidak dapat dikembalikan jika pembatalan dilakukan oleh pelanggan.</p>
+                            </div>
                         </div>
                     @endif
                 </div>

@@ -111,4 +111,32 @@ class Jadwal extends Model
     {
         return $this->hasMany(Trip::class, 'jadwal_id');
     }
+
+    /**
+     * Recalculate and update status_jadwal based on booked seats.
+     */
+    public function checkAndUpdateStatus(): void
+    {
+        $hasActiveTrip = $this->trips()
+            ->whereIn('status_trip', [Trip::STATUS_ON_TRIP, Trip::STATUS_COMPLETED])
+            ->exists();
+
+        if ($hasActiveTrip) {
+            $this->update(['status_jadwal' => self::STATUS_NONAKTIF]);
+            return;
+        }
+
+        $bookedSeats = $this->bookings()
+            ->whereNotIn('status_booking', [
+                Booking::STATUS_CANCELLED,
+                Booking::STATUS_EXPIRED
+            ])
+            ->sum('jumlah_penumpang');
+
+        if ($bookedSeats >= $this->kuota) {
+            $this->update(['status_jadwal' => self::STATUS_PENUH]);
+        } else {
+            $this->update(['status_jadwal' => self::STATUS_AKTIF]);
+        }
+    }
 }

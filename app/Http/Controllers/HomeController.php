@@ -21,6 +21,9 @@ class HomeController extends Controller
                 $query->whereNotIn('status_booking', [Booking::STATUS_CANCELLED, Booking::STATUS_EXPIRED]);
             }], 'jumlah_penumpang')
             ->aktif()
+            ->whereDoesntHave('trips', function ($query) {
+                $query->whereIn('status_trip', [\App\Models\Trip::STATUS_ON_TRIP, \App\Models\Trip::STATUS_COMPLETED]);
+            })
             ->where(function ($q) use ($today, $currentTime) {
                 $q->where('tanggal_keberangkatan', '>', $today)
                   ->orWhere(function ($sq) use ($today, $currentTime) {

@@ -251,6 +251,24 @@ class TripController extends Controller
 
         if ($request->has('status_trip')) {
             $status = $request->status_trip;
+
+            if (in_array($status, ['ready', 'on_trip'])) {
+                $totalPax = $trip->detailTrips->sum(function ($dt) {
+                    if ($dt->booking && in_array($dt->booking->status_booking, [
+                        Booking::STATUS_ASSIGNED_TO_TRIP,
+                        Booking::STATUS_ON_TRIP,
+                        Booking::STATUS_COMPLETED
+                    ])) {
+                        return $dt->booking->jumlah_penumpang;
+                    }
+                    return 0;
+                });
+
+                if ($totalPax < 3) {
+                    return redirect()->back()->with('error', 'Trip belum dapat dijalankan karena minimal 3 penumpang belum terpenuhi.');
+                }
+            }
+
             $updateData['status_trip'] = $status;
 
             if ($status === 'on_trip' && !$trip->started_at) {

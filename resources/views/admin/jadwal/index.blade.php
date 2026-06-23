@@ -70,7 +70,17 @@
                 @php
                     $bookedSum = $item->bookings_sum_jumlah_penumpang ?? 0;
                     $displayStatus = $item->status_jadwal;
-                    if ($item->is_expired) {
+                    
+                    // Check if there is a running or completed trip
+                    $activeTrip = $item->trips()->whereIn('status_trip', ['on_trip', 'completed'])->first();
+                    
+                    if ($activeTrip) {
+                        if ($activeTrip->status_trip === 'on_trip') {
+                            $displayStatus = 'on_trip';
+                        } elseif ($activeTrip->status_trip === 'completed') {
+                            $displayStatus = 'completed';
+                        }
+                    } elseif ($item->is_expired) {
                         $displayStatus = 'nonaktif';
                     } elseif ($item->status_jadwal === 'aktif' && $bookedSum >= $item->kuota) {
                         $displayStatus = 'penuh';

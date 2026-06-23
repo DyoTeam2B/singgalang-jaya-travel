@@ -46,6 +46,23 @@ class BookingService
                 ]
             );
 
+            // Check for duplicate active booking
+            $hasActiveBooking = Booking::where('pelanggan_id', $pelanggan->id)
+                ->where('jadwal_id', $data['jadwal_id'])
+                ->whereNotIn('status_booking', [
+                    Booking::STATUS_CANCELLED,
+                    Booking::STATUS_COMPLETED,
+                    Booking::STATUS_EXPIRED
+                ])
+                ->whereDoesntHave('pembayaran', function ($q) {
+                    $q->where('status_pembayaran', \App\Models\Pembayaran::STATUS_DITOLAK);
+                })
+                ->exists();
+
+            if ($hasActiveBooking) {
+                throw new \Exception('Anda sudah memiliki booking aktif pada jadwal ini.');
+            }
+
             // 2. Retrieve the schedule and its rute's tarif
             $jadwal = Jadwal::with('rute')->findOrFail($data['jadwal_id']);
             $tarif = $jadwal->rute->tarif;

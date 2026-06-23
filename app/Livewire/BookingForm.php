@@ -143,6 +143,28 @@ class BookingForm extends Component
             }
         }
 
+        // Double check active booking
+        $user = auth()->user();
+        $pelanggan = $user ? $user->pelanggan : null;
+        if ($pelanggan && $this->selectedJadwalId) {
+            $hasActiveBooking = Booking::where('pelanggan_id', $pelanggan->id)
+                ->where('jadwal_id', $this->selectedJadwalId)
+                ->whereNotIn('status_booking', [
+                    Booking::STATUS_CANCELLED,
+                    Booking::STATUS_COMPLETED,
+                    Booking::STATUS_EXPIRED
+                ])
+                ->whereDoesntHave('pembayaran', function ($q) {
+                    $q->where('status_pembayaran', \App\Models\Pembayaran::STATUS_DITOLAK);
+                })
+                ->exists();
+
+            if ($hasActiveBooking) {
+                $this->addError('selectedJadwalId', 'Anda sudah memiliki booking aktif pada jadwal ini.');
+                return;
+            }
+        }
+
         $data = [
             'jadwal_id' => $this->selectedJadwalId,
             'nama' => $this->nama,

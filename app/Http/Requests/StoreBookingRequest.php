@@ -83,6 +83,27 @@ class StoreBookingRequest extends FormRequest
                     }
                 }
             }
+
+            // Check for duplicate active booking on the same schedule
+            $user = auth()->user();
+            $pelanggan = $user ? $user->pelanggan : null;
+            if ($pelanggan && $jadwalId) {
+                $hasActiveBooking = Booking::where('pelanggan_id', $pelanggan->id)
+                    ->where('jadwal_id', $jadwalId)
+                    ->whereNotIn('status_booking', [
+                        Booking::STATUS_CANCELLED,
+                        Booking::STATUS_COMPLETED,
+                        Booking::STATUS_EXPIRED
+                    ])
+                    ->whereDoesntHave('pembayaran', function ($q) {
+                        $q->where('status_pembayaran', \App\Models\Pembayaran::STATUS_DITOLAK);
+                    })
+                    ->exists();
+
+                if ($hasActiveBooking) {
+                    $validator->errors()->add('jadwal_id', 'Anda sudah memiliki booking aktif pada jadwal ini.');
+                }
+            }
         });
     }
 }

@@ -37,6 +37,9 @@ class BookingController extends Controller
             ->withSum(['bookings as booked_seats' => function ($q) {
                 $q->whereNotIn('status_booking', [Booking::STATUS_CANCELLED, Booking::STATUS_EXPIRED]);
             }], 'jumlah_penumpang')
+            ->whereDoesntHave('trips', function ($query) {
+                $query->whereIn('status_trip', [\App\Models\Trip::STATUS_ON_TRIP, \App\Models\Trip::STATUS_COMPLETED]);
+            })
             ->where(function ($q) use ($today, $currentTime) {
                 $q->where('tanggal_keberangkatan', '>', $today)
                   ->orWhere(function ($sq) use ($today, $currentTime) {
@@ -94,18 +97,45 @@ class BookingController extends Controller
     public function index()
     {
         $pelanggan = auth()->user()->pelanggan;
+        $pelangganId = $pelanggan?->id ?? 0;
 
-        $bookings = Booking::with([
+        $activeStatuses = [
+            Booking::STATUS_BOOKING_DIBUAT,
+            Booking::STATUS_MENUNGGU_VERIFIKASI,
+            Booking::STATUS_DIKONFIRMASI,
+            Booking::STATUS_ASSIGNED_TO_TRIP,
+            Booking::STATUS_ON_TRIP,
+        ];
+
+        $historyStatuses = [
+            Booking::STATUS_COMPLETED,
+            Booking::STATUS_CANCELLED,
+            Booking::STATUS_EXPIRED
+        ];
+
+        $activeBookings = Booking::with([
                 'jadwal.rute',
                 'pembayaran' => fn ($query) => $query->latest(),
                 'detailTrips.trip.driver',
                 'detailTrips.trip.armada',
             ])
-            ->where('pelanggan_id', $pelanggan?->id ?? 0)
+            ->where('pelanggan_id', $pelangganId)
+            ->whereIn('status_booking', $activeStatuses)
             ->latest()
-            ->paginate(10);
+            ->get();
 
-        return view('public.booking.index', compact('bookings'));
+        $historyBookings = Booking::with([
+                'jadwal.rute',
+                'pembayaran' => fn ($query) => $query->latest(),
+                'detailTrips.trip.driver',
+                'detailTrips.trip.armada',
+            ])
+            ->where('pelanggan_id', $pelangganId)
+            ->whereIn('status_booking', $historyStatuses)
+            ->latest()
+            ->paginate(10, ['*'], 'history_page');
+
+        return view('public.booking.index', compact('activeBookings', 'historyBookings'));
     }
 
     /**
@@ -165,7 +195,7 @@ class BookingController extends Controller
      */
     public function update(Request $request, $kode)
     {
-        $booking = Booking::with('pelanggan')
+        $booking = Booking::with(['pelanggan', 'jadwal.rute'])
             ->where('kode_booking', $kode)
             ->firstOrFail();
 
@@ -182,24 +212,71 @@ class BookingController extends Controller
         if (!in_array($booking->status_booking, $allowedStatuses)) {
             return redirect()
                 ->route('booking.show', ['kode' => $kode])
-                ->with('error', 'Lokasi penjemputan tidak dapat diubah karena pesanan sudah masuk ke tahap trip/perjalanan.');
+                ->with('error', 'Pemesanan tidak dapat diubah pada status saat ini.');
         }
 
-        $validated = $request->validate([
+        $rules = [
             'alamat_jemput' => ['required', 'string', 'max:500'],
             'latitude_jemput' => ['nullable', 'numeric'],
             'longitude_jemput' => ['nullable', 'numeric'],
-        ], [
+        ];
+
+        $messages = [
             'alamat_jemput.required' => 'Alamat penjemputan wajib diisi.',
             'alamat_jemput.max' => 'Alamat penjemputan maksimal 500 karakter.',
+        ];
+
+        $canEditPassengers = in_array($booking->status_booking, [
+            Booking::STATUS_BOOKING_DIBUAT,
+            Booking::STATUS_MENUNGGU_VERIFIKASI
         ]);
+
+        if ($request->has('jumlah_penumpang')) {
+            if (!$canEditPassengers) {
+                return redirect()
+                    ->route('booking.show', ['kode' => $kode])
+                    ->with('error', 'Jumlah penumpang tidak dapat diubah pada status saat ini.');
+            }
+
+            $rules['jumlah_penumpang'] = ['required', 'integer', 'min:1'];
+            $messages['jumlah_penumpang.required'] = 'Jumlah penumpang wajib diisi.';
+            $messages['jumlah_penumpang.integer'] = 'Jumlah penumpang harus berupa angka.';
+            $messages['jumlah_penumpang.min'] = 'Jumlah penumpang minimal 1 orang.';
+        }
+
+        $validated = $request->validate($rules, $messages);
+
+        if ($request->has('jumlah_penumpang')) {
+            $newJumlah = (int)$validated['jumlah_penumpang'];
+
+            // Recalculate available seats excluding current booking
+            $bookedSeats = $booking->jadwal->bookings()
+                ->whereNotIn('status_booking', [
+                    Booking::STATUS_CANCELLED,
+                    Booking::STATUS_EXPIRED
+                ])
+                ->where('id', '!=', $booking->id)
+                ->sum('jumlah_penumpang');
+
+            $available = $booking->jadwal->kuota - $bookedSeats;
+
+            if ($newJumlah > $available) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', "Jumlah penumpang melebihi kuota kursi yang tersedia ({$available} kursi tersisa).");
+            }
+
+            // Recalculate total price
+            $tarif = $booking->jadwal->rute->tarif;
+            $validated['total_harga'] = $tarif * $newJumlah;
+        }
 
         $booking->update($validated);
 
-        // Redirect back to customer booking detail.
         return redirect()
             ->route('booking.show', ['kode' => $kode])
-            ->with('success', 'Lokasi penjemputan berhasil diperbarui.');
+            ->with('success', 'Detail pemesanan berhasil diperbarui.');
     }
 
     /**

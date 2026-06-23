@@ -76,7 +76,7 @@
                             </div>
                             <div class="px-4 py-3 rounded-xl border flex items-start gap-3 bg-blue-50 border-blue-100 text-blue-800">
                                 <svg class="w-5 h-5 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <p class="text-xs font-semibold leading-relaxed">Booking tetap aktif setelah dibuat. Upload bukti DP untuk masuk ke verifikasi admin.</p>
+                                <p class="text-xs font-semibold leading-relaxed">Booking Anda akan diproses setelah bukti pembayaran DP diverifikasi oleh admin.</p>
                             </div>
                         </div>
 
@@ -105,6 +105,7 @@
                                     <li>Pastikan nama pengirim atau berita transfer mudah dikenali.</li>
                                     <li>Upload screenshot/foto bukti transfer melalui form.</li>
                                     <li>Admin akan memverifikasi bukti pembayaran.</li>
+                                    <li class="font-bold text-amber-700">DP tidak dapat dikembalikan jika pembatalan dilakukan oleh pelanggan.</li>
                                 </ol>
                             </div>
 

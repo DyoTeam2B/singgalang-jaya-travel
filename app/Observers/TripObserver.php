@@ -45,6 +45,10 @@ class TripObserver
                     }
                 });
             }
+
+            if ($trip->jadwal) {
+                $trip->jadwal->checkAndUpdateStatus();
+            }
         }
     }
 
@@ -63,5 +67,15 @@ class TripObserver
                 }
             }
         });
+    }
+
+    /**
+     * Handle the Trip "deleted" event.
+     */
+    public function deleted(Trip $trip): void
+    {
+        if ($trip->jadwal) {
+            $trip->jadwal->checkAndUpdateStatus();
+        }
     }
 }

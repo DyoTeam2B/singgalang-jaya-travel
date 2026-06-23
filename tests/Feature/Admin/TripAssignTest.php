@@ -392,6 +392,24 @@ class TripAssignTest extends TestCase
 
         $this->assertEquals(Trip::STATUS_NEW, $trip->status_trip);
 
+        // Assign a booking with 3 passengers to satisfy the business rule (min 3 passenger validation)
+        $booking = Booking::create([
+            'pelanggan_id' => $this->pelanggan->id,
+            'jadwal_id' => $this->jadwal->id,
+            'kode_booking' => 'SJT-TEST-99999',
+            'alamat_jemput' => 'Padang Panjang City Center',
+            'alamat_tujuan' => 'Pekanbaru Airport',
+            'jumlah_penumpang' => 3,
+            'total_harga' => 450000,
+            'status_booking' => Booking::STATUS_DIKONFIRMASI,
+        ]);
+
+        $trip->detailTrips()->create([
+            'booking_id' => $booking->id,
+            'status_jemput' => 'belum',
+            'status_antar' => 'belum',
+        ]);
+
         // Approve trip
         $responseApprove = $this->actingAs($this->adminUser)
             ->put(route('admin.trips.update', $trip->id), [

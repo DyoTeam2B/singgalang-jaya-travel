@@ -3,7 +3,10 @@
 @section('content')
 @php
     $totalPax = $trip->detailTrips->sum(function($dt) {
-        return $dt->booking ? $dt->booking->jumlah_penumpang : 0;
+        if ($dt->booking && in_array($dt->booking->status_booking, ['assigned_to_trip', 'on_trip', 'completed'])) {
+            return $dt->booking->jumlah_penumpang;
+        }
+        return 0;
     });
     $capacity = $trip->armada ? $trip->armada->kapasitas : 5;
     $remainingSeats = $capacity - $totalPax;
@@ -112,14 +115,26 @@
                     @csrf
                     @method('PUT')
                     <input type="hidden" name="status_trip" value="ready">
-                    <button type="submit" 
-                            class="flex items-center gap-2 px-6 py-3.5 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all active:scale-95 shadow-xl shadow-emerald-800/20">
-                        <!-- Check Icon -->
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
-                        </svg>
-                        Setujui Trip
-                    </button>
+                    @if($totalPax < 3)
+                        <button type="button" 
+                                title="Trip belum dapat dijalankan karena minimal 3 penumpang belum terpenuhi."
+                                class="flex items-center gap-2 px-6 py-3.5 bg-slate-100 text-slate-400 border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest cursor-not-allowed shadow-none">
+                            <!-- Check Icon -->
+                            <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+                            </svg>
+                            Setujui Trip
+                        </button>
+                    @else
+                        <button type="submit" 
+                                class="flex items-center gap-2 px-6 py-3.5 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all active:scale-95 shadow-xl shadow-emerald-800/20">
+                            <!-- Check Icon -->
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+                            </svg>
+                            Setujui Trip
+                        </button>
+                    @endif
                 </form>
             @endif
 
@@ -129,14 +144,26 @@
                     @csrf
                     @method('PUT')
                     <input type="hidden" name="status_trip" value="on_trip">
-                    <button type="submit" 
-                            class="flex items-center gap-2 px-6 py-3.5 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-600/10">
-                        <!-- Play Icon -->
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"></path>
-                        </svg>
-                        Mulai Perjalanan (On Trip)
-                    </button>
+                    @if($totalPax < 3)
+                        <button type="button" 
+                                title="Trip belum dapat dijalankan karena minimal 3 penumpang belum terpenuhi."
+                                class="flex items-center gap-2 px-6 py-3.5 bg-slate-100 text-slate-400 border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest cursor-not-allowed shadow-none">
+                            <!-- Play Icon -->
+                            <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"></path>
+                            </svg>
+                            Mulai Perjalanan (On Trip)
+                        </button>
+                    @else
+                        <button type="submit" 
+                                class="flex items-center gap-2 px-6 py-3.5 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-600/10">
+                            <!-- Play Icon -->
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"></path>
+                            </svg>
+                            Mulai Perjalanan (On Trip)
+                        </button>
+                    @endif
                 </form>
             @endif
 
@@ -159,6 +186,15 @@
 
     <!-- Alert / Session Notification -->
     <x-alert />
+
+    @if(in_array($trip->status_trip, ['new', 'ready']) && $totalPax < 3)
+        <div class="p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl text-xs font-semibold flex items-center gap-2 mb-6 shadow-sm">
+            <svg class="w-5 h-5 text-amber-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            <span>Trip belum dapat dijalankan karena minimal 3 penumpang belum terpenuhi.</span>
+        </div>
+    @endif
 
     <!-- Top Info Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
