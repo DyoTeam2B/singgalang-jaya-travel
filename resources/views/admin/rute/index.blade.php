@@ -5,12 +5,12 @@
         <!-- Header Section -->
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
-                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-[0.3em] mb-2">Manajemen Operasional</p>
-                <h1 class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">Kelola Rute</h1>
-                <p class="text-sm font-bold text-slate-400 mt-1">Atur asal, tujuan, dan tarif tetap untuk setiap rute perjalanan.</p>
+                <p class="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-2">Manajemen Operasional</p>
+                <h1 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Kelola Rute</h1>
+                <p class="text-sm font-semibold text-slate-500 mt-1">Atur asal, tujuan, dan tarif tetap untuk setiap rute perjalanan.</p>
             </div>
             <a href="{{ route('admin.rute.create') }}"
-               class="bg-blue-800 hover:bg-blue-900 text-white px-6 py-3.5 rounded-2xl text-[11px] font-bold uppercase tracking-widest shadow-sm flex items-center gap-2 transition-all active:scale-95">
+               class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3.5 rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-lg shadow-blue-600/10 flex items-center gap-2 transition-all active:scale-[0.98]">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
                 </svg>
@@ -23,31 +23,31 @@
 
         <!-- Search & Stats Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div class="lg:col-span-3 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="lg:col-span-3 bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
                 <form method="GET" action="{{ route('admin.rute.index') }}" class="flex flex-wrap gap-4 items-center">
                     <div class="relative flex-1 min-w-[280px]">
                         <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                         <input type="text" name="search" value="{{ $search }}" placeholder="Cari kota asal atau tujuan..."
-                               class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                               class="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200/60 rounded-xl text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all shadow-sm">
                     </div>
-                    <button type="submit" class="bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-black uppercase tracking-widest px-6 py-4 rounded-xl transition-all shadow-md active:scale-95">
                         Cari
                     </button>
                     @if($search)
-                        <a href="{{ route('admin.rute.index') }}" class="bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all">
+                        <a href="{{ route('admin.rute.index') }}" class="bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-black uppercase tracking-widest px-6 py-4 rounded-xl transition-all border border-slate-200/40 text-center">
                             Reset
                         </a>
                     @endif
                 </form>
             </div>
-            <div class="bg-blue-800 rounded-2xl p-5 shadow-sm flex items-center justify-between text-white group">
+            <div class="bg-blue-600 rounded-2xl p-5 shadow-lg shadow-blue-600/5 flex items-center justify-between text-white group">
                 <div>
-                    <p class="text-[10px] font-bold text-blue-100 uppercase tracking-widest mb-1">Total Rute</p>
-                    <h3 class="text-2xl font-bold text-white">{{ $rute->total() }}</h3>
+                    <p class="text-[10px] font-black text-blue-100 uppercase tracking-widest mb-1">Total Rute</p>
+                    <h3 class="text-2xl font-black text-white">{{ $rute->total() }}</h3>
                 </div>
-                <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-white">
+                <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-white">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
                     </svg>
@@ -56,7 +56,7 @@
         </div>
 
         <!-- Table Card Container -->
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+        <div class="bg-white rounded-[2rem] border border-slate-200/80 shadow-sm overflow-hidden flex flex-col">
             <!-- Table -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">

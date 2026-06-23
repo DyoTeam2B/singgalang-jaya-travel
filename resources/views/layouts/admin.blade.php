@@ -47,7 +47,7 @@
     <div x-data="{ sidebarMobileOpen: false, profileDropdownOpen: false, notificationDropdownOpen: false, logoutModalOpen: false }" class="min-h-screen flex relative overflow-x-hidden">
         
         <!-- Sidebar - Desktop (Static) -->
-        <aside class="hidden lg:flex lg:flex-col lg:w-72 lg:fixed lg:inset-y-0 lg:bg-slate-900 lg:text-slate-300 lg:z-50 lg:border-r lg:border-white/10 lg:shadow-2xl">
+        <aside class="hidden lg:flex lg:flex-col lg:w-72 lg:fixed lg:inset-y-0 lg:bg-[#0B1329] lg:text-slate-300 lg:z-50 lg:border-r lg:border-white/5 lg:shadow-2xl">
             <x-sidebar-admin />
         </aside>
 
@@ -63,11 +63,11 @@
              x-transition:leave-end="opacity-0">
             
             <!-- Dark Overlay background -->
-            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
                  @click="sidebarMobileOpen = false"></div>
             
             <!-- Drawer Content -->
-            <aside class="absolute inset-y-0 left-0 w-72 bg-slate-900 text-slate-300 shadow-2xl flex flex-col"
+            <aside class="absolute inset-y-0 left-0 w-72 bg-[#0B1329] text-slate-300 shadow-2xl flex flex-col"
                    x-show="sidebarMobileOpen"
                    x-transition:enter="transition-transform duration-300 ease-out"
                    x-transition:enter-start="-translate-x-full"
@@ -90,7 +90,7 @@
         </div>
 
         <!-- Main Content Wrapper -->
-        <div class="flex-1 flex flex-col lg:pl-72 min-h-screen">
+        <div class="flex-1 flex flex-col lg:pl-72 min-h-screen min-w-0 w-full max-w-full overflow-x-hidden">
             
             <!-- Top Navbar -->
             <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-40 shrink-0">
@@ -104,14 +104,14 @@
                     </button>
 
                     <!-- Search (Mock) -->
-                    <div class="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl w-64 md:w-80 focus-within:ring-4 focus-within:ring-slate-900/5 transition-all">
+                    <div class="hidden sm:flex items-center gap-2.5 px-4 py-2.5 bg-slate-50 border border-slate-200/60 rounded-xl w-64 md:w-80 focus-within:ring-4 focus-within:ring-blue-600/5 focus-within:border-blue-500/30 transition-all">
                         <!-- Search Icon -->
                         <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                         <input type="text"
                                placeholder="Cari data..."
-                               class="bg-transparent border-none outline-none text-xs font-bold w-full placeholder:text-slate-400 focus:ring-0 focus:border-transparent p-0" />
+                               class="bg-transparent border-none outline-none text-xs font-semibold w-full placeholder:text-slate-400 focus:ring-0 focus:border-transparent p-0" />
                     </div>
                 </div>
 
@@ -230,7 +230,7 @@
             </header>
 
             <!-- Page Content -->
-            <main class="flex-1 p-4 sm:p-6 lg:p-10 max-w-[1600px] mx-auto w-full">
+            <main class="flex-1 p-4 sm:p-6 lg:p-10 max-w-[1600px] mx-auto w-full min-w-0 max-w-full">
                 @yield('content')
             </main>
         </div>

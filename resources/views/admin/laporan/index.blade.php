@@ -15,8 +15,8 @@
                 <span class="w-8 h-1 bg-blue-600 rounded-full"></span>
                 <p class="text-[10px] font-bold text-blue-600 uppercase tracking-[0.3em]">Financial Report</p>
             </div>
-            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight mb-1">Laporan Keuangan</h1>
-            <p class="text-sm font-medium text-slate-500">Analisis pendapatan dan performa armada</p>
+            <h1 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight mb-1">Laporan Keuangan</h1>
+            <p class="text-sm font-semibold text-slate-500">Analisis pendapatan dan performa armada</p>
         </div>
 
         <form method="GET" action="{{ route('admin.laporan.index') }}" class="flex flex-wrap items-center gap-3" id="filter-form">
@@ -26,7 +26,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
                 </svg>
                 <select name="shift" onchange="document.getElementById('filter-form').submit()"
-                    class="pl-11 pr-8 py-3 bg-white border border-slate-200 shadow-sm rounded-xl text-sm font-semibold text-slate-700 appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer min-w-[160px] transition-colors">
+                    class="pl-11 pr-8 py-3 bg-white border border-slate-200/60 shadow-sm rounded-xl text-xs font-bold text-slate-900 appearance-none focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 cursor-pointer min-w-[160px] transition-all">
                     <option value="semua" {{ $shift === 'semua' ? 'selected' : '' }}>Semua Shift</option>
                     <option value="pagi" {{ $shift === 'pagi' ? 'selected' : '' }}>Shift Pagi</option>
                     <option value="malam" {{ $shift === 'malam' ? 'selected' : '' }}>Shift Malam</option>
@@ -39,7 +39,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                 </svg>
                 <select name="period" onchange="document.getElementById('filter-form').submit()"
-                    class="pl-11 pr-8 py-3 bg-white border border-slate-200 shadow-sm rounded-xl text-sm font-semibold text-slate-700 appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer min-w-[180px] transition-colors">
+                    class="pl-11 pr-8 py-3 bg-white border border-slate-200/60 shadow-sm rounded-xl text-xs font-bold text-slate-900 appearance-none focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 cursor-pointer min-w-[180px] transition-all">
                     <option value="today" {{ $period === 'today' ? 'selected' : '' }}>Hari Ini</option>
                     <option value="7days" {{ $period === '7days' ? 'selected' : '' }}>7 Hari Terakhir</option>
                     <option value="30days" {{ $period === '30days' ? 'selected' : '' }}>Bulan Ini</option>
@@ -49,7 +49,7 @@
             {{-- Export Button --}}
             <div x-data="{ open: false }">
                 <button type="button" @click="open = true"
-                    class="inline-flex items-center gap-2 bg-blue-800 hover:bg-blue-900 text-white font-semibold px-6 py-3 rounded-xl transition-colors shadow-sm whitespace-nowrap">
+                    class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-black uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all shadow-lg shadow-blue-600/10 active:scale-[0.98] whitespace-nowrap">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
@@ -59,7 +59,7 @@
                 {{-- Export Modal --}}
                 <template x-teleport="body">
                     <div x-show="open" x-cloak
-                        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+                        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
                         x-transition:enter="transition ease-out duration-200"
                         x-transition:enter-start="opacity-0"
                         x-transition:enter-end="opacity-100"
@@ -67,7 +67,7 @@
                         x-transition:leave-start="opacity-100"
                         x-transition:leave-end="opacity-0">
                         <div @click.outside="open = false"
-                            class="bg-white w-full max-w-md rounded-2xl shadow-lg overflow-hidden p-8 text-center"
+                            class="bg-white w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden p-8 text-center border border-slate-100"
                             x-transition:enter="transition ease-out duration-200"
                             x-transition:enter-start="opacity-0 scale-95"
                             x-transition:enter-end="opacity-100 scale-100">
@@ -77,19 +77,19 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
                                 </svg>
                             </div>
-                            <h3 class="text-xl font-bold text-slate-900 tracking-tight mb-2">Export Laporan CSV</h3>
-                            <p class="text-sm text-slate-500 mb-6 px-4 leading-relaxed">Pilih rentang laporan yang ingin Anda unduh ke format CSV yang bisa dibuka di Excel.</p>
+                            <h3 class="text-xl font-black text-slate-900 tracking-tight mb-2">Export Laporan CSV</h3>
+                            <p class="text-xs font-semibold text-slate-400 mb-6 px-4 leading-relaxed">Pilih rentang laporan yang ingin Anda unduh ke format CSV yang bisa dibuka di Excel.</p>
 
                             <form action="{{ route('admin.laporan.export') }}" method="GET" class="space-y-4 mb-6 text-left">
                                 <input type="hidden" name="shift" value="{{ $shift }}">
                                 <div class="space-y-1.5">
-                                    <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider px-1">Rentang Waktu</label>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Rentang Waktu</label>
                                     <div class="relative">
                                         <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                         </svg>
                                         <select name="export_period"
-                                            class="w-full pl-11 pr-8 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 appearance-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-colors">
+                                            class="w-full pl-11 pr-8 py-3.5 bg-slate-50 border border-slate-200/60 rounded-xl text-xs font-bold text-slate-700 appearance-none focus:outline-none focus:ring-4 focus:ring-blue-600/10 cursor-pointer transition-all">
                                             <option value="today" {{ $period === 'today' ? 'selected' : '' }}>Hari Ini</option>
                                             <option value="7days" {{ $period === '7days' ? 'selected' : '' }}>7 Hari Terakhir</option>
                                             <option value="30days" {{ $period === '30days' ? 'selected' : '' }}>Bulan Ini</option>
@@ -97,21 +97,21 @@
                                     </div>
                                 </div>
 
-                                <div class="p-3.5 bg-blue-50 rounded-xl border border-blue-100 flex items-center gap-3">
+                                <div class="p-3.5 bg-blue-50/50 rounded-2xl border border-blue-100/50 flex items-center gap-3">
                                     <svg class="w-5 h-5 text-blue-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
                                     </svg>
-                                    <span class="text-xs font-semibold text-blue-700">Sertakan Rincian Pendapatan Driver</span>
+                                    <span class="text-xs font-black text-blue-700">Sertakan Rincian Pendapatan Driver</span>
                                 </div>
 
                                 <div class="grid grid-cols-2 gap-3 pt-2">
                                     <button type="button" @click="open = false"
-                                        class="py-3 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium rounded-xl text-sm transition-colors">
+                                        class="py-4 bg-white border border-slate-200 text-slate-600 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center hover:bg-slate-50 transition-all shadow-sm active:scale-95">
                                         Batal
                                     </button>
                                     <button type="submit"
-                                        class="py-3 bg-blue-800 hover:bg-blue-900 text-white font-semibold rounded-xl text-sm shadow-sm transition-colors inline-flex items-center justify-center gap-2">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        class="py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-[0.98] shadow-lg shadow-blue-600/10 inline-flex items-center justify-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                         </svg>
                                         Export CSV
@@ -128,7 +128,7 @@
     {{-- Summary Cards --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
         {{-- Total Booking --}}
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
+        <div class="bg-white p-6 rounded-[2rem] border border-slate-200/85 shadow-sm hover:shadow-md transition-shadow group">
             <div class="flex items-center justify-between mb-4">
                 <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -137,13 +137,13 @@
                 </div>
             </div>
             <div>
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Total Booking</p>
-                <h3 class="text-3xl font-bold text-slate-900 tracking-tight">{{ number_format($totalBookings) }} <span class="text-xs font-medium text-slate-400">Pax {{ number_format($totalPassengers) }}</span></h3>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Booking</p>
+                <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ number_format($totalBookings) }} <span class="text-xs font-bold text-slate-400">Pax {{ number_format($totalPassengers) }}</span></h3>
             </div>
         </div>
 
         {{-- Pendapatan --}}
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
+        <div class="bg-white p-6 rounded-[2rem] border border-slate-200/85 shadow-sm hover:shadow-md transition-shadow group">
             <div class="flex items-center justify-between mb-4">
                 <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -152,13 +152,13 @@
                 </div>
             </div>
             <div>
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Pendapatan Bersih</p>
-                <h3 class="text-3xl font-bold text-slate-900 tracking-tight">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</h3>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Pendapatan Bersih</p>
+                <h3 class="text-3xl font-black text-slate-900 tracking-tight">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</h3>
             </div>
         </div>
 
         {{-- Total Trip --}}
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
+        <div class="bg-white p-6 rounded-[2rem] border border-slate-200/85 shadow-sm hover:shadow-md transition-shadow group">
             <div class="flex items-center justify-between mb-4">
                 <div class="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -167,13 +167,13 @@
                 </div>
             </div>
             <div>
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Total Trip</p>
-                <h3 class="text-3xl font-bold text-slate-900 tracking-tight">{{ number_format($totalTrips) }} <span class="text-xs font-medium text-slate-400">Keberangkatan</span></h3>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Trip</p>
+                <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ number_format($totalTrips) }} <span class="text-xs font-bold text-slate-400">Keberangkatan</span></h3>
             </div>
         </div>
 
         {{-- Okupansi --}}
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
+        <div class="bg-white p-6 rounded-[2rem] border border-slate-200/85 shadow-sm hover:shadow-md transition-shadow group">
             <div class="flex items-center justify-between mb-4">
                 <div class="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -182,18 +182,18 @@
                 </div>
             </div>
             <div>
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Okupansi Rata-rata</p>
-                <h3 class="text-3xl font-bold text-slate-900 tracking-tight">{{ $avgOccupancy }}% <span class="text-xs font-medium text-slate-400">Kapasitas</span></h3>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Okupansi Rata-rata</p>
+                <h3 class="text-3xl font-black text-slate-900 tracking-tight">{{ $avgOccupancy }}% <span class="text-xs font-bold text-slate-400">Kapasitas</span></h3>
             </div>
         </div>
     </div>
 
     {{-- Revenue Chart --}}
-    <div class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="bg-white p-6 md:p-8 rounded-[2rem] border border-slate-200/80 shadow-sm overflow-hidden">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
             <div>
-                <h3 class="text-lg font-bold text-slate-900 tracking-tight mb-1">Grafik Pendapatan</h3>
-                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Analisis berdasarkan periode operasional</p>
+                <h3 class="text-lg font-black text-slate-900 tracking-tight mb-1">Grafik Pendapatan</h3>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Analisis berdasarkan periode operasional</p>
             </div>
             <div class="flex items-center gap-3">
                 <span class="flex items-center gap-2 text-xs font-semibold text-slate-500">
@@ -209,10 +209,10 @@
     </div>
 
     {{-- Daily Report Table --}}
-    <div x-data="{ selectedReport: null }" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+    <div x-data="{ selectedReport: null }" class="bg-white rounded-[2rem] border border-slate-200/80 shadow-sm overflow-hidden flex flex-col">
         <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <h3 class="text-lg font-bold text-slate-900">Rincian Laporan Harian</h3>
-            <span class="inline-flex text-xs font-semibold text-blue-700 bg-blue-50 px-4 py-1.5 rounded-full border border-blue-100">{{ $periodLabel }}</span>
+            <h3 class="text-lg font-black text-slate-900">Rincian Laporan Harian</h3>
+            <span class="inline-flex text-[9px] font-black uppercase tracking-wider text-blue-600 bg-blue-50/50 px-4.5 py-2 rounded-full border border-blue-100/50">{{ $periodLabel }}</span>
         </div>
 
         <div class="overflow-x-auto">
@@ -281,8 +281,8 @@
                                         pelunasanRevenue: {{ $report->pelunasan_revenue }},
                                         cancelled: {{ $report->cancelled }}
                                     }"
-                                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-650 bg-white border border-slate-200 hover:bg-slate-50 active:scale-95 transition-all shadow-sm">
+                                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                     </svg>
@@ -309,7 +309,7 @@
         {{-- Detail Report Modal --}}
         <template x-teleport="body">
             <div x-show="selectedReport !== null" x-cloak
-                class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+                class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
                 x-transition:enter="transition ease-out duration-200"
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
@@ -317,18 +317,18 @@
                 x-transition:leave-start="opacity-100"
                 x-transition:leave-end="opacity-0">
                 <div @click.outside="selectedReport = null"
-                    class="bg-white w-full max-w-4xl rounded-2xl shadow-lg overflow-hidden flex flex-col max-h-[90vh]"
+                    class="bg-white w-full max-w-4xl rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-slate-100"
                     x-transition:enter="transition ease-out duration-200"
                     x-transition:enter-start="opacity-0 scale-95"
                     x-transition:enter-end="opacity-100 scale-100">
 
                     {{-- Modal Header --}}
-                    <div class="p-6 border-b border-slate-100 flex items-center justify-between shrink-0">
+                    <div class="p-6 md:p-8 border-b border-slate-100 flex items-center justify-between shrink-0">
                         <div>
-                            <h3 class="text-xl font-bold text-slate-900 tracking-tight">Rincian Laporan Operasional</h3>
-                            <p class="text-xs font-medium text-slate-400 mt-0.5" x-text="selectedReport?.date + ' • ' + selectedReport?.day"></p>
+                            <h3 class="text-xl font-black text-slate-900 tracking-tight">Rincian Laporan Operasional</h3>
+                            <p class="text-xs font-bold text-slate-400 mt-0.5" x-text="selectedReport?.date + ' • ' + selectedReport?.day"></p>
                         </div>
-                        <button @click="selectedReport = null" class="p-2 bg-slate-50 text-slate-400 rounded-xl hover:bg-slate-100 transition-colors">
+                        <button @click="selectedReport = null" class="p-3 bg-slate-50 text-slate-400 rounded-2xl hover:bg-slate-100 transition-colors">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
@@ -336,81 +336,81 @@
                     </div>
 
                     {{-- Modal Body --}}
-                    <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                    <div class="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
                         {{-- Financial Summary Cards --}}
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div class="p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Total Pendapatan</p>
-                                <p class="text-lg font-bold text-slate-900" x-text="'Rp ' + (selectedReport?.revenue || 0).toLocaleString('id-ID')"></p>
+                            <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200/60">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Total Pendapatan</p>
+                                <p class="text-lg font-black text-slate-900" x-text="'Rp ' + (selectedReport?.revenue || 0).toLocaleString('id-ID')"></p>
                             </div>
-                            <div class="p-5 bg-blue-50 rounded-2xl border border-blue-100">
-                                <p class="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-2">DP Collected</p>
-                                <p class="text-lg font-bold text-blue-600" x-text="'Rp ' + (selectedReport?.dpRevenue || 0).toLocaleString('id-ID')"></p>
+                            <div class="p-5 bg-blue-50 rounded-2xl border border-blue-100/50">
+                                <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-2">DP Collected</p>
+                                <p class="text-lg font-black text-blue-600" x-text="'Rp ' + (selectedReport?.dpRevenue || 0).toLocaleString('id-ID')"></p>
                             </div>
-                            <div class="p-5 bg-emerald-50 rounded-2xl border border-emerald-100">
-                                <p class="text-[10px] font-semibold text-emerald-400 uppercase tracking-wider mb-2">Pelunasan Collected</p>
-                                <p class="text-lg font-bold text-emerald-600" x-text="'Rp ' + (selectedReport?.pelunasanRevenue || 0).toLocaleString('id-ID')"></p>
+                            <div class="p-5 bg-emerald-50 rounded-2xl border border-emerald-100/50">
+                                <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-2">Pelunasan Collected</p>
+                                <p class="text-lg font-black text-emerald-600" x-text="'Rp ' + (selectedReport?.pelunasanRevenue || 0).toLocaleString('id-ID')"></p>
                             </div>
-                            <div class="p-5 bg-amber-50 rounded-2xl border border-amber-100">
-                                <p class="text-[10px] font-semibold text-amber-400 uppercase tracking-wider mb-2">Sisa Pelunasan</p>
-                                <p class="text-lg font-bold text-amber-600" x-text="'Rp ' + Math.max(0, (selectedReport?.revenue || 0) - (selectedReport?.dpRevenue || 0) - (selectedReport?.pelunasanRevenue || 0)).toLocaleString('id-ID')"></p>
+                            <div class="p-5 bg-amber-50 rounded-2xl border border-amber-100/50">
+                                <p class="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-2">Sisa Pelunasan</p>
+                                <p class="text-lg font-black text-amber-600" x-text="'Rp ' + Math.max(0, (selectedReport?.revenue || 0) - (selectedReport?.dpRevenue || 0) - (selectedReport?.pelunasanRevenue || 0)).toLocaleString('id-ID')"></p>
                             </div>
                         </div>
 
                         {{-- Stats Row --}}
                         <div class="grid grid-cols-3 gap-4">
-                            <div class="flex items-center gap-4 p-5 bg-white border border-slate-100 rounded-2xl shadow-sm">
+                            <div class="flex items-center gap-4 p-5 bg-white border border-slate-200/60 rounded-2xl shadow-sm">
                                 <div class="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] font-semibold text-slate-400 uppercase">Booking</p>
-                                    <p class="text-lg font-bold text-slate-900" x-text="selectedReport?.booking || 0"></p>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Booking</p>
+                                    <p class="text-lg font-black text-slate-900" x-text="selectedReport?.booking || 0"></p>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-4 p-5 bg-white border border-slate-100 rounded-2xl shadow-sm">
+                            <div class="flex items-center gap-4 p-5 bg-white border border-slate-200/60 rounded-2xl shadow-sm">
                                 <div class="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] font-semibold text-slate-400 uppercase">Penumpang</p>
-                                    <p class="text-lg font-bold text-slate-900" x-text="selectedReport?.passengers || 0"></p>
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Penumpang</p>
+                                    <p class="text-lg font-black text-slate-900" x-text="selectedReport?.passengers || 0"></p>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-4 p-5 bg-white border border-slate-100 rounded-2xl shadow-sm">
-                                <div class="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center text-rose-400">
+                            <div class="flex items-center gap-4 p-5 bg-white border border-slate-200/60 rounded-2xl shadow-sm">
+                                <div class="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center text-rose-500">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="text-[10px] font-semibold text-rose-400 uppercase">Dibatalkan</p>
-                                    <p class="text-lg font-bold text-rose-600" x-text="selectedReport?.cancelled || 0"></p>
+                                    <p class="text-[10px] font-black text-rose-500 uppercase tracking-widest">Dibatalkan</p>
+                                    <p class="text-lg font-black text-rose-600" x-text="selectedReport?.cancelled || 0"></p>
                                 </div>
                             </div>
                         </div>
 
                         {{-- Trip Summary Table --}}
                         @if($tripSummary->count() > 0)
-                        <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
+                        <div class="bg-white border border-slate-200/60 rounded-2xl overflow-hidden shadow-sm">
                             <div class="p-5 border-b border-slate-100 flex items-center gap-2">
                                 <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
                                 </svg>
-                                <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Rangkuman Trip Periode</h4>
+                                <h4 class="text-xs font-black text-slate-900 uppercase tracking-wider">Rangkuman Trip Periode</h4>
                             </div>
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left">
                                     <thead>
                                         <tr class="bg-slate-50 border-b border-slate-100">
-                                            <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Trip & Rute</th>
-                                            <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Driver & Armada</th>
-                                            <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Pax</th>
-                                            <th class="px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Status</th>
+                                            <th class="px-5 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">Trip & Rute</th>
+                                            <th class="px-5 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">Driver & Armada</th>
+                                            <th class="px-5 py-3 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Pax</th>
+                                            <th class="px-5 py-3 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-100">
@@ -455,12 +455,12 @@
                     {{-- Modal Footer --}}
                     <div class="p-6 border-t border-slate-100 flex justify-end gap-3 bg-slate-50/50 shrink-0">
                         <button @click="selectedReport = null"
-                            class="px-6 py-3 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium rounded-xl text-sm transition-colors">
+                            class="px-6 py-4 bg-white border border-slate-200 text-slate-600 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm active:scale-95">
                             Tutup
                         </button>
                         <a href="{{ route('admin.laporan.export', ['period' => $period, 'shift' => $shift]) }}"
-                            class="inline-flex items-center gap-2 px-6 py-3 bg-blue-800 hover:bg-blue-900 text-white font-semibold rounded-xl text-sm shadow-sm transition-colors">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            class="inline-flex items-center gap-2 px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-600/10 transition-all active:scale-[0.98]">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
                             Unduh CSV

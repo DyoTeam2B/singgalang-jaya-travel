@@ -22,11 +22,11 @@ class TripController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $status = $request->input('status', 'ready'); // default to ready
+        $status = $request->input('status', 'new'); // default to new
 
         // Validate status input to prevent sql issues
         if (!in_array($status, ['new', 'ready', 'on_trip', 'completed', 'cancelled'])) {
-            $status = 'ready';
+            $status = 'new';
         }
 
         $trips = Trip::query()
@@ -325,7 +325,7 @@ class TripController extends Controller
         $whatsappNotificationService->sendTripAssignedToCustomer($booking, $trip);
         $whatsappNotificationService->sendTripAssignedToDriver($booking, $trip);
 
-        return redirect()->route('admin.trips.show', $trip->id)
+        return redirect()->route('admin.trips.index')
             ->with('success', 'Booking ' . $booking->kode_booking . ' berhasil ditugaskan ke trip.');
     }
 

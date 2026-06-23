@@ -16,7 +16,7 @@
             
             <button 
                 @click="isAddModalOpen = true"
-                class="inline-flex items-center gap-2 bg-blue-800 hover:bg-blue-900 text-white font-semibold px-6 py-3 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-95 text-xs uppercase tracking-wider"
+                class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3.5 rounded-2xl transition-all shadow-lg shadow-blue-600/10 hover:shadow-xl hover:shadow-blue-600/15 active:scale-[0.98] text-[10px] font-black uppercase tracking-wider"
             >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
@@ -69,7 +69,7 @@
         <div class="flex flex-col xl:flex-row gap-8 items-start min-h-[500px]">
             
             <!-- Left Column: Data Table -->
-            <div class="flex-1 w-full bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+            <div class="flex-1 w-full bg-white rounded-[2rem] border border-slate-200/80 shadow-sm flex flex-col overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -162,7 +162,7 @@
                 @php
                     $activeTripsCount = $selectedArmada->trips()->whereIn('status_trip', ['ready', 'on_trip'])->count();
                 @endphp
-                <div class="w-full xl:w-[400px] bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+                <div class="w-full xl:w-[400px] bg-white rounded-[2rem] border border-slate-200/80 shadow-sm flex flex-col overflow-hidden">
                     <div class="p-8 border-b border-slate-100 flex items-center justify-between">
                         <h3 class="text-sm font-black text-slate-900 uppercase tracking-widest">Detail Armada</h3>
                         <span class="text-[10px] font-black text-slate-400 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
@@ -215,7 +215,7 @@
                             @method('DELETE')
                             <button 
                                 type="submit"
-                                class="w-full py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:bg-slate-800 transition-all active:scale-95"
+                                class="w-full py-4 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-rose-600/10 transition-all active:scale-95"
                                 onclick="return confirm('Apakah Anda yakin ingin menghapus data armada {{ $selectedArmada->nama_mobil }} ({{ $selectedArmada->nomor_plat }})?');"
                             >
                                 Hapus
@@ -258,37 +258,37 @@
                     
                     <div class="p-10 space-y-6 max-h-[60vh] overflow-y-auto">
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nama Mobil / Tipe</label>
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Nama Mobil / Tipe</label>
                             <input 
                                 required
                                 type="text" 
                                 name="nama_mobil"
                                 value="{{ old('action_type') === 'create' ? old('nama_mobil') : '' }}"
-                                class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold focus:ring-4 focus:ring-blue-600/10"
+                                class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all placeholder:text-slate-400"
                                 placeholder="Contoh: Toyota Avanza, Suzuki Ertiga" 
                             />
                             @error('nama_mobil')
-                                <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                                <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Plat Nomor</label>
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Plat Nomor</label>
                             <input 
                                 required
                                 type="text" 
                                 name="nomor_plat"
                                 value="{{ old('action_type') === 'create' ? old('nomor_plat') : '' }}"
-                                class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold uppercase focus:ring-4 focus:ring-blue-600/10"
+                                class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold uppercase text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all placeholder:text-slate-400"
                                 placeholder="Contoh: BA 1234 XY" 
                             />
                             @error('nomor_plat')
-                                <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                                <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Kapasitas Penumpang</label>
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Kapasitas Penumpang</label>
                             <input 
                                 required
                                 type="number" 
@@ -296,30 +296,30 @@
                                 min="1"
                                 max="20"
                                 value="{{ old('action_type') === 'create' ? old('kapasitas') : 5 }}"
-                                class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold focus:ring-4 focus:ring-blue-600/10"
+                                class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all"
                             />
                             @error('kapasitas')
-                                <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                                <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div class="space-y-2" x-data="{ status: 'aktif' }">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Status Armada</label>
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Status Armada</label>
                             <input type="hidden" name="status_armada" :value="status">
                             <div class="grid grid-cols-2 gap-4">
                                 <button
                                     type="button"
                                     @click="status = 'aktif'"
-                                    :class="status === 'aktif' ? 'bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-900/20' : 'bg-white text-slate-400 border-slate-100 hover:bg-slate-50'"
-                                    class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border"
+                                    :class="status === 'aktif' ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-600/10' : 'bg-white text-slate-400 border-slate-200/60 hover:bg-slate-50'"
+                                    class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border active:scale-95"
                                 >
                                     Aktif
                                 </button>
                                 <button
                                     type="button"
                                     @click="status = 'nonaktif'"
-                                    :class="status === 'nonaktif' ? 'bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-900/20' : 'bg-white text-slate-400 border-slate-100 hover:bg-slate-50'"
-                                    class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border"
+                                    :class="status === 'nonaktif' ? 'bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-900/10' : 'bg-white text-slate-400 border-slate-200/60 hover:bg-slate-50'"
+                                    class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border active:scale-95"
                                 >
                                     Nonaktif
                                 </button>
@@ -328,10 +328,10 @@
                     </div>
 
                     <div class="p-10 bg-slate-50/50 border-t border-slate-100 flex gap-4">
-                        <button type="button" @click="isAddModalOpen = false" class="flex-1 py-5 bg-white border border-slate-200 text-slate-600 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 active:scale-95 shadow-sm">
+                        <button type="button" @click="isAddModalOpen = false" class="flex-1 py-5 bg-white border border-slate-200/60 text-slate-600 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 active:scale-95 shadow-sm">
                             Batal
                         </button>
-                        <button type="submit" class="flex-1 py-5 bg-blue-600 text-white rounded-3xl text-[10px] font-black uppercase tracking-widest shadow-2xl shadow-blue-600/20 hover:bg-blue-700 active:scale-95">
+                        <button type="submit" class="flex-1 py-5 bg-blue-600 text-white rounded-3xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-600/10 hover:bg-blue-700 active:scale-95">
                             Simpan Armada
                         </button>
                     </div>
@@ -366,37 +366,37 @@
                         
                         <div class="p-10 space-y-6 max-h-[60vh] overflow-y-auto">
                             <div class="space-y-2">
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nama Mobil / Tipe</label>
+                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Nama Mobil / Tipe</label>
                                 <input 
                                     required
                                     type="text" 
                                     name="nama_mobil"
                                     value="{{ old('action_type') === 'edit' ? old('nama_mobil') : $selectedArmada->nama_mobil }}"
-                                    class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold focus:ring-4 focus:ring-blue-600/10"
+                                    class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all placeholder:text-slate-400"
                                     placeholder="Toyota Avanza" 
                                 />
                                 @error('nama_mobil')
-                                    <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                                    <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                                 @enderror
                             </div>
 
                             <div class="space-y-2">
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Plat Nomor</label>
+                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Plat Nomor</label>
                                 <input 
                                     required
                                     type="text" 
                                     name="nomor_plat"
                                     value="{{ old('action_type') === 'edit' ? old('nomor_plat') : $selectedArmada->nomor_plat }}"
-                                    class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold uppercase focus:ring-4 focus:ring-blue-600/10"
+                                    class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold uppercase text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all placeholder:text-slate-400"
                                     placeholder="BA 1234 XY" 
                                 />
                                 @error('nomor_plat')
-                                    <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                                    <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                                 @enderror
                             </div>
 
                             <div class="space-y-2">
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Kapasitas Penumpang</label>
+                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Kapasitas Penumpang</label>
                                 <input 
                                     required
                                     type="number" 
@@ -404,30 +404,30 @@
                                     min="1"
                                     max="20"
                                     value="{{ old('action_type') === 'edit' ? old('kapasitas') : $selectedArmada->kapasitas }}"
-                                    class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold focus:ring-4 focus:ring-blue-600/10"
+                                    class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all"
                                 />
                                 @error('kapasitas')
-                                    <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                                    <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <div class="space-y-2" x-data="{ status: '{{ old('action_type') === 'edit' ? old('status_armada') : $selectedArmada->status_armada }}' }">
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Status Armada</label>
+                             <div class="space-y-2" x-data="{ status: '{{ old('action_type') === 'edit' ? old('status_armada') : $selectedArmada->status_armada }}' }">
+                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Status Armada</label>
                                 <input type="hidden" name="status_armada" :value="status">
                                 <div class="grid grid-cols-2 gap-4">
                                     <button
                                         type="button"
                                         @click="status = 'aktif'"
-                                        :class="status === 'aktif' ? 'bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-900/20' : 'bg-white text-slate-400 border-slate-100 hover:bg-slate-50'"
-                                        class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border"
+                                        :class="status === 'aktif' ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-600/10' : 'bg-white text-slate-400 border-slate-200/60 hover:bg-slate-50'"
+                                        class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border active:scale-95"
                                     >
                                         Aktif
                                     </button>
                                     <button
                                         type="button"
                                         @click="status = 'nonaktif'"
-                                        :class="status === 'nonaktif' ? 'bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-900/20' : 'bg-white text-slate-400 border-slate-100 hover:bg-slate-50'"
-                                        class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border"
+                                        :class="status === 'nonaktif' ? 'bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-900/10' : 'bg-white text-slate-400 border-slate-200/60 hover:bg-slate-50'"
+                                        class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border active:scale-95"
                                     >
                                         Nonaktif
                                     </button>
@@ -436,10 +436,10 @@
                         </div>
 
                         <div class="p-10 bg-slate-50/50 border-t border-slate-100 flex gap-4">
-                            <button type="button" @click="isEditModalOpen = false" class="flex-1 py-5 bg-white border border-slate-200 text-slate-600 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 active:scale-95 shadow-sm">
+                            <button type="button" @click="isEditModalOpen = false" class="flex-1 py-5 bg-white border border-slate-200/60 text-slate-600 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 active:scale-95 shadow-sm">
                                 Batal
                             </button>
-                            <button type="submit" class="flex-1 py-5 bg-blue-600 text-white rounded-3xl text-[10px] font-black uppercase tracking-widest shadow-2xl shadow-blue-600/20 hover:bg-blue-700 active:scale-95">
+                            <button type="submit" class="flex-1 py-5 bg-blue-600 text-white rounded-3xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-600/10 hover:bg-blue-700 active:scale-95">
                                 Update Data
                             </button>
                         </div>

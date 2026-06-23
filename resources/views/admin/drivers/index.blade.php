@@ -16,7 +16,7 @@
         </div>
         <button 
             @click="isAddModalOpen = true"
-            class="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-white bg-slate-900 px-6 py-4 rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10 whitespace-nowrap active:scale-95"
+            class="flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-white bg-blue-600 px-6 py-4 rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/10 whitespace-nowrap active:scale-[0.98]"
         >
             <!-- UserPlus Icon -->
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -44,7 +44,7 @@
                     name="search"
                     placeholder="Cari ID Driver, Nama, Plat atau Email..." 
                     value="{{ $search }}"
-                    class="w-full pl-11 pr-4 py-4 bg-white border border-slate-100 rounded-[1.5rem] text-xs font-bold focus:ring-4 focus:ring-slate-900/5 focus:border-slate-200 outline-none transition-all shadow-xl shadow-slate-900/5"
+                    class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all shadow-sm"
                 />
             </div>
 
@@ -56,7 +56,7 @@
                 <select 
                     name="status"
                     onchange="this.form.submit()"
-                    class="w-full pl-11 pr-8 py-4 bg-white border border-slate-100 shadow-xl shadow-slate-900/5 rounded-[1.5rem] text-xs font-bold text-slate-900 appearance-none focus:ring-4 focus:ring-slate-900/5 cursor-pointer outline-none border-none"
+                    class="w-full pl-11 pr-8 py-3.5 bg-white border border-slate-200/60 shadow-sm rounded-2xl text-xs font-bold text-slate-900 appearance-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 cursor-pointer outline-none transition-all"
                 >
                     <option value="">Semua Status</option>
                     <option value="Tersedia" {{ $statusFilter === 'Tersedia' ? 'selected' : '' }}>Tersedia</option>
@@ -76,10 +76,10 @@
     </div>
 
     <!-- Data Layout (Table & Detail Column) -->
-    <div class="flex flex-col xl:flex-row gap-8 items-start min-h-[500px]">
+    <div class="flex flex-col xl:flex-row gap-8 items-start min-h-[500px] w-full min-w-0">
         
         <!-- Left Column: Data Table/Cards -->
-        <div class="flex-1 w-full flex flex-col gap-4">
+        <div class="flex-1 w-full min-w-0 flex flex-col gap-4">
             <!-- Mobile Cards view -->
             <div class="grid grid-cols-1 gap-4 xl:hidden">
                 @forelse($drivers as $driver)
@@ -195,7 +195,7 @@
             </div>
 
             <!-- Desktop Table view -->
-            <div class="hidden xl:block bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="hidden xl:block w-full max-w-full min-w-0 bg-white rounded-[2rem] border border-slate-200/80 shadow-sm overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -343,7 +343,7 @@
         </div>
 
         <!-- Right Column: Detail Panel Wrapper -->
-        <div class="w-full xl:w-[400px] shrink-0 {{ $selectedDriver ? 'fixed inset-0 z-[150] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm xl:relative xl:inset-auto xl:z-auto xl:bg-transparent xl:backdrop-blur-none xl:p-0' : 'hidden xl:block' }}">
+        <div class="w-full xl:w-[400px] shrink-0 {{ $selectedDriver && request()->has('selected_id') ? 'fixed inset-0 z-[150] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm xl:relative xl:inset-auto xl:z-auto xl:bg-transparent xl:backdrop-blur-none xl:p-0' : 'hidden xl:block' }}">
             @if($selectedDriver)
                 @php
                     $selActiveTrip = $selectedDriver->trips()->whereIn('status_trip', ['ready', 'on_trip'])->first();
@@ -537,7 +537,7 @@
                     
                     <!-- Nama Driver -->
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nama Driver</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Nama Driver</label>
                         <div class="relative">
                             <!-- User Circle Icon -->
                             <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -548,18 +548,18 @@
                                 type="text" 
                                 name="nama_driver"
                                 value="{{ old('action_type') === 'create' ? old('nama_driver') : '' }}"
-                                class="w-full pl-11 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold outline-none focus:ring-4 focus:ring-slate-900/5 transition-all @error('nama_driver') ring-2 ring-red-500 @enderror"
+                                class="w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all placeholder:text-slate-450 @error('nama_driver') ring-2 ring-red-500 @enderror"
                                 placeholder="Nama Lengkap" 
                             />
                         </div>
                         @error('nama_driver')
-                            <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                            <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Nomor HP -->
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nomor HP</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Nomor HP</label>
                         <div class="relative">
                             <!-- Phone Icon -->
                             <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -570,18 +570,18 @@
                                 type="tel" 
                                 name="no_hp"
                                 value="{{ old('action_type') === 'create' ? old('no_hp') : '' }}"
-                                class="w-full pl-11 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold outline-none focus:ring-4 focus:ring-slate-900/5 transition-all @error('no_hp') ring-2 ring-red-500 @enderror"
+                                class="w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all placeholder:text-slate-450 @error('no_hp') ring-2 ring-red-500 @enderror"
                                 placeholder="0812-xxxx-xxxx" 
                             />
                         </div>
                         @error('no_hp')
-                            <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                            <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Email -->
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email (Login ID)</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Email (Login ID)</label>
                         <div class="relative">
                             <!-- Mail Icon -->
                             <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -592,18 +592,18 @@
                                 type="email" 
                                 name="email"
                                 value="{{ old('action_type') === 'create' ? old('email') : '' }}"
-                                class="w-full pl-11 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold outline-none focus:ring-4 focus:ring-slate-900/5 transition-all @error('email') ring-2 ring-red-500 @enderror"
+                                class="w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all placeholder:text-slate-455 @error('email') ring-2 ring-red-500 @enderror"
                                 placeholder="driver@singgalang.com" 
                             />
                         </div>
                         @error('email')
-                            <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                            <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Password -->
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Password</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Password</label>
                         <div class="relative">
                             <!-- Lock Icon -->
                             <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -613,22 +613,22 @@
                                 required
                                 type="password" 
                                 name="password"
-                                class="w-full pl-11 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold outline-none focus:ring-4 focus:ring-slate-900/5 transition-all @error('password') ring-2 ring-red-500 @enderror"
+                                class="w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all placeholder:text-slate-450 @error('password') ring-2 ring-red-500 @enderror"
                                 placeholder="••••••••" 
                             />
                         </div>
                         @error('password')
-                            <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                            <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Pilih Armada -->
                     <div class="md:col-span-2 space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pilih Armada (Kendaraan)</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Pilih Armada (Kendaraan)</label>
                         <select 
                             required
                             name="armada_id"
-                            class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold focus:ring-4 focus:ring-slate-900/5 transition-all @error('armada_id') ring-2 ring-red-500 @enderror"
+                            class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all cursor-pointer @error('armada_id') ring-2 ring-red-500 @enderror"
                         >
                             <option value="">Pilih Armada...</option>
                             @foreach($armadas as $armada)
@@ -638,28 +638,28 @@
                             @endforeach
                         </select>
                         @error('armada_id')
-                            <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                            <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Status Awal -->
                     <div class="md:col-span-2 space-y-2" x-data="{ status: 'aktif' }">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Status Awal</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Status Awal</label>
                         <input type="hidden" name="status_driver" :value="status">
                         <div class="grid grid-cols-2 gap-4">
                             <button
                                 type="button"
                                 @click="status = 'aktif'"
-                                :class="status === 'aktif' ? 'bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-900/20' : 'bg-white text-slate-400 border-slate-100 hover:bg-slate-50'"
-                                class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border"
+                                :class="status === 'aktif' ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-600/10' : 'bg-white text-slate-400 border-slate-200/60 hover:bg-slate-50'"
+                                class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border active:scale-95"
                             >
                                 Aktif (Tersedia)
                             </button>
                             <button
                                 type="button"
                                 @click="status = 'nonaktif'"
-                                :class="status === 'nonaktif' ? 'bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-900/20' : 'bg-white text-slate-400 border-slate-100 hover:bg-slate-50'"
-                                class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border"
+                                :class="status === 'nonaktif' ? 'bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-900/10' : 'bg-white text-slate-400 border-slate-200/60 hover:bg-slate-50'"
+                                class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border active:scale-95"
                             >
                                 Nonaktif (Tidak Aktif)
                             </button>
@@ -671,13 +671,13 @@
                     <button 
                         type="button"
                         @click="isAddModalOpen = false"
-                        class="flex-1 py-5 bg-white border border-slate-200 text-slate-600 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm active:scale-95"
+                        class="flex-1 py-5 bg-white border border-slate-200/60 text-slate-600 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm active:scale-95"
                     >
                         Batal
                     </button>
                     <button 
                         type="submit"
-                        class="flex-1 py-5 bg-blue-600 text-white rounded-3xl text-[10px] font-black uppercase tracking-widest shadow-2xl shadow-blue-600/20 hover:bg-blue-700 transition-all active:scale-95"
+                        class="flex-1 py-5 bg-blue-600 text-white rounded-3xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-600/10 hover:bg-blue-700 transition-all active:scale-95"
                     >
                         Simpan Data Driver
                     </button>
@@ -735,7 +735,7 @@
                         
                         <!-- Nama Driver -->
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nama Driver</label>
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Nama Driver</label>
                             <div class="relative">
                                 <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -745,18 +745,18 @@
                                     type="text" 
                                     name="nama_driver"
                                     value="{{ old('action_type') === 'edit' ? old('nama_driver') : $selectedDriver->nama_driver }}"
-                                    class="w-full pl-11 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold outline-none focus:ring-4 focus:ring-slate-900/5 transition-all @error('nama_driver') ring-2 ring-red-500 @enderror"
+                                    class="w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all placeholder:text-slate-450 @error('nama_driver') ring-2 ring-red-500 @enderror"
                                     placeholder="Nama Lengkap" 
                                 />
                             </div>
                             @error('nama_driver')
-                                <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                                <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Nomor HP -->
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nomor HP</label>
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Nomor HP</label>
                             <div class="relative">
                                 <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"></path>
@@ -766,18 +766,18 @@
                                     type="tel" 
                                     name="no_hp"
                                     value="{{ old('action_type') === 'edit' ? old('no_hp') : $selectedDriver->no_hp }}"
-                                    class="w-full pl-11 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold outline-none focus:ring-4 focus:ring-slate-900/5 transition-all @error('no_hp') ring-2 ring-red-500 @enderror"
+                                    class="w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all placeholder:text-slate-450 @error('no_hp') ring-2 ring-red-500 @enderror"
                                     placeholder="0812-xxxx-xxxx" 
                                 />
                             </div>
                             @error('no_hp')
-                                <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                                <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Email -->
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email (Login ID)</label>
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Email (Login ID)</label>
                             <div class="relative">
                                 <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"></path>
@@ -787,18 +787,18 @@
                                     type="email" 
                                     name="email"
                                     value="{{ old('action_type') === 'edit' ? old('email') : $selectedDriver->user->email }}"
-                                    class="w-full pl-11 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold outline-none focus:ring-4 focus:ring-slate-900/5 transition-all @error('email') ring-2 ring-red-500 @enderror"
+                                    class="w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all placeholder:text-slate-455 @error('email') ring-2 ring-red-500 @enderror"
                                     placeholder="driver@singgalang.com" 
                                 />
                             </div>
                             @error('email')
-                                <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                                <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Password -->
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Password Baru (Opsional)</label>
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Password Baru (Opsional)</label>
                             <div class="relative">
                                 <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"></path>
@@ -806,22 +806,22 @@
                                 <input 
                                     type="password" 
                                     name="password"
-                                    class="w-full pl-11 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold outline-none focus:ring-4 focus:ring-slate-900/5 transition-all @error('password') ring-2 ring-red-500 @enderror"
+                                    class="w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all placeholder:text-slate-450 @error('password') ring-2 ring-red-500 @enderror"
                                     placeholder="Kosongkan jika tidak diubah" 
                                 />
                             </div>
                             @error('password')
-                                <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                                <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Pilih Armada -->
                         <div class="md:col-span-2 space-y-2">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pilih Armada (Kendaraan)</label>
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Pilih Armada (Kendaraan)</label>
                             <select 
                                 required
                                 name="armada_id"
-                                class="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl text-xs font-bold focus:ring-4 focus:ring-slate-900/5 transition-all @error('armada_id') ring-2 ring-red-500 @enderror"
+                                class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all cursor-pointer @error('armada_id') ring-2 ring-red-500 @enderror"
                             >
                                 <option value="">Pilih Armada...</option>
                                 @foreach($armadas as $armada)
@@ -831,7 +831,7 @@
                                 @endforeach
                             </select>
                             @error('armada_id')
-                                <p class="text-xs text-red-500 font-bold mt-1">{{ $message }}</p>
+                                <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                             @enderror
                         </div>
 
@@ -840,22 +840,22 @@
                             $editStatus = old('action_type') === 'edit' ? old('status_driver') : $selectedDriver->status_driver;
                         @endphp
                         <div class="md:col-span-2 space-y-2" x-data="{ status: '{{ $editStatus }}' }">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Status Driver</label>
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Status Driver</label>
                             <input type="hidden" name="status_driver" :value="status">
                             <div class="grid grid-cols-2 gap-4">
                                 <button
                                     type="button"
                                     @click="status = 'aktif'"
-                                    :class="status === 'aktif' ? 'bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-900/20' : 'bg-white text-slate-400 border-slate-100 hover:bg-slate-50'"
-                                    class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border"
+                                    :class="status === 'aktif' ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-600/10' : 'bg-white text-slate-400 border-slate-200/60 hover:bg-slate-50'"
+                                    class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border active:scale-95"
                                 >
                                     Aktif
                                 </button>
                                 <button
                                     type="button"
                                     @click="status = 'nonaktif'"
-                                    :class="status === 'nonaktif' ? 'bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-900/20' : 'bg-white text-slate-400 border-slate-100 hover:bg-slate-50'"
-                                    class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border"
+                                    :class="status === 'nonaktif' ? 'bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-900/10' : 'bg-white text-slate-400 border-slate-200/60 hover:bg-slate-50'"
+                                    class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border active:scale-95"
                                 >
                                     Nonaktif
                                 </button>
@@ -867,13 +867,13 @@
                         <button 
                             type="button"
                             @click="isEditModalOpen = false"
-                            class="flex-1 py-5 bg-white border border-slate-200 text-slate-600 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm active:scale-95"
+                            class="flex-1 py-5 bg-white border border-slate-200/60 text-slate-600 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all shadow-sm active:scale-95"
                         >
                             Batal
                         </button>
                         <button 
                             type="submit"
-                            class="flex-1 py-5 bg-blue-600 text-white rounded-3xl text-[10px] font-black uppercase tracking-widest shadow-2xl shadow-blue-600/20 hover:bg-blue-700 transition-all active:scale-95"
+                            class="flex-1 py-5 bg-blue-600 text-white rounded-3xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-600/10 hover:bg-blue-700 transition-all active:scale-95"
                         >
                             Simpan Perubahan
                         </button>

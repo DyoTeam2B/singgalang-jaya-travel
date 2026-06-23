@@ -16,8 +16,7 @@
             </div>
         </div>
 
-        <!-- Form Card -->
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-[2rem] border border-slate-200/80 shadow-sm overflow-hidden">
             <form method="POST" action="{{ route('admin.jadwal.update', $jadwal->id) }}" class="p-8 sm:p-10 space-y-6">
                 @csrf
                 @method('PUT')
@@ -27,9 +26,9 @@
 
                 <!-- Rute -->
                 <div class="space-y-2">
-                    <label for="rute_id" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Rute Perjalanan</label>
+                    <label for="rute_id" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Rute Perjalanan</label>
                     <select name="rute_id" id="rute_id" required
-                            class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer">
+                            class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all cursor-pointer">
                         <option value="">Pilih Rute Perjalanan...</option>
                         @foreach($rute as $r)
                             <option value="{{ $r->id }}" {{ old('rute_id', $jadwal->rute_id) == $r->id ? 'selected' : '' }}>
@@ -38,77 +37,77 @@
                         @endforeach
                     </select>
                     @error('rute_id')
-                        <p class="text-xs text-rose-500 font-semibold mt-1">{{ $message }}</p>
+                        <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Tanggal Keberangkatan -->
                 <div class="space-y-2">
-                    <label for="tanggal_keberangkatan" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Tanggal Keberangkatan</label>
+                    <label for="tanggal_keberangkatan" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Tanggal Keberangkatan</label>
                     <input type="date" name="tanggal_keberangkatan" id="tanggal_keberangkatan" value="{{ old('tanggal_keberangkatan', $jadwal->tanggal_keberangkatan->format('Y-m-d')) }}" required
-                           class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                           class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all">
                     @error('tanggal_keberangkatan')
-                        <p class="text-xs text-rose-500 font-semibold mt-1">{{ $message }}</p>
+                        <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Shift & Jam Berangkat -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
-                        <label for="shift" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Shift</label>
+                        <label for="shift" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Shift</label>
                         <select name="shift" id="shift" required
-                                class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer">
+                                class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all cursor-pointer">
                             <option value="pagi" {{ old('shift', $jadwal->shift) == 'pagi' ? 'selected' : '' }}>Pagi</option>
                             <option value="malam" {{ old('shift', $jadwal->shift) == 'malam' ? 'selected' : '' }}>Malam</option>
                         </select>
                         @error('shift')
-                            <p class="text-xs text-rose-500 font-semibold mt-1">{{ $message }}</p>
+                            <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div class="space-y-2">
-                        <label for="jam_berangkat" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Jam Keberangkatan</label>
+                        <label for="jam_berangkat" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Jam Keberangkatan</label>
                         <input type="time" name="jam_berangkat" id="jam_berangkat" value="{{ old('jam_berangkat', $jadwal->jam_berangkat->format('H:i')) }}" required
-                               class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                               class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all">
                         @error('jam_berangkat')
-                            <p class="text-xs text-rose-500 font-semibold mt-1">{{ $message }}</p>
+                            <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
 
                 <!-- Kuota (Kapasitas Penumpang) -->
                 <div class="space-y-2">
-                    <label for="kuota" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Kapasitas (Kuota Penumpang)</label>
+                    <label for="kuota" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Kapasitas (Kuota Penumpang)</label>
                     <input type="number" name="kuota" id="kuota" value="{{ old('kuota', $jadwal->kuota) }}" required min="1" max="50"
-                           class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all placeholder:text-slate-400"
+                           class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all placeholder:text-slate-400"
                            placeholder="Contoh: 5">
                     @error('kuota')
-                        <p class="text-xs text-rose-500 font-semibold mt-1">{{ $message }}</p>
+                        <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Status Jadwal -->
                 <div class="space-y-2">
-                    <label for="status_jadwal" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Status Jadwal</label>
+                    <label for="status_jadwal" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Status Jadwal</label>
                     <select name="status_jadwal" id="status_jadwal" required
-                            class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors cursor-pointer">
+                            class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all cursor-pointer">
                         <option value="aktif" {{ old('status_jadwal', $jadwal->status_jadwal) == 'aktif' ? 'selected' : '' }}>Aktif</option>
                         <option value="nonaktif" {{ old('status_jadwal', $jadwal->status_jadwal) == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
                         <option value="penuh" {{ old('status_jadwal', $jadwal->status_jadwal) == 'penuh' ? 'selected' : '' }}>Penuh</option>
                     </select>
                     @error('status_jadwal')
-                        <p class="text-xs text-rose-500 font-semibold mt-1">{{ $message }}</p>
+                        <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="pt-4 border-t border-slate-200 flex gap-4">
+                <div class="pt-6 border-t border-slate-100 flex gap-4">
                     <a href="{{ route('admin.jadwal.index') }}"
-                       class="flex-1 py-4 bg-white border border-slate-300 text-slate-700 font-medium rounded-xl text-xs text-center hover:bg-slate-50 transition-all shadow-sm">
+                       class="flex-1 py-4 bg-white border border-slate-200 text-slate-600 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center hover:bg-slate-50 transition-all shadow-sm active:scale-95">
                         Batal
                     </a>
                     <button type="submit"
-                            class="flex-1 py-4 bg-blue-800 hover:bg-blue-900 text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all active:scale-98">
+                            class="flex-1 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-[0.98] shadow-lg shadow-blue-600/10">
                         Simpan Perubahan
                     </button>
                 </div>

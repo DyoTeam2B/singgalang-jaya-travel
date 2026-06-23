@@ -109,7 +109,7 @@ class TripAssignTest extends TestCase
                 'booking_id' => $booking->id,
             ]);
 
-        $response->assertRedirect(route('admin.trips.show', $trip->id));
+        $response->assertRedirect(route('admin.trips.index'));
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('bookings', [

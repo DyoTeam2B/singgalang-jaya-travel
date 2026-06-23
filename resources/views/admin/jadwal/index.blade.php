@@ -5,12 +5,12 @@
         <!-- Header Section -->
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
-                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-[0.3em] mb-2">Manajemen Operasional</p>
-                <h1 class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">Jadwal Keberangkatan</h1>
-                <p class="text-sm font-bold text-slate-400 mt-1">Atur rute, shift, dan kapasitas keberangkatan harian.</p>
+                <p class="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-2">Manajemen Operasional</p>
+                <h1 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Jadwal Keberangkatan</h1>
+                <p class="text-sm font-semibold text-slate-500 mt-1">Atur rute, shift, dan kapasitas keberangkatan harian.</p>
             </div>
             <a href="{{ route('admin.jadwal.create') }}"
-               class="bg-blue-800 hover:bg-blue-900 text-white px-6 py-3.5 rounded-2xl text-[11px] font-bold uppercase tracking-widest shadow-sm flex items-center gap-2 transition-all active:scale-95">
+               class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3.5 rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-lg shadow-blue-600/10 flex items-center gap-2 transition-all active:scale-[0.98]">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
                 </svg>
@@ -24,16 +24,16 @@
         <!-- Tabs & Search Grid -->
         <div class="flex flex-col lg:flex-row gap-6">
             <!-- Tabs -->
-            <div class="bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-1 shrink-0">
+            <div class="bg-white p-1.5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-1 shrink-0">
                 <a href="{{ route('admin.jadwal.index', ['tab' => 'active', 'search' => $search]) }}"
-                   class="flex items-center gap-2 px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all {{ $tab === 'active' ? 'bg-blue-800 text-white shadow-sm' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50' }}">
+                   class="flex items-center gap-2 px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all {{ $tab === 'active' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-650 hover:bg-slate-50' }}">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zM14.25 15h.008v.008H14.25V15zm0 2.25h.008v.008H14.25v-.008zm2.25-2.25h.008v.008H16.5V15zm0 2.25h.008v.008H16.5v-.008z"></path>
                     </svg>
                     Jadwal Aktif
                 </a>
                 <a href="{{ route('admin.jadwal.index', ['tab' => 'history', 'search' => $search]) }}"
-                   class="flex items-center gap-2 px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all {{ $tab === 'history' ? 'bg-blue-800 text-white shadow-sm' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50' }}">
+                   class="flex items-center gap-2 px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all {{ $tab === 'history' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-650 hover:bg-slate-50' }}">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
@@ -42,7 +42,7 @@
             </div>
 
             <!-- Search -->
-            <div class="flex-1 bg-white rounded-2xl border border-slate-200 p-2 shadow-sm flex items-center gap-3">
+            <div class="flex-1 bg-white rounded-2xl border border-slate-200/80 p-2 shadow-sm flex items-center gap-3">
                 <form method="GET" action="{{ route('admin.jadwal.index') }}" class="w-full flex gap-3 items-center">
                     <input type="hidden" name="tab" value="{{ $tab }}">
                     <div class="relative flex-1">
@@ -50,13 +50,13 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                         <input type="text" name="search" value="{{ $search }}" placeholder="Cari rute, tanggal (YYYY-MM-DD), atau shift..."
-                               class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                               class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/60 rounded-xl text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all">
                     </div>
-                    <button type="submit" class="bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-black uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all shadow-md active:scale-95">
                         Cari
                     </button>
                     @if($search)
-                        <a href="{{ route('admin.jadwal.index', ['tab' => $tab]) }}" class="bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all">
+                        <a href="{{ route('admin.jadwal.index', ['tab' => $tab]) }}" class="bg-slate-100 hover:bg-slate-200 text-slate-650 text-[10px] font-black uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all border border-slate-200/40 text-center">
                             Reset
                         </a>
                     @endif

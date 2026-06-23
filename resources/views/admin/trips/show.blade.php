@@ -96,7 +96,7 @@
                     <input type="hidden" name="status_trip" value="completed">
                     <button type="submit" 
                             onclick="return confirm('Apakah Anda yakin ingin menyelesaikan trip ini? Status seluruh booking akan diubah menjadi Selesai.')"
-                            class="flex items-center gap-2 px-6 py-3.5 bg-blue-800 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-900 transition-all active:scale-95 shadow-xl shadow-blue-800/20">
+                            class="flex items-center gap-2 px-6 py-3.5 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-600/10">
                         <!-- Check Circle Icon -->
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -130,7 +130,7 @@
                     @method('PUT')
                     <input type="hidden" name="status_trip" value="on_trip">
                     <button type="submit" 
-                            class="flex items-center gap-2 px-6 py-3.5 bg-blue-800 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-900 transition-all active:scale-95 shadow-xl shadow-blue-800/20">
+                            class="flex items-center gap-2 px-6 py-3.5 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-600/10">
                         <!-- Play Icon -->
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"></path>
@@ -164,7 +164,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 
         <!-- Left Column: Main Trip Info Card -->
-        <div class="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm p-6 md:p-8 space-y-8">
+        <div class="lg:col-span-2 bg-white rounded-[2rem] border border-slate-200/80 shadow-sm p-6 md:p-8 space-y-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- Route & Schedule Details -->
                 <div class="space-y-6">
@@ -238,15 +238,15 @@
             @if($trip->status_trip !== 'completed' && $trip->status_trip !== 'cancelled')
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6 border-t border-slate-100">
                     <button @click="isDriverModalOpen = true"
-                            class="flex items-center justify-center gap-3 py-3.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:border-slate-400 transition-all active:scale-[0.98] shadow-sm">
+                            class="flex items-center justify-center gap-3 py-3.5 bg-white border border-slate-200 text-slate-600 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-[0.98] shadow-sm">
                         <!-- UserPlus Icon -->
-                        <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.3 20.737a12.318 12.318 0 01-6.3-1.502z"></path>
                         </svg>
                         Tugaskan / Ganti Driver
                     </button>
                     <button @click="isBookingModalOpen = true"
-                            class="flex items-center justify-center gap-3 py-3.5 bg-blue-800 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-900 transition-all active:scale-[0.98] shadow-md shadow-blue-800/10">
+                            class="flex items-center justify-center gap-3 py-3.5 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-[0.98] shadow-lg shadow-blue-600/10">
                         <!-- Users Icon -->
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.3 20.737a12.318 12.318 0 01-6.3-1.502z"></path>
@@ -258,7 +258,7 @@
         </div>
 
         <!-- Right Column: Trip Summary Card -->
-        <div class="bg-slate-900 rounded-3xl p-6 md:p-8 text-white relative overflow-hidden shadow-xl shadow-slate-900/10 border border-slate-800 self-stretch flex flex-col justify-between">
+        <div class="bg-slate-900 rounded-[2rem] p-6 md:p-8 text-white relative overflow-hidden shadow-xl shadow-slate-900/10 border border-slate-800 self-stretch flex flex-col justify-between">
             <div class="absolute top-0 right-0 w-32 h-32 bg-blue-600/15 rounded-full -mr-16 -mt-16 blur-3xl"></div>
             
             <div class="relative z-10 space-y-8">
@@ -319,7 +319,7 @@
         subtitle="Titik jemput dan antar pada trip ini"
     />
     <!-- Passenger Manifest Table Card -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-[2rem] border border-slate-200/80 shadow-sm overflow-hidden">
         <div class="p-6 md:p-8 border-b border-slate-100 flex items-center justify-between gap-4 flex-wrap">
             <h3 class="text-sm font-black text-slate-800 uppercase tracking-[0.2em] flex items-center gap-3">
                 <!-- Users Manifest Icon -->
@@ -328,14 +328,6 @@
                 </svg>
                 Manifes Penumpang
             </h3>
-            
-            <a href="#" class="text-[10px] font-black text-blue-600 hover:text-blue-800 uppercase tracking-widest hover:underline flex items-center gap-1.5 transition-colors">
-                <!-- Download icon -->
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"></path>
-                </svg>
-                Cetak Manifest (PDF)
-            </a>
         </div>
 
         <div class="overflow-x-auto">
@@ -479,7 +471,7 @@
                         <input type="text" 
                                x-model="driverSearch" 
                                placeholder="Cari driver, plat nomor, atau jenis mobil..."
-                               class="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                               class="w-full pl-11 pr-4 py-3 bg-white border border-slate-200/60 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all shadow-sm">
                     </div>
                 </div>
 
@@ -532,7 +524,7 @@
                                     @method('PUT')
                                     <input type="hidden" name="driver_id" value="{{ $driver->id }}">
                                     <button type="submit" 
-                                            class="px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest bg-blue-800 text-white hover:bg-blue-900 transition-all active:scale-95 shadow-sm shadow-blue-800/10">
+                                            class="px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest bg-blue-600 text-white hover:bg-blue-700 transition-all active:scale-95 shadow-md shadow-blue-600/10">
                                         Pilih
                                     </button>
                                 </form>
@@ -649,7 +641,7 @@
                                     @csrf
                                     <input type="hidden" name="booking_id" value="{{ $booking->id }}">
                                     <button type="submit" 
-                                            class="px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest bg-blue-800 text-white hover:bg-blue-900 transition-all active:scale-95 shadow-sm shadow-blue-800/10">
+                                            class="px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest bg-blue-600 text-white hover:bg-blue-700 transition-all active:scale-95 shadow-md shadow-blue-600/10">
                                         Tugaskan
                                     </button>
                                 </form>

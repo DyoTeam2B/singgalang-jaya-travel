@@ -12,7 +12,7 @@
             </div>
             <div class="flex items-center gap-3">
                 <a href="{{ route('admin.trips.create') }}"
-                   class="bg-blue-800 hover:bg-blue-900 text-white px-6 py-3.5 rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-xl shadow-blue-800/20 flex items-center gap-2 transition-all active:scale-95">
+                   class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-600/10 flex items-center gap-2 transition-all active:scale-[0.98]">
                     <!-- Plus Icon -->
                     <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
@@ -26,36 +26,50 @@
         <x-alert />
 
         <!-- Status Filter Tabs -->
-        <div class="flex items-center gap-2 bg-slate-100/80 p-1.5 rounded-2xl w-fit border border-slate-200 overflow-x-auto no-scrollbar shadow-inner">
+        <div class="flex items-center gap-2 bg-slate-100/60 p-1.5 rounded-2xl w-fit border border-slate-200/60 overflow-x-auto no-scrollbar shadow-inner max-w-full">
+            <a href="{{ route('admin.trips.index', ['status' => 'new', 'search' => $search]) }}"
+               class="px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ $status === 'new' ? 'bg-white text-slate-900 shadow-sm border border-slate-200/50' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50' }}">
+                Baru Dibuat
+                <span class="ml-3 px-2 py-0.5 rounded-lg text-[9px] {{ $status === 'new' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500' }}">
+                    {{ $counts['new'] }}
+                </span>
+            </a>
             <a href="{{ route('admin.trips.index', ['status' => 'ready', 'search' => $search]) }}"
-               class="px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ $status === 'ready' ? 'bg-white text-slate-900 shadow-sm border border-slate-200' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50' }}">
+               class="px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ $status === 'ready' ? 'bg-white text-slate-900 shadow-sm border border-slate-200/50' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50' }}">
                 Siap Keberangkatan
-                <span class="ml-3 px-2 py-0.5 rounded-lg text-[9px] {{ $status === 'ready' ? 'bg-slate-900 text-white' : 'bg-slate-200 text-slate-500' }}">
+                <span class="ml-3 px-2 py-0.5 rounded-lg text-[9px] {{ $status === 'ready' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500' }}">
                     {{ $counts['ready'] }}
                 </span>
             </a>
             <a href="{{ route('admin.trips.index', ['status' => 'on_trip', 'search' => $search]) }}"
-               class="px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ $status === 'on_trip' ? 'bg-white text-slate-900 shadow-sm border border-slate-200' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50' }}">
+               class="px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ $status === 'on_trip' ? 'bg-white text-slate-900 shadow-sm border border-slate-200/50' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50' }}">
                 Dalam Perjalanan
-                <span class="ml-3 px-2 py-0.5 rounded-lg text-[9px] {{ $status === 'on_trip' ? 'bg-slate-900 text-white' : 'bg-slate-200 text-slate-500' }}">
+                <span class="ml-3 px-2 py-0.5 rounded-lg text-[9px] {{ $status === 'on_trip' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500' }}">
                     {{ $counts['on_trip'] }}
                 </span>
             </a>
             <a href="{{ route('admin.trips.index', ['status' => 'completed', 'search' => $search]) }}"
-               class="px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ $status === 'completed' ? 'bg-white text-slate-900 shadow-sm border border-slate-200' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50' }}">
+               class="px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ $status === 'completed' ? 'bg-white text-slate-900 shadow-sm border border-slate-200/50' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50' }}">
                 Selesai
-                <span class="ml-3 px-2 py-0.5 rounded-lg text-[9px] {{ $status === 'completed' ? 'bg-slate-900 text-white' : 'bg-slate-200 text-slate-500' }}">
+                <span class="ml-3 px-2 py-0.5 rounded-lg text-[9px] {{ $status === 'completed' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500' }}">
                     {{ $counts['completed'] }}
+                </span>
+            </a>
+            <a href="{{ route('admin.trips.index', ['status' => 'cancelled', 'search' => $search]) }}"
+               class="px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap {{ $status === 'cancelled' ? 'bg-white text-slate-900 shadow-sm border border-slate-200/50' : 'text-slate-400 hover:text-slate-600 hover:bg-white/50' }}">
+                Dibatalkan
+                <span class="ml-3 px-2 py-0.5 rounded-lg text-[9px] {{ $status === 'cancelled' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500' }}">
+                    {{ $counts['cancelled'] }}
                 </span>
             </a>
         </div>
 
         <!-- Layout Grid: Left (Booking Queue), Right (Trip Cards) -->
-        <div class="flex flex-col xl:flex-row gap-8 items-start">
+        <div class="flex flex-col xl:flex-row gap-8 items-start w-full min-w-0">
 
             <!-- Left Panel: Verified Booking Queue -->
             <div class="w-full xl:w-[380px] shrink-0 flex flex-col">
-                <div class="flex items-center justify-between mb-4 px-5 py-3 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex items-center justify-between mb-4 px-5 py-4 bg-white rounded-2xl border border-slate-200/80 shadow-sm">
                     <h2 class="text-[10px] font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2">
                         <!-- Shield Verified Icon -->
                         <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -68,7 +82,7 @@
 
                 <div class="space-y-4 max-h-[600px] overflow-y-auto pr-1">
                     @forelse($bookings as $booking)
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-blue-300 transition-all space-y-4 relative group">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:border-blue-500/30 hover:shadow-md transition-all space-y-4 relative group">
                             <!-- Booking Header -->
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-1.5">
@@ -128,12 +142,12 @@
                                             assignBookingCode = '{{ $booking->kode_booking }}';
                                             tripsForAssign = {{ json_encode($tripsForThisBooking) }};
                                         "
-                                        class="w-full py-2.5 bg-blue-800 hover:bg-blue-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-1.5 border border-blue-900 transition-all shadow-sm active:scale-95">
+                                        class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all shadow-md shadow-blue-600/10 active:scale-[0.98]">
                                     Assign ke Trip
                                 </button>
                             @else
                                 <a href="{{ route('admin.trips.create', ['jadwal_id' => $booking->jadwal_id]) }}"
-                                   class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-1.5 border border-slate-200 text-center transition-all">
+                                   class="w-full py-3 bg-slate-50 border border-slate-200/60 hover:bg-slate-100 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all active:scale-[0.98] text-center">
                                     Buat Trip Baru
                                 </a>
                             @endif
@@ -151,10 +165,10 @@
             </div>
 
             <!-- Right Panel: Trip Cards & Search -->
-            <div class="flex-1 w-full flex flex-col space-y-6">
+            <div class="flex-1 w-full min-w-0 flex flex-col space-y-6">
 
                 <!-- Search/Filter Bar -->
-                <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm">
                     <form method="GET" action="{{ route('admin.trips.index') }}" class="flex flex-wrap gap-4 items-center">
                         <input type="hidden" name="status" value="{{ $status }}">
                         <div class="relative flex-1 min-w-[240px]">
@@ -163,13 +177,13 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
                             <input type="text" name="search" value="{{ $search }}" placeholder="Cari driver, plat nomor, kota asal/tujuan..."
-                                   class="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                                   class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200/60 rounded-xl text-xs font-bold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all shadow-sm">
                         </div>
-                        <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-black uppercase tracking-widest px-6 py-3 rounded-xl transition-all">
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-black uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all shadow-md active:scale-95">
                             Filter
                         </button>
                         @if($search)
-                            <a href="{{ route('admin.trips.index', ['status' => $status]) }}" class="bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-black uppercase tracking-widest px-6 py-3 rounded-xl transition-all">
+                            <a href="{{ route('admin.trips.index', ['status' => $status]) }}" class="bg-slate-100 hover:bg-slate-200 text-slate-650 text-[10px] font-black uppercase tracking-widest px-6 py-3.5 rounded-xl transition-all border border-slate-200/40 text-center">
                                 Reset
                             </a>
                         @endif
@@ -187,11 +201,11 @@
                             $isFull = $totalPax >= $capacity;
                             $percentage = min(100, ($totalPax / $capacity) * 100);
                         @endphp
-                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-all">
+                        <div class="bg-white rounded-[2rem] border border-slate-200/80 shadow-sm overflow-hidden hover:shadow-md transition-all">
                             <!-- Card Header Info -->
                             <div class="p-6 bg-slate-50/50 border-b border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-4">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 bg-blue-800 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-md shadow-blue-800/10">
+                                    <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-blue-600/15">
                                         <!-- Car Icon -->
                                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.129-1.125V11.25c0-.447-.266-.852-.676-1.03l-2.222-.962V5.25a2.25 2.25 0 00-2.25-2.25h-5.25a2.25 2.25 0 00-2.25 2.25v2.607L6.216 9.19a1.125 1.125 0 00-.676 1.03v4.5c0 .621.504 1.125 1.125 1.125h1.125m9.75 0v-4.5M6.75 14.25h12m-.75-3.75h-10.5M12 3v3.75M9.75 6.75H12"></path>
@@ -200,7 +214,7 @@
                                     <div>
                                         <div class="flex flex-wrap items-center gap-2 mb-1">
                                             <span class="text-lg font-black text-slate-900">TRP-{{ str_pad($trip->id, 3, '0', STR_PAD_LEFT) }}</span>
-                                            <span class="px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase border bg-blue-50 text-blue-700 border-blue-100">
+                                            <span class="px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase border bg-blue-50 text-blue-600 border-blue-100">
                                                 {{ $trip->jadwal->tanggal_keberangkatan->format('d M Y') }}
                                             </span>
                                             <span class="px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase border {{ strtolower($trip->jadwal->shift) === 'pagi' ? 'bg-orange-50 text-orange-600 border-orange-100' : 'bg-indigo-50 text-indigo-600 border-indigo-100' }}">
@@ -226,11 +240,11 @@
                                 <div class="flex flex-col items-end gap-1">
                                     <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Okupansi Kursi</p>
                                     <div class="flex items-center gap-3">
-                                        <div class="w-24 h-2.5 bg-slate-200 rounded-full overflow-hidden shadow-inner">
-                                            <div class="h-full {{ $isFull ? 'bg-red-600' : 'bg-blue-600 shadow-[0_0_8px_rgba(30,58,138,0.3)]' }} transition-all"
+                                        <div class="w-24 h-2 bg-slate-100 rounded-full overflow-hidden shadow-inner border border-slate-200/40">
+                                            <div class="h-full {{ $isFull ? 'bg-rose-500' : 'bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.3)]' }} transition-all"
                                                  style="width: {{ $percentage }}%"></div>
                                         </div>
-                                        <span class="text-sm font-black {{ $isFull ? 'text-red-600' : 'text-slate-800' }}">
+                                        <span class="text-sm font-black {{ $isFull ? 'text-rose-600' : 'text-slate-800' }}">
                                             {{ $totalPax }}/{{ $capacity }}
                                         </span>
                                     </div>
@@ -241,18 +255,18 @@
                             <div class="p-6 bg-white space-y-4">
                                 <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-400">
                                     <span>Manifes Penumpang</span>
-                                    <span class="text-blue-800">Rute: {{ $trip->jadwal->rute->asal }} → {{ $trip->jadwal->rute->tujuan }}</span>
+                                    <span class="text-blue-600">Rute: {{ $trip->jadwal->rute->asal }} → {{ $trip->jadwal->rute->tujuan }}</span>
                                 </div>
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     @forelse($trip->detailTrips as $detail)
-                                        <div class="flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100 hover:border-blue-100 transition-colors">
-                                            <div class="w-8 h-8 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-xs font-black text-slate-900 shrink-0 shadow-sm">
+                                        <div class="flex items-center gap-3 bg-slate-50/50 p-4 rounded-xl border border-slate-100/80 hover:border-blue-500/20 transition-all">
+                                            <div class="w-8 h-8 bg-white border border-slate-200/60 rounded-lg flex items-center justify-center text-xs font-black text-slate-900 shrink-0 shadow-sm">
                                                 {{ $detail->booking->jumlah_penumpang }}
                                             </div>
                                             <div class="min-w-0 flex-1">
                                                 <p class="text-xs font-black text-slate-900 truncate">{{ $detail->booking->pelanggan->nama }}</p>
-                                                <p class="text-[9px] font-bold text-blue-700 truncate mt-0.5">Berangkat: {{ $trip->jadwal->tanggal_keberangkatan->format('d M Y') }} - {{ ucfirst($trip->jadwal->shift) }} {{ $trip->jadwal->jam_berangkat->format('H:i') }} WIB</p>
+                                                <p class="text-[9px] font-bold text-blue-600 truncate mt-0.5">Berangkat: {{ $trip->jadwal->tanggal_keberangkatan->format('d M Y') }} - {{ ucfirst($trip->jadwal->shift) }} {{ $trip->jadwal->jam_berangkat->format('H:i') }} WIB</p>
                                                 <p class="text-[9px] font-bold text-slate-400 truncate mt-0.5">Jemput: {{ $detail->booking->alamat_jemput }}</p>
                                             </div>
                                         </div>
@@ -268,7 +282,7 @@
                             </div>
 
                             <!-- Card Footer Actions -->
-                            <div class="p-6 bg-slate-50/30 border-t border-slate-200 flex flex-wrap items-center justify-between gap-4">
+                            <div class="p-6 bg-slate-50/50 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
                                 <div class="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-slate-400">
                                     <span class="flex items-center gap-1">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -283,12 +297,12 @@
                                         </svg>
                                         {{ $trip->jadwal->jam_berangkat instanceof \DateTime ? $trip->jadwal->jam_berangkat->format('H:i') : \Carbon\Carbon::parse($trip->jadwal->jam_berangkat)->format('H:i') }} WIB
                                     </span>
-                                    <span>Â·</span>
+                                    <span>·</span>
                                     <span>{{ $trip->status_trip }}</span>
                                 </div>
                                 <div class="flex items-center gap-3">
                                     <a href="{{ route('admin.trips.show', $trip->id) }}"
-                                       class="px-5 py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm">
+                                       class="px-5 py-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-650 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm active:scale-95">
                                         Detail Trip
                                     </a>
                                 </div>
@@ -363,7 +377,7 @@
                                     @csrf
                                     <input type="hidden" name="booking_id" :value="assignBookingId">
                                     <button type="submit" 
-                                            class="px-4 py-2 bg-blue-800 hover:bg-blue-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-sm">
+                                            class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[9px] font-black uppercase tracking-widest transition-all active:scale-95 shadow-md shadow-blue-600/10">
                                         Pilih
                                     </button>
                                 </form>

@@ -57,10 +57,10 @@
     </div>
 
     <!-- Main Grid (Table + Detail Panel) -->
-    <div class="flex flex-col xl:flex-row gap-6 items-start">
+    <div class="flex flex-col xl:flex-row gap-6 items-start w-full min-w-0">
         
         <!-- Table/Cards Section -->
-        <div class="flex-1 w-full bg-white rounded-[2rem] border border-slate-200/60 shadow-sm flex flex-col overflow-hidden">
+        <div class="flex-1 w-full min-w-0 bg-white rounded-[2rem] border border-slate-200/60 shadow-sm flex flex-col overflow-hidden">
             <!-- Mobile Cards view -->
             <div class="grid grid-cols-1 gap-4 p-6 xl:hidden">
                 @forelse ($payments as $p)
@@ -117,7 +117,7 @@
             </div>
 
             <!-- Desktop Table view -->
-            <div class="hidden xl:block overflow-x-auto">
+            <div class="hidden xl:block overflow-x-auto w-full max-w-full">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-50/50 border-b border-slate-100">

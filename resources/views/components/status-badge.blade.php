@@ -43,6 +43,7 @@
     };
 @endphp
 
-<span {{ $attributes->merge(['class' => 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ' . $config['classes']]) }}>
+<span {{ $attributes->merge(['class' => 'inline-flex items-center px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider border ' . $config['classes']]) }}>
     {{ $config['label'] }}
 </span>
+

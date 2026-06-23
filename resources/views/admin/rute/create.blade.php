@@ -16,58 +16,51 @@
             </div>
         </div>
 
-        <!-- Form Card -->
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-[2rem] border border-slate-200/80 shadow-sm overflow-hidden">
             <form method="POST" action="{{ route('admin.rute.store') }}" class="p-8 sm:p-10 space-y-6">
                 @csrf
 
                 <!-- Kota Asal -->
                 <div class="space-y-2">
-                    <label for="asal" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Kota Asal</label>
-                    <div class="relative">
-                        <input type="text" name="asal" id="asal" value="{{ old('asal') }}" required
-                               class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all placeholder:text-slate-400"
-                               placeholder="Contoh: Padang Panjang">
-                    </div>
+                    <label for="asal" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Kota Asal</label>
+                    <input type="text" name="asal" id="asal" value="{{ old('asal') }}" required
+                           class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all placeholder:text-slate-400"
+                           placeholder="Contoh: Padang Panjang">
                     @error('asal')
-                        <p class="text-xs text-rose-500 font-semibold mt-1">{{ $message }}</p>
+                        <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Kota Tujuan -->
                 <div class="space-y-2">
-                    <label for="tujuan" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Kota Tujuan</label>
-                    <div class="relative">
-                        <input type="text" name="tujuan" id="tujuan" value="{{ old('tujuan') }}" required
-                               class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all placeholder:text-slate-400"
-                               placeholder="Contoh: Pekanbaru">
-                    </div>
+                    <label for="tujuan" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Kota Tujuan</label>
+                    <input type="text" name="tujuan" id="tujuan" value="{{ old('tujuan') }}" required
+                           class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all placeholder:text-slate-400"
+                           placeholder="Contoh: Pekanbaru">
                     @error('tujuan')
-                        <p class="text-xs text-rose-500 font-semibold mt-1">{{ $message }}</p>
+                        <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Tarif -->
                 <div class="space-y-2">
-                    <label for="tarif" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Tarif (Rp)</label>
-                    <div class="relative">
-                        <input type="number" name="tarif" id="tarif" value="{{ old('tarif') }}" required min="0"
-                               class="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all placeholder:text-slate-400"
-                               placeholder="Contoh: 150000">
-                    </div>
+                    <label for="tarif" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Tarif (Rp)</label>
+                    <input type="number" name="tarif" id="tarif" value="{{ old('tarif') }}" required min="0"
+                           class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all placeholder:text-slate-400"
+                           placeholder="Contoh: 150000">
                     @error('tarif')
-                        <p class="text-xs text-rose-500 font-semibold mt-1">{{ $message }}</p>
+                        <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="pt-4 border-t border-slate-200 flex gap-4">
+                <div class="pt-6 border-t border-slate-100 flex gap-4">
                     <a href="{{ route('admin.rute.index') }}"
-                       class="flex-1 py-4 bg-white border border-slate-300 text-slate-700 font-medium rounded-xl text-xs text-center hover:bg-slate-50 transition-all shadow-sm">
+                       class="flex-1 py-4 bg-white border border-slate-200 text-slate-600 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center hover:bg-slate-50 transition-all shadow-sm active:scale-95">
                         Batal
                     </a>
                     <button type="submit"
-                            class="flex-1 py-4 bg-blue-800 hover:bg-blue-900 text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all active:scale-98">
+                            class="flex-1 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-[0.98] shadow-lg shadow-blue-600/10">
                         Simpan Rute
                     </button>
                 </div>

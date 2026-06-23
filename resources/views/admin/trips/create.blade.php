@@ -34,8 +34,8 @@
                 <p class="text-sm font-bold text-slate-400 mt-1">Pilih jadwal dan driver. Armada otomatis mengikuti armada milik driver.</p>
             </div>
             <a href="{{ route('admin.trips.index') }}"
-               class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium px-5 py-3 rounded-xl text-xs flex items-center gap-2 transition-all">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+               class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 px-5 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all active:scale-95 shadow-sm">
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"></path>
                 </svg>
                 Kembali
@@ -44,17 +44,17 @@
 
         <x-alert />
 
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
+        <div class="bg-white rounded-[2rem] border border-slate-200/80 shadow-sm p-8 sm:p-10">
             <form action="{{ route('admin.trips.store') }}" method="POST" class="space-y-6">
                 @csrf
 
-                <div>
+                <div class="space-y-2">
                     <div class="flex items-center justify-between mb-1">
-                        <label for="jadwal_id" class="block text-sm font-medium text-slate-700">Jadwal Keberangkatan</label>
-                        <span class="text-xs font-bold text-slate-400" x-text="schedules.length + ' jadwal aktif tersedia'"></span>
+                        <label for="jadwal_id" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Jadwal Keberangkatan</label>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase" x-text="schedules.length + ' jadwal aktif tersedia'"></span>
                     </div>
-                    <select id="jadwal_id" name="jadwal_id" x-model="scheduleId"
-                            class="w-full border border-slate-300 rounded-xl h-12 px-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                    <select id="jadwal_id" name="jadwal_id" x-model="scheduleId" required
+                            class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all cursor-pointer">
                         <option value="">Pilih Jadwal Aktif...</option>
                         @foreach($schedules as $schedule)
                             <option value="{{ $schedule->id }}">
@@ -63,17 +63,17 @@
                         @endforeach
                     </select>
                     @error('jadwal_id')
-                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div>
+                <div class="space-y-2">
                     <div class="flex items-center justify-between mb-1">
-                        <label for="driver_id" class="block text-sm font-medium text-slate-700">Driver</label>
-                        <span class="text-xs font-bold text-slate-400" x-text="drivers.length + ' driver aktif tersedia'"></span>
+                        <label for="driver_id" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Driver</label>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase" x-text="drivers.length + ' driver aktif tersedia'"></span>
                     </div>
-                    <select id="driver_id" name="driver_id" x-model="driverId"
-                            class="w-full border border-slate-300 rounded-xl h-12 px-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                    <select id="driver_id" name="driver_id" x-model="driverId" required
+                            class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all cursor-pointer">
                         <option value="">Pilih Driver Tersedia...</option>
                         @foreach($drivers as $driver)
                             <option value="{{ $driver->id }}">
@@ -82,53 +82,53 @@
                         @endforeach
                     </select>
                     @error('driver_id')
-                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <template x-if="selectedSchedule">
-                    <div class="p-5 bg-slate-50 border border-slate-200 rounded-xl space-y-2 animate-in fade-in duration-300">
-                        <p class="text-[10px] font-black text-blue-700 uppercase tracking-widest">Detail Rencana Keberangkatan</p>
+                    <div class="p-5 bg-slate-50 border border-slate-200/60 rounded-[1.5rem] space-y-2 animate-in fade-in duration-300">
+                        <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Detail Rencana Keberangkatan</p>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-bold text-slate-600">
                             <div>
-                                <p class="text-[10px] font-medium text-slate-400 uppercase">Rute</p>
-                                <p class="text-slate-900 font-extrabold mt-0.5" x-text="selectedSchedule.route"></p>
+                                <p class="text-[10px] font-black text-slate-400 uppercase">Rute</p>
+                                <p class="text-slate-900 font-black mt-0.5" x-text="selectedSchedule.route"></p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-medium text-slate-400 uppercase">Tanggal</p>
-                                <p class="text-slate-900 font-extrabold mt-0.5" x-text="selectedSchedule.date"></p>
+                                <p class="text-[10px] font-black text-slate-400 uppercase">Tanggal</p>
+                                <p class="text-slate-900 font-black mt-0.5" x-text="selectedSchedule.date"></p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-medium text-slate-400 uppercase">Shift / Waktu</p>
-                                <p class="text-slate-900 font-extrabold mt-0.5" x-text="selectedSchedule.shift + ' - ' + selectedSchedule.time"></p>
+                                <p class="text-[10px] font-black text-slate-400 uppercase">Shift / Waktu</p>
+                                <p class="text-slate-900 font-black mt-0.5" x-text="selectedSchedule.shift + ' - ' + selectedSchedule.time"></p>
                             </div>
                         </div>
                     </div>
                 </template>
 
                 <template x-if="selectedDriver">
-                    <div class="p-5 bg-emerald-50/50 border border-emerald-100 rounded-xl space-y-2 animate-in fade-in duration-300">
+                    <div class="p-5 bg-emerald-50/50 border border-emerald-100 rounded-[1.5rem] space-y-2 animate-in fade-in duration-300">
                         <p class="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Detail Driver & Armada</p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-bold text-slate-600">
                             <div>
-                                <p class="text-[10px] font-medium text-slate-400 uppercase">Nama Driver</p>
-                                <p class="text-slate-900 font-extrabold mt-0.5" x-text="selectedDriver.name"></p>
+                                <p class="text-[10px] font-black text-slate-400 uppercase">Nama Driver</p>
+                                <p class="text-slate-900 font-black mt-0.5" x-text="selectedDriver.name"></p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-medium text-slate-400 uppercase">Kontak HP</p>
-                                <p class="text-slate-900 font-extrabold mt-0.5" x-text="selectedDriver.phone"></p>
+                                <p class="text-[10px] font-black text-slate-400 uppercase">Kontak HP</p>
+                                <p class="text-slate-900 font-black mt-0.5" x-text="selectedDriver.phone"></p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-medium text-slate-400 uppercase">Mobil / Tipe</p>
-                                <p class="text-slate-900 font-extrabold mt-0.5" x-text="selectedDriver.armada_name"></p>
+                                <p class="text-[10px] font-black text-slate-400 uppercase">Mobil / Tipe</p>
+                                <p class="text-slate-900 font-black mt-0.5" x-text="selectedDriver.armada_name"></p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-medium text-slate-400 uppercase">Plat Nomor</p>
-                                <p class="text-slate-900 font-extrabold mt-0.5" x-text="selectedDriver.armada_plate"></p>
+                                <p class="text-[10px] font-black text-slate-400 uppercase">Plat Nomor</p>
+                                <p class="text-slate-900 font-black mt-0.5" x-text="selectedDriver.armada_plate"></p>
                             </div>
                             <div>
-                                <p class="text-[10px] font-medium text-slate-400 uppercase">Kapasitas Kursi</p>
-                                <p class="text-slate-900 font-extrabold mt-0.5" x-text="selectedDriver.armada_capacity + ' Kursi'"></p>
+                                <p class="text-[10px] font-black text-slate-400 uppercase">Kapasitas Kursi</p>
+                                <p class="text-slate-900 font-black mt-0.5" x-text="selectedDriver.armada_capacity + ' Kursi'"></p>
                             </div>
                         </div>
                     </div>
@@ -143,13 +143,13 @@
                     </p>
                 </div>
 
-                <div class="flex items-center gap-4 pt-4 border-t border-slate-100 justify-end">
+                <div class="flex items-center gap-4 pt-6 border-t border-slate-100 justify-end">
                     <a href="{{ route('admin.trips.index') }}"
-                       class="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold px-6 py-3 rounded-xl transition-colors text-sm">
+                       class="py-4 px-8 bg-white border border-slate-200 text-slate-600 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center hover:bg-slate-50 transition-all shadow-sm active:scale-95">
                         Batal
                     </a>
                     <button type="submit"
-                            class="bg-blue-800 hover:bg-blue-900 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm">
+                            class="py-4 px-8 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-[0.98] shadow-lg shadow-blue-600/10">
                         Buat Trip
                     </button>
                 </div>
