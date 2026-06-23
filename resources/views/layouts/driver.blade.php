@@ -20,7 +20,7 @@
     <div x-data="{ sidebarMobileOpen: false, profileDropdownOpen: false, logoutModalOpen: false }" class="min-h-screen flex relative overflow-x-hidden">
         
         <!-- Sidebar - Desktop (Static) -->
-        <aside class="hidden lg:flex lg:flex-col lg:w-72 lg:fixed lg:inset-y-0 lg:bg-slate-900 lg:text-slate-300 lg:z-50 lg:border-r lg:border-white/10 lg:shadow-2xl">
+        <aside class="hidden lg:flex lg:flex-col lg:w-72 lg:fixed lg:inset-y-0 lg:bg-[#0B1329] lg:text-slate-300 lg:z-50 lg:border-r lg:border-white/5 lg:shadow-2xl">
             <x-sidebar-driver />
         </aside>
 
@@ -36,11 +36,11 @@
              x-transition:leave-end="opacity-0">
             
             <!-- Dark Overlay background -->
-            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
                  @click="sidebarMobileOpen = false"></div>
             
             <!-- Drawer Content -->
-            <aside class="absolute inset-y-0 left-0 w-72 bg-slate-900 text-slate-300 shadow-2xl flex flex-col"
+            <aside class="absolute inset-y-0 left-0 w-72 bg-[#0B1329] text-slate-300 shadow-2xl flex flex-col"
                    x-show="sidebarMobileOpen"
                    x-transition:enter="transition-transform duration-300 ease-out"
                    x-transition:enter-start="-translate-x-full"
@@ -50,22 +50,20 @@
                    x-transition:leave-end="-translate-x-full">
                 
                 <!-- Close Button -->
-                <div class="flex justify-end p-4 lg:hidden">
-                    <button @click="sidebarMobileOpen = false"
-                            class="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-xl transition-all">
-                        <!-- X Icon -->
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
+                <button @click="sidebarMobileOpen = false"
+                        class="absolute top-6 right-6 p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-xl transition-all lg:hidden z-50">
+                    <!-- X Icon -->
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
                 
                 <x-sidebar-driver />
             </aside>
         </div>
 
         <!-- Main Content Wrapper -->
-        <div class="flex-1 flex flex-col lg:pl-72 min-h-screen">
+        <div class="flex-1 flex flex-col lg:pl-72 min-h-screen min-w-0 w-full max-w-full overflow-x-hidden">
             
             <!-- Top Navbar -->
             <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-40 shrink-0">
