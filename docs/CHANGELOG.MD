@@ -33,6 +33,24 @@ Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 ### Notes
 
 * Perubahan telah diverifikasi dengan caching view (`php artisan view:cache`) dan pengujian suite (`php artisan test`) yang meluluskan seluruh 62 tes.
+## [2026-06-23] - Nayasha - Sprint 5 Responsiveness
+
+### Added
+
+* Tampilan stacking cards yang responsif pada mobile (`block md:hidden`/`block xl:hidden`) untuk tabel Booking, Pembayaran, dan Driver.
+* Overlay/backdrop modal detail yang berpusat (`fixed inset-0 z-[150] ...`) pada mobile untuk Pembayaran detail dan Driver detail.
+* Tombol tutup/dismiss detail panel pada mobile yang membersihkan status pencarian dengan route link stripping query parameter `selected_id`.
+
+### Changed
+
+* Refactoring file `livewire/admin/booking-table.blade.php` untuk melipat baris tabel menjadi kartu-kartu informatif pada layar mobile.
+* Refactoring file `livewire/admin/pembayaran-table.blade.php` untuk melipat baris tabel menjadi kartu-kartu informatif pada layar mobile, serta menampilkan detail pembayaran sebagai backdrop overlay terpusat di layar mobile.
+* Refactoring file `admin/drivers/index.blade.php` untuk mendukung tampilan mobile kartu pengemudi, overlay backdrop untuk rincian detail pengemudi, serta responsive padding dan rounded corners pada modal Tambah/Edit Driver.
+
+### Tested
+
+* `php artisan view:cache` (Pass)
+* `php artisan test` (62 passed, 237 assertions)
 
 ## [2026-06-22] - Tim - Sprint 4 Maps & Integration
 
