@@ -284,16 +284,16 @@ Semua tugas fondasi telah diselesaikan: Setup project, Breeze auth, RoleMiddlewa
 
 **Durasi**: 4 hari
 
-| Task | PIC | Keterangan |
-|------|-----|------------|
-| Responsive landing page | RYH | Mobile + tablet |
-| Responsive admin sidebar (hamburger) | RYF | Mobile drawer |
-| Responsive driver panel | KVN | Mobile-friendly manifest |
-| Responsive forms & tables | NYS | Horizontal scroll, stack cards |
-| Form validation (semua form) | Semua | Server-side + client-side |
-| Error handling & flash messages | Semua | Alert component |
-| UI polish (Poppins font, spacing, shadows) | Semua | Sesuai design rules |
-| Loading states | Semua | Button loading, Livewire loading |
+| Task | PIC | Keterangan | Status |
+|------|-----|------------|--------|
+| Responsive landing page | RYH | Mobile + tablet | ✅ Selesai |
+| Responsive admin sidebar (hamburger) | RYF | Mobile drawer | 🔲 |
+| Responsive driver panel | KVN | Mobile-friendly manifest | 🔲 |
+| Responsive forms & tables | NYS | Horizontal scroll, stack cards | 🔲 |
+| Form validation (semua form) | Semua | Server-side + client-side | ✅ Selesai (RYH) / 🔲 (Lainnya) |
+| Error handling & flash messages | Semua | Alert component | ✅ Selesai (RYH) / 🔲 (Lainnya) |
+| UI polish (Poppins font, spacing, shadows) | Semua | Sesuai design rules | ✅ Selesai (RYH) / 🔲 (Lainnya) |
+| Loading states | Semua | Button loading, Livewire loading | ✅ Selesai (RYH) / 🔲 (Lainnya) |
 
 **Deliverable**: Seluruh halaman responsive. UI production-ready.
 

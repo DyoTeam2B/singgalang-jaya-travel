@@ -68,7 +68,32 @@
                 <span class="text-xs font-semibold text-slate-400">{{ $booking->updated_at->format('d M Y H:i') }} WIB</span>
             </div>
 
-            <div class="overflow-x-auto pb-2">
+            {{-- Mobile Timeline (Vertical) --}}
+            <div class="block md:hidden space-y-4">
+                @foreach($timelineSteps as $index => $step)
+                    @php
+                        $isActive = $index <= $currentStepIndex;
+                        $isLast = $loop->last;
+                    @endphp
+                    <div class="flex gap-4">
+                        <div class="flex flex-col items-center shrink-0">
+                            <div class="w-8 h-8 rounded-full border-4 flex items-center justify-center text-[10px] font-black {{ $isActive ? 'bg-blue-600 border-blue-100 text-white shadow-md shadow-blue-600/20' : 'bg-white border-slate-200 text-slate-400' }}">
+                                {{ $index + 1 }}
+                            </div>
+                            @if(!$isLast)
+                                <div class="w-0.5 h-10 {{ $index < $currentStepIndex ? 'bg-blue-600' : 'bg-slate-200' }} my-1"></div>
+                            @endif
+                        </div>
+                        <div class="pt-0.5">
+                            <p class="text-sm font-bold {{ $isActive ? 'text-blue-800' : 'text-slate-400' }}">{{ $step['label'] }}</p>
+                            <p class="text-xs font-medium {{ $isActive ? 'text-slate-500' : 'text-slate-300' }} mt-0.5">{{ $step['description'] }}</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            {{-- Desktop Timeline (Horizontal) --}}
+            <div class="hidden md:block overflow-x-auto pb-2">
                 <div class="min-w-[760px] grid grid-cols-6">
                     @foreach($timelineSteps as $index => $step)
                         @php
@@ -97,7 +122,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             <div class="lg:col-span-8 space-y-6">
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                    <div class="p-8 flex flex-col md:flex-row justify-between gap-6">
+                    <div class="p-6 sm:p-8 flex flex-col md:flex-row justify-between gap-6">
                         <div class="space-y-3">
                             <h2 class="text-2xl font-bold text-slate-800">{{ $booking->jadwal->rute->asal ?? '-' }} -> {{ $booking->jadwal->rute->tujuan ?? '-' }}</h2>
                             <div class="flex flex-wrap items-center gap-3 text-sm text-slate-500">
@@ -120,7 +145,7 @@
                         </div>
                     </div>
 
-                    <div class="border-t border-slate-100 p-8 grid md:grid-cols-2 gap-6">
+                    <div class="border-t border-slate-100 p-6 sm:p-8 grid md:grid-cols-2 gap-6">
                         <div class="space-y-3">
                             <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Alamat Jemput</p>
                             <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-sm font-medium text-slate-700 leading-relaxed">{{ $booking->alamat_jemput }}</div>

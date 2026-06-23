@@ -2,6 +2,20 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-23] - Rayhan - Sprint 5
+
+### Changed
+
+* Mengoptimalkan responsivitas Landing Page (Home) untuk mobile & tablet dengan mengubah padding statis menjadi responsif (`p-6 sm:p-10 md:p-16`).
+* Menambahkan layout daftar booking berbasis kartu (card list) yang ramah mobile pada halaman Booking Saya, menggantikan format tabel desktop ketika diakses lewat perangkat mobile.
+* Membagi panel timeline status booking dan lacak pemesanan menjadi format vertikal untuk mobile agar tidak menyebabkan overflow horizontal.
+* Menyesuaikan padding detail tiket dan tinjauan pemesanan di layar mobile (`p-6 sm:p-8`).
+
+### Tested
+
+* `npm run build` (Pass).
+* `php artisan test` (62 passed, 237 assertions).
+
 ## [2026-06-22] - Tim - Sprint 4 Maps & Integration
 
 ### Added

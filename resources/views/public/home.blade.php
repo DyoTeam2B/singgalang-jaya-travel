@@ -316,7 +316,7 @@
                             $isFull = $sisaKursi <= 0;
                         @endphp
                         
-                        <div class="bg-white rounded-2xl border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_45px_rgb(37,99,235,0.08)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col p-8 {{ $isFull ? 'opacity-80' : '' }}">
+                        <div class="bg-white rounded-2xl border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_45px_rgb(37,99,235,0.08)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col p-6 sm:p-8 {{ $isFull ? 'opacity-80' : '' }}">
                             <div class="absolute top-0 right-0 w-64 h-64 {{ $isMorning ? 'bg-blue-50/60' : 'bg-indigo-50/60' }} rounded-full blur-3xl -z-0 pointer-events-none transition-colors"></div>
 
                             <div class="relative z-10 flex-1 flex flex-col">
@@ -371,13 +371,13 @@
                                         </div>
                                         <div class="flex justify-between mt-2">
                                             <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ $schedule->tanggal_keberangkatan->format('d M Y') }}</p>
-                                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Kap: {{ $schedule->kuota }}</p>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Kap: {{ $schedule->kuota }}</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Ticket Divider -->
-                                <div class="relative -mx-8 my-8">
+                                <div class="relative -mx-6 sm:-mx-8 my-8">
                                     <div class="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-slate-50 rounded-full border border-slate-200/60 z-20"></div>
                                     <div class="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-slate-50 rounded-full border border-slate-200/60 z-20"></div>
                                     <div class="border-t-2 border-dashed border-slate-200 w-full relative z-10"></div>
@@ -551,7 +551,7 @@
                 <div class="flex flex-col lg:flex-row">
                     
                     <!-- Left Content -->
-                    <div class="flex-1 p-10 md:p-16 lg:p-20 flex flex-col justify-center">
+                    <div class="flex-1 p-6 sm:p-10 md:p-16 lg:p-20 flex flex-col justify-center">
                         <span class="inline-flex items-center gap-2 bg-amber-50 text-amber-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-[0.12em] w-fit mb-6">
                             <!-- CarFront icon -->
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

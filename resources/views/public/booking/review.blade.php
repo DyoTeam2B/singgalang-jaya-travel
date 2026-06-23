@@ -25,7 +25,32 @@
                 </div>
                 <x-status-badge :status="$booking->status_booking" />
             </div>
-            <div class="overflow-x-auto pb-2">
+            {{-- Mobile Timeline (Vertical) --}}
+            <div class="block md:hidden space-y-4">
+                @foreach($timelineSteps as $index => $step)
+                    @php
+                        $isActive = $index === 0;
+                        $isLast = $loop->last;
+                    @endphp
+                    <div class="flex gap-4">
+                        <div class="flex flex-col items-center shrink-0">
+                            <div class="w-8 h-8 rounded-full border-4 flex items-center justify-center text-[10px] font-black {{ $isActive ? 'bg-blue-600 border-blue-100 text-white shadow-md shadow-blue-600/20' : 'bg-white border-slate-200 text-slate-400' }}">
+                                {{ $index + 1 }}
+                            </div>
+                            @if(!$isLast)
+                                <div class="w-0.5 h-10 bg-slate-200 my-1"></div>
+                            @endif
+                        </div>
+                        <div class="pt-0.5">
+                            <p class="text-sm font-bold {{ $isActive ? 'text-blue-800' : 'text-slate-400' }}">{{ $step['label'] }}</p>
+                            <p class="text-xs font-medium {{ $isActive ? 'text-slate-500' : 'text-slate-300' }} mt-0.5">{{ $step['description'] }}</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            {{-- Desktop Timeline (Horizontal) --}}
+            <div class="hidden md:block overflow-x-auto pb-2">
                 <div class="min-w-[760px] grid grid-cols-6">
                     @foreach($timelineSteps as $index => $step)
                         @php
@@ -53,7 +78,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
 
             {{-- Ticket Header --}}
-            <div class="p-8">
+            <div class="p-6 sm:p-8">
                 <div class="flex flex-col md:flex-row justify-between gap-6">
                     <div class="space-y-3">
                         <p class="text-xs font-bold text-blue-600 uppercase tracking-widest">{{ $booking->kode_booking }}</p>
@@ -88,7 +113,7 @@
             </div>
 
             {{-- Location Info --}}
-            <div class="p-8 grid md:grid-cols-2 gap-6">
+            <div class="p-6 sm:p-8 grid md:grid-cols-2 gap-6">
                 <div class="space-y-3">
                     <div class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full bg-blue-600 ring-2 ring-blue-600/20"></span>
@@ -126,7 +151,7 @@
             </div>
 
             {{-- Kontak Penumpang --}}
-            <div class="px-8 pb-2">
+            <div class="px-6 sm:px-8 pb-2">
                 <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col md:flex-row justify-between gap-4">
                     <div>
                         <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-0.5">Nama Penumpang Utama</span>
@@ -140,7 +165,7 @@
             </div>
 
             {{-- Price Breakdown --}}
-            <div class="p-8 border-t border-slate-100">
+            <div class="p-6 sm:p-8 border-t border-slate-100">
                 <div class="space-y-4">
                     <div class="flex justify-between items-center text-sm font-medium">
                         <span class="text-slate-500 uppercase tracking-wider">Tiket Perjalanan ({{ $booking->jumlah_penumpang }}x)</span>
@@ -177,7 +202,7 @@
             </div>
 
             {{-- Actions --}}
-            <div class="px-8 pb-8">
+            <div class="px-6 pb-6 sm:px-8 sm:pb-8">
                 <div class="flex flex-col sm:flex-row gap-4 pt-4 border-t border-slate-100">
                     <a href="{{ route('home') }}" class="flex-1 inline-flex justify-center items-center bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium px-6 py-3.5 rounded-xl transition-colors text-sm gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>

@@ -101,7 +101,7 @@
 
                 {{-- Ticket Header Card --}}
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden relative">
-                    <div class="p-8">
+                    <div class="p-6 sm:p-8">
                         <div class="flex flex-col md:flex-row justify-between gap-6">
                             <div class="space-y-3">
                                 <p class="text-xs font-bold text-blue-600 uppercase tracking-widest">{{ $booking->kode_booking }}</p>
@@ -139,7 +139,7 @@
                     </div>
 
                     {{-- Location Info --}}
-                    <div class="p-8 grid md:grid-cols-2 gap-6">
+                    <div class="p-6 sm:p-8 grid md:grid-cols-2 gap-6">
                         <div class="space-y-3">
                             <div class="flex items-center gap-2">
                                 <span class="w-2.5 h-2.5 rounded-full bg-blue-600 ring-2 ring-blue-600/20"></span>

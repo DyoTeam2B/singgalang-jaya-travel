@@ -28,7 +28,7 @@
 
         @if($isAlreadyProcessed)
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                <div class="p-10 text-center space-y-6">
+                <div class="p-6 sm:p-10 text-center space-y-6">
                     <div class="w-20 h-20 bg-green-50 rounded-2xl flex items-center justify-center text-green-500 mx-auto">
                         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                     </div>
