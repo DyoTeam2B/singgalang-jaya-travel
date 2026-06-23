@@ -59,9 +59,65 @@
     <!-- Main Grid (Table + Detail Panel) -->
     <div class="flex flex-col xl:flex-row gap-6 items-start">
         
-        <!-- Table Section -->
+        <!-- Table/Cards Section -->
         <div class="flex-1 w-full bg-white rounded-[2rem] border border-slate-200/60 shadow-sm flex flex-col overflow-hidden">
-            <div class="overflow-x-auto">
+            <!-- Mobile Cards view -->
+            <div class="grid grid-cols-1 gap-4 p-6 xl:hidden">
+                @forelse ($payments as $p)
+                    @php
+                        $isSelected = $selectedPaymentId === $p->id;
+                    @endphp
+                    <div 
+                        wire:click="selectPayment({{ $p->id }})"
+                        class="bg-white rounded-2xl border border-slate-200/60 p-5 space-y-4 cursor-pointer hover:border-slate-350 transition-all relative {{ $isSelected ? 'ring-2 ring-blue-600' : '' }}"
+                    >
+                        <!-- Header -->
+                        <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-3">
+                            <div>
+                                <p class="text-xs font-black text-slate-900">{{ $p->booking->pelanggan->nama ?? 'N/A' }}</p>
+                                <span class="text-[9px] font-black text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-md border border-blue-100/40 mt-1.5 inline-block">{{ $p->booking->kode_booking ?? 'N/A' }}</span>
+                            </div>
+                            <x-status-badge :status="$p->status_pembayaran" class="text-[8px] uppercase tracking-wider py-1 px-2.5 rounded-lg" />
+                        </div>
+
+                        <!-- Info Grid -->
+                        <div class="grid grid-cols-2 gap-4 text-[10px]">
+                            <div class="space-y-1">
+                                <p class="font-black text-slate-400 uppercase tracking-wider">Tipe</p>
+                                <span class="font-black {{ $p->jenis_pembayaran === 'dp' ? 'text-blue-600' : 'text-emerald-600' }} uppercase">
+                                    {{ $p->jenis_pembayaran === 'dp' ? 'DP (Flat Rp50.000)' : 'Pelunasan' }}
+                                </span>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="font-black text-slate-400 uppercase tracking-wider">Nominal</p>
+                                <span class="font-black text-slate-900">Rp {{ number_format($p->jumlah_bayar, 0, ',', '.') }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Footer / Date -->
+                        <div class="flex items-center justify-between pt-3 border-t border-slate-100 text-[10px] text-slate-500 font-medium">
+                            <span class="flex items-center gap-1">
+                                <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                {{ $p->created_at->translatedFormat('d M Y') }}
+                            </span>
+                            @if ($p->bukti_pembayaran)
+                                <span class="text-[9px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100/40">Proof Uploaded</span>
+                            @else
+                                <span class="text-[9px] font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-200/40">No Proof</span>
+                            @endif
+                        </div>
+                    </div>
+                @empty
+                    <div class="p-8 text-center text-slate-400 font-bold text-xs">
+                        Tidak ada data pembayaran.
+                    </div>
+                @endforelse
+            </div>
+
+            <!-- Desktop Table view -->
+            <div class="hidden xl:block overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-50/50 border-b border-slate-100">
@@ -135,18 +191,18 @@
             </div>
         </div>
 
-        <!-- Detail Panel -->
-        <div class="w-full xl:w-[420px] shrink-0">
+        <!-- Detail Panel Wrapper -->
+        <div class="w-full xl:w-[420px] shrink-0 {{ $selectedPaymentId ? 'fixed inset-0 z-[150] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm xl:relative xl:inset-auto xl:z-auto xl:bg-transparent xl:backdrop-blur-none xl:p-0' : 'hidden xl:block' }}">
             @if ($selectedPayment)
                 @php
                     $proofUrl = filter_var($selectedPayment->bukti_pembayaran, FILTER_VALIDATE_URL) 
                         ? $selectedPayment->bukti_pembayaran 
                         : Storage::url($selectedPayment->bukti_pembayaran);
                 @endphp
-                <div class="bg-white rounded-[2rem] border border-slate-200/60 shadow-sm flex flex-col overflow-hidden animate-in slide-in-from-right-8 fade-in duration-300">
+                <div class="bg-white rounded-[2rem] border border-slate-200/60 shadow-2xl xl:shadow-sm flex flex-col overflow-hidden max-h-[85vh] xl:max-h-none w-full max-w-md xl:max-w-none animate-in slide-in-from-bottom-4 xl:slide-in-from-right-8 fade-in duration-300">
                     <div class="p-5 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between shrink-0">
                         <div>
-                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Rincian Pembayaran</p>
+                            <p class="text-[10px] font-black text-slate-500 uppercase tracking-wider mb-0.5">Rincian Pembayaran</p>
                             <h3 class="text-xs font-black text-slate-900">{{ $selectedPayment->booking->kode_booking }}</h3>
                         </div>
                         <button 
@@ -160,7 +216,7 @@
                         </button>
                     </div>
 
-                    <div class="p-5 space-y-6 overflow-y-auto max-h-[60vh] no-scrollbar">
+                    <div class="p-5 space-y-6 overflow-y-auto max-h-[55vh] xl:max-h-[60vh] no-scrollbar">
                         <!-- Customer Info -->
                         <div class="flex items-center gap-3">
                             <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shrink-0 border border-blue-100/50">
@@ -170,7 +226,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-xs font-black text-slate-950">{{ $selectedPayment->booking->pelanggan->nama ?? 'N/A' }}</p>
+                                <p class="text-xs font-black text-slate-955">{{ $selectedPayment->booking->pelanggan->nama ?? 'N/A' }}</p>
                                 <p class="text-[10px] font-bold text-slate-400 flex items-center gap-1 mt-0.5">
                                     <!-- Phone Icon -->
                                     <svg class="w-3 h-3 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
