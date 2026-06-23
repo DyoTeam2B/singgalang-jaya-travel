@@ -18,7 +18,7 @@
 
         <!-- Stats Overview -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                 <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4">
                     <!-- Car Icon -->
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -28,7 +28,7 @@
                 <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Total Trip Selesai</p>
                 <h3 class="text-xl font-black text-slate-900">{{ $stats['total_trips'] }} Perjalanan</h3>
             </div>
-            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                 <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-4">
                     <!-- Users Icon -->
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -38,7 +38,7 @@
                 <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Total Penumpang</p>
                 <h3 class="text-xl font-black text-slate-900">{{ $stats['total_passengers'] }} Orang</h3>
             </div>
-            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                 <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
                     <!-- Wallet Icon -->
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -51,7 +51,7 @@
         </div>
 
         <!-- Filter & List Area -->
-        <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div class="overflow-x-auto no-scrollbar">
                 <table class="w-full text-left border-collapse">
                     <thead>

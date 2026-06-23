@@ -44,7 +44,7 @@
             </style>
 
             <!-- Header Info -->
-            <div class="bg-slate-900 text-white p-6 sm:p-10 relative overflow-hidden rounded-3xl mb-10 shadow-2xl shadow-slate-900/20">
+            <div class="bg-slate-900 text-white p-6 sm:p-10 relative overflow-hidden rounded-2xl mb-10 shadow-sm border border-slate-800">
                 <div class="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-[80px]"></div>
                 <div class="relative z-10">
                     <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -150,7 +150,7 @@
                             @endphp
 
                             <div @click="if(window.recenterDriverMap) window.recenterDriverMap({{ $isPickedUp ? ($b->latitude_tujuan ?? 'null') : ($b->latitude_jemput ?? 'null') }}, {{ $isPickedUp ? ($b->longitude_tujuan ?? 'null') : ($b->longitude_jemput ?? 'null') }})"
-                                class="bg-white rounded-3xl border transition-all duration-300 cursor-pointer overflow-hidden relative group {{ ($b->latitude_jemput && $b->longitude_jemput) ? 'hover:border-blue-300' : 'border-slate-150' }} shadow-sm">
+                                class="bg-white rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden relative group {{ ($b->latitude_jemput && $b->longitude_jemput) ? 'hover:border-blue-300' : 'border-slate-200' }} shadow-sm">
                                 
                                 <div class="p-6">
                                     <!-- Card Header -->
@@ -299,7 +299,7 @@
                     </div>
 
                     <!-- Map Container -->
-                    <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm h-[500px] relative">
+                    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm h-[500px] relative">
                         <div id="driver-map" style="height: 100%; width: 100%; z-index: 10;"></div>
                         
                         <!-- Floating Overlay -->
@@ -327,7 +327,7 @@
                     </div>
 
                     <!-- Trip Stepper Progress -->
-                    <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+                    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
                         <h3 class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 text-center">Progres Perjalanan</h3>
                         @php
                             $isReady = $activeTrip->status_trip === \App\Models\Trip::STATUS_READY;
@@ -379,8 +379,8 @@
 
             <!-- Dropoff Modal Confirmation Alpine -->
             <template x-if="dropoffModalPassenger">
-                <div class="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
-                    <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden p-8 text-center"
+                <div class="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+                    <div class="bg-white w-full max-w-md rounded-2xl shadow-sm overflow-hidden p-8 text-center border border-slate-200"
                          @click.outside="dropoffModalPassenger = null">
                         <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                             <!-- Checkmark SVG -->
@@ -427,7 +427,7 @@
         @else
             <!-- STATS / WELCOME SCREEN FOR DRIVERS WITH NO ACTIVE TRIP -->
             <div class="py-6">
-                <div class="bg-white overflow-hidden shadow-sm rounded-3xl border border-slate-200">
+                <div class="bg-white overflow-hidden shadow-sm rounded-2xl border border-slate-200">
                     <div class="p-8 text-slate-900">
                         <div class="flex items-center gap-4 mb-6">
                             <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 shadow-inner">
@@ -447,7 +447,7 @@
 
                         <!-- Overview stats cards -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                            <div class="bg-slate-50 border border-slate-200/60 p-6 rounded-3xl">
+                            <div class="bg-slate-50 border border-slate-200/60 p-6 rounded-2xl">
                                 <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4">
                                     <!-- Car SVG -->
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -458,7 +458,7 @@
                                 <h4 class="text-lg font-black text-slate-900">{{ $stats['total_trips'] }} Perjalanan</h4>
                             </div>
 
-                            <div class="bg-slate-50 border border-slate-200/60 p-6 rounded-3xl">
+                            <div class="bg-slate-50 border border-slate-200/60 p-6 rounded-2xl">
                                 <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-4">
                                     <!-- Users SVG -->
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -469,7 +469,7 @@
                                 <h4 class="text-lg font-black text-slate-900">{{ $stats['total_passengers'] }} Orang</h4>
                             </div>
 
-                            <div class="bg-slate-50 border border-slate-200/60 p-6 rounded-3xl">
+                            <div class="bg-slate-50 border border-slate-200/60 p-6 rounded-2xl">
                                 <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center mb-4">
                                     <!-- Wallet SVG -->
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -482,7 +482,7 @@
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="bg-slate-900 text-white rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between">
+                            <div class="bg-slate-900 text-white rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between border border-slate-800">
                                 <div class="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 rounded-full blur-[40px]"></div>
                                 <div class="relative z-10">
                                     <h4 class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-4">Tugas Saat Ini</h4>
@@ -495,15 +495,15 @@
                                 </div>
                             </div>
 
-                            <div class="bg-slate-50 border border-slate-200/80 rounded-3xl p-6">
+                            <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-6">
                                 <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Informasi Kendaraan</h4>
                                 @if($driver && $driver->armada)
                                     <div class="space-y-3 text-xs font-semibold text-slate-600">
-                                        <div class="flex justify-between border-b border-slate-150 pb-2">
+                                        <div class="flex justify-between border-b border-slate-200 pb-2">
                                             <span class="text-slate-400 uppercase text-[9px] tracking-wider">Merk Mobil</span>
                                             <span class="text-slate-900 font-bold uppercase">{{ $driver->armada->nama_mobil }}</span>
                                         </div>
-                                        <div class="flex justify-between border-b border-slate-150 pb-2">
+                                        <div class="flex justify-between border-b border-slate-200 pb-2">
                                             <span class="text-slate-400 uppercase text-[9px] tracking-wider">Nomor Plat</span>
                                             <span class="text-slate-900 font-bold uppercase">{{ $driver->armada->nomor_plat }}</span>
                                         </div>

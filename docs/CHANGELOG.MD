@@ -15,6 +15,14 @@ Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
 * `npm run build` (Pass).
 * `php artisan test` (62 passed, 237 assertions).
+## [2026-06-22] - Kevin - Sprint 3 UI Slicing
+
+### Changed
+
+* Slicing dan penyesuaian visual kartu/kontainer menjadi `rounded-2xl` sesuai [ui-rule.md](file:///d:/pbl/singgalang-jaya-travel/context/ui-rule.md) pada [dashboard.blade.php](file:///d:/pbl/singgalang-jaya-travel/resources/views/driver/dashboard.blade.php), [index.blade.php](file:///d:/pbl/singgalang-jaya-travel/resources/views/driver/trips/index.blade.php), dan [show.blade.php](file:///d:/pbl/singgalang-jaya-travel/resources/views/driver/trips/show.blade.php).
+* Pembersihan border non-standar (`border-slate-150`) menjadi standard (`border-slate-200`) pada panel driver.
+* Mengurangi bayangan berat (`shadow-2xl`) menjadi soft shadow (`shadow-sm`) untuk mematuhi larangan visual pada [ui-rule.md](file:///d:/pbl/singgalang-jaya-travel/context/ui-rule.md).
+* Pembaruan status file portal driver pada [sprint-planning.md](file:///d:/pbl/singgalang-jaya-travel/context/sprint-planning.md) menjadi selesai (complete).
 
 ## [2026-06-22] - Tim - Sprint 4 Maps & Integration
 

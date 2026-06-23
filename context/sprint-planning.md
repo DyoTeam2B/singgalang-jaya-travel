@@ -372,8 +372,8 @@ flowchart LR
 | `app/Http/Controllers/Admin/TripController.php` | KVN | ✅ |
 | `app/Http/Controllers/Admin/ArmadaController.php` | RYF | ✅ |
 | `app/Http/Controllers/Admin/LaporanController.php` | RYF | ✅ |
-| `app/Http/Controllers/Driver/DashboardController.php` | KVN | 🔲 |
-| `app/Http/Controllers/Driver/TripController.php` | KVN | 🔲 |
+| `app/Http/Controllers/Driver/DashboardController.php` | KVN | ✅ |
+| `app/Http/Controllers/Driver/TripController.php` | KVN | ✅ |
 
 ### Livewire
 
@@ -383,7 +383,7 @@ flowchart LR
 | `app/Livewire/Admin/BookingTable.php` | NYS | ✅ |
 | `app/Livewire/Admin/PembayaranTable.php` | NYS | ✅ |
 | `app/Livewire/Admin/ArmadaTable.php` | RYF | ❌ (Tidak diperlukan, CRUD menggunakan modal) |
-| `app/Livewire/Driver/TripManifest.php` | KVN | 🔲 |
+| `app/Livewire/Driver/TripManifest.php` | KVN | ❌ (Tidak diperlukan, digantikan Alpine.js) |
 
 ### Services
 
@@ -419,10 +419,10 @@ flowchart LR
 | `resources/views/admin/trips/index.blade.php` | KVN | ✅ |
 | `resources/views/admin/trips/create.blade.php` | KVN | ✅ |
 | `resources/views/admin/trips/show.blade.php` | KVN | ✅ |
-| `resources/views/driver/dashboard.blade.php` | KVN | ⚠️ Placeholder |
-| `resources/views/driver/trips/*` | KVN | 🔲 |
+| `resources/views/driver/dashboard.blade.php` | KVN | ✅ |
+| `resources/views/driver/trips/*` | KVN | ✅ |
 | `resources/views/components/map-picker.blade.php` | RYH | ✅ |
-| `resources/views/components/map-viewer.blade.php` | KVN | 🔲 |
+| `resources/views/components/map-viewer.blade.php` | KVN | ✅ |
 | `resources/views/livewire/booking-form.blade.php` | RYH | ✅ |
 | `resources/views/livewire/admin/booking-table.blade.php` | NYS | ✅ |
 | `resources/views/livewire/admin/pembayaran-table.blade.php` | NYS | ✅ |
@@ -431,4 +431,4 @@ flowchart LR
 | `resources/views/profile/public-edit.blade.php` | RYH | ✅ |
 | `resources/views/profile/partials/profile-page-content.blade.php` | NYS/RYH | ✅ |
 
-> **Next step**: Selesaikan Sprint 3 — Driver Dashboard & operations (Kevin), Admin Laporan (Rayfo).
+> **Next step**: Polish & Responsive (Sprint 5) - Penyelarasan responsive sisa halaman admin dan driver panel.
