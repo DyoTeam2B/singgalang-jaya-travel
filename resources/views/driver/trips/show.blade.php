@@ -35,7 +35,25 @@
         })
         ->values();
 @endphp
-    <div class="max-w-4xl mx-auto space-y-8 font-poppins pb-24 w-full max-w-full min-w-0">
+    <div x-data="{ activeTab: 'manifest' }"
+         x-init="$watch('activeTab', value => {
+             if (value === 'map') {
+                 setTimeout(() => {
+                     const mapInstance = window.sjtMapViewers?.['driver-trip-map-{{ $trip->id }}'];
+                     if (mapInstance) {
+                         mapInstance.invalidateSize();
+                         const points = @json($mapPoints);
+                         if (points && points.length > 0) {
+                             const bounds = points.map(p => [p.lat, p.lng]).filter(b => b[0] && b[1]);
+                             if (bounds.length > 0) {
+                                 mapInstance.fitBounds(bounds, { padding: [42, 42], maxZoom: 15 });
+                             }
+                         }
+                     }
+                 }, 100);
+             }
+         })"
+         class="max-w-4xl mx-auto space-y-8 font-poppins pb-24 w-full max-w-full min-w-0">
         
         <!-- Sticky Sub-Header Nav -->
         <div class="bg-white border border-slate-200 rounded-3xl p-4 flex items-center justify-between shadow-sm">
@@ -103,30 +121,55 @@
             </div>
         </div>
 
-        <x-map-viewer
-            :points="$mapPoints"
-            mapId="driver-trip-map-{{ $trip->id }}"
-            height="h-96"
-            title="Peta Manifest"
-            subtitle="Titik jemput dan antar penumpang"
-        />
-        
-        <!-- Section Label -->
-        <div class="flex items-center justify-between px-2">
-            <h3 class="text-xs font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2">
-                <!-- Users SVG -->
-                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <!-- Tab Switcher (Mobile Only) -->
+        <div class="flex lg:hidden bg-slate-100 p-1.5 rounded-2xl mb-6 border border-slate-200 shadow-inner">
+            <button type="button" 
+                    @click="activeTab = 'manifest'"
+                    :class="activeTab === 'manifest' ? 'bg-white text-blue-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'"
+                    class="flex-1 py-3 text-xs font-black uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                 </svg>
-                Daftar Penumpang
-            </h3>
-            <span class="text-[10px] font-bold text-slate-400 bg-slate-100 border border-slate-200 px-3 py-1 rounded-full uppercase tracking-wider">
-                {{ $trip->detailTrips->count() }} Penumpang
-            </span>
+                Manifest
+            </button>
+            <button type="button" 
+                    @click="activeTab = 'map'"
+                    :class="activeTab === 'map' ? 'bg-white text-blue-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'"
+                    class="flex-1 py-3 text-xs font-black uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                </svg>
+                Peta Manifest
+            </button>
         </div>
 
-        <!-- Passenger List Cards -->
-        <div class="space-y-6">
+        <div :class="activeTab === 'map' ? 'block' : 'hidden lg:block'">
+            <x-map-viewer
+                :points="$mapPoints"
+                mapId="driver-trip-map-{{ $trip->id }}"
+                height="h-96"
+                title="Peta Manifest"
+                subtitle="Titik jemput dan antar penumpang"
+            />
+        </div>
+        
+        <div :class="activeTab === 'manifest' ? 'block' : 'hidden lg:block'" class="space-y-6">
+            <!-- Section Label -->
+            <div class="flex items-center justify-between px-2 mb-6">
+                <h3 class="text-xs font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <!-- Users SVG -->
+                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    Daftar Penumpang
+                </h3>
+                <span class="text-[10px] font-bold text-slate-400 bg-slate-100 border border-slate-200 px-3 py-1 rounded-full uppercase tracking-wider">
+                    {{ $trip->detailTrips->count() }} Penumpang
+                </span>
+            </div>
+
+            <!-- Passenger List Cards -->
+            <div class="space-y-6">
             @forelse($trip->detailTrips as $index => $dt)
                 @php
                     $b = $dt->booking;
@@ -242,6 +285,7 @@
                     Belum ada manifest penumpang pada trip ini.
                 </div>
             @endforelse
+        </div>
         </div>
     </div>
 @endsection

@@ -2,6 +2,23 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-24] - Kevin - Sprint 5
+
+### Added
+
+* Tampilan Mobile Cards View untuk riwayat perjalanan driver di driver/trips/index.blade.php.
+* Tab switcher responsif berbasis Alpine.js untuk dashboard driver (dashboard.blade.php) dan rincian manifest (driver/trips/show.blade.php) di layar mobile/tablet.
+
+### Changed
+
+* Memperbaiki tata letak peta Leaflet pada mobile menggunakan automatic map invalidation size saat tab diaktifkan.
+* Menyelaraskan padding dan ukuran kartu manifes penumpang pada layar kecil agar sesuai dengan ui-rule.md.
+
+### Tested
+
+* php artisan test (67 passed, 265 assertions)
+* npm run build (Pass)
+
 ## [2026-06-23] - Rayhan - Sprint 5
 
 ### Changed

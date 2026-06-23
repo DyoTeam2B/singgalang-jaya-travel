@@ -60,7 +60,61 @@
 
         <!-- Filter & List Area -->
         <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden w-full">
-            <div class="overflow-x-auto no-scrollbar w-full max-w-full min-w-0">
+            <!-- Mobile Cards View -->
+            <div class="grid grid-cols-1 gap-4 md:hidden p-6 bg-slate-50/50">
+                @forelse($trips as $trip)
+                    @php
+                        $revenue = $trip->detailTrips->sum(fn($dt) => $dt->booking ? max(0, $dt->booking->total_harga - 50000) : 0);
+                    @endphp
+                    <div class="bg-white rounded-[2rem] border border-slate-200/60 shadow-sm p-6 space-y-4">
+                        <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-3">
+                            <div class="min-w-0">
+                                <p class="text-xs font-black text-slate-900 uppercase truncate">{{ $trip->jadwal->rute->asal }} &rarr; {{ $trip->jadwal->rute->tujuan }}</p>
+                                <div class="flex items-center gap-1.5 mt-1.5">
+                                    <span class="text-[9px] font-black text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-md border border-blue-100/40">TRP-{{ str_pad($trip->id, 3, '0', STR_PAD_LEFT) }}</span>
+                                    <span class="text-[9px] font-black text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded-md uppercase truncate max-w-[120px]" title="{{ $trip->armada->nomor_plat ?? '-' }}">{{ $trip->armada->nomor_plat ?? '-' }}</span>
+                                </div>
+                            </div>
+                            <x-status-badge :status="$trip->status_trip" class="text-[8px] uppercase tracking-wider py-1 px-2.5 rounded-lg shrink-0" />
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 text-[10px]">
+                            <div class="space-y-1">
+                                <p class="font-black text-slate-400 uppercase tracking-wider">Jadwal</p>
+                                <p class="font-bold text-slate-950 leading-tight">{{ $trip->jadwal->tanggal_keberangkatan->format('d M Y') }}</p>
+                                <p class="text-blue-600 font-black uppercase tracking-wider">Shift {{ ucfirst($trip->jadwal->shift) }}</p>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="font-black text-slate-400 uppercase tracking-wider">Statistik</p>
+                                <p class="font-bold text-slate-900 flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                    </svg>
+                                    {{ $trip->detailTrips->count() }} PAX
+                                </p>
+                                <p class="font-black text-emerald-600">Rp {{ number_format($revenue, 0, ',', '.') }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-end pt-3 border-t border-slate-100">
+                            <a href="{{ route('driver.trips.show', $trip->id) }}" class="w-full flex items-center justify-center gap-2 py-3 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 rounded-xl text-xs font-black uppercase tracking-widest transition-all">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                Lihat Detail
+                            </a>
+                        </div>
+                    </div>
+                @empty
+                    <div class="bg-white rounded-[2rem] border border-slate-200/60 p-8 text-center text-slate-400 font-bold text-xs italic">
+                        Belum ada catatan perjalanan yang tersimpan.
+                    </div>
+                @endforelse
+            </div>
+
+            <!-- Desktop Table view -->
+            <div class="hidden md:block overflow-x-auto no-scrollbar w-full max-w-full min-w-0">
                 <table class="w-full text-left border-collapse min-w-[700px]">
                     <thead>
                         <tr class="bg-slate-50 border-b border-slate-200">

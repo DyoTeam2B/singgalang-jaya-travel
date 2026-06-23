@@ -22,8 +22,29 @@
     @endphp
 
     <div x-data="{ 
-        dropoffModalPassenger: null
-    }" class="relative w-full max-w-full min-w-0">
+        dropoffModalPassenger: null,
+        activeTab: 'manifest'
+    }" 
+    x-init="$watch('activeTab', value => {
+        if (value === 'map' && window.driverMap) {
+            setTimeout(() => {
+                window.driverMap.invalidateSize();
+                const passengers = {{ json_encode($passengersJson) }};
+                if (passengers && passengers.length > 0) {
+                    const bounds = passengers.map(p => {
+                        const isPickedUp = p.status_antar === 'sudah_diantar' || p.status_jemput === 'sudah_dijemput';
+                        const lat = isPickedUp ? p.dest_lat : p.pickup_lat;
+                        const lng = isPickedUp ? p.dest_lng : p.pickup_lng;
+                        return [lat, lng];
+                    }).filter(b => b[0] && b[1]);
+                    if (bounds.length > 0) {
+                        window.driverMap.fitBounds(bounds, { padding: [50, 50] });
+                    }
+                }
+            }, 100);
+        }
+    })"
+    class="relative w-full max-w-full min-w-0">
 
         @if (session('success'))
             <x-alert type="success" :message="session('success')" class="mb-6" />
@@ -124,11 +145,33 @@
                 </div>
             </div>
 
+            <!-- Tab Switcher (Mobile Only) -->
+            <div class="flex lg:hidden bg-slate-100 p-1.5 rounded-2xl mb-6 border border-slate-200 shadow-inner">
+                <button type="button" 
+                        @click="activeTab = 'manifest'"
+                        :class="activeTab === 'manifest' ? 'bg-white text-blue-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'"
+                        class="flex-1 py-3 text-xs font-black uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    Manifest
+                </button>
+                <button type="button" 
+                        @click="activeTab = 'map'"
+                        :class="activeTab === 'map' ? 'bg-white text-blue-800 shadow-sm' : 'text-slate-500 hover:text-slate-800'"
+                        class="flex-1 py-3 text-xs font-black uppercase tracking-wider rounded-xl transition-all duration-300 flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                    </svg>
+                    Peta & Progres
+                </button>
+            </div>
+
             <!-- Dashboard Grid split view -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full">
                 
                 <!-- Kiri: Manifest Penumpang -->
-                <div class="lg:col-span-5 space-y-6 min-w-0 w-full">
+                <div :class="activeTab === 'manifest' ? 'block' : 'hidden lg:block'" class="lg:col-span-5 space-y-6 min-w-0 w-full">
                     <div class="flex items-center justify-between px-2">
                         <h2 class="text-xs font-black text-slate-800 uppercase tracking-[0.2em] flex items-center gap-2">
                             <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -286,7 +329,7 @@
                 </div>
 
                 <!-- Kanan: Map & Stepper Progress -->
-                <div class="lg:col-span-7 space-y-6 min-w-0 w-full">
+                <div :class="activeTab === 'map' ? 'block' : 'hidden lg:block'" class="lg:col-span-7 space-y-6 min-w-0 w-full">
                     <div class="flex items-center justify-between px-2">
                         <h2 class="text-xs font-black text-slate-800 uppercase tracking-[0.2em] flex items-center gap-2">
                             <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
