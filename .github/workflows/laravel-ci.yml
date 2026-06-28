@@ -86,4 +86,4 @@ jobs:
         run: npm run build
 
       - name: Run Laravel tests
-        run: php artisan test --no-interaction
+        run: php artisan test
