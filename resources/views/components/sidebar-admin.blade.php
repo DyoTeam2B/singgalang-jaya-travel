@@ -2,18 +2,15 @@
 <div class="flex flex-col h-full overflow-hidden bg-[#0B1329] text-slate-300 font-poppins">
     <!-- Sidebar Header -->
     <div class="h-20 flex items-center px-6 border-b border-white/5 shrink-0 bg-[#070C1B]">
-        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 ring-2 ring-white/10 shrink-0">
-                <!-- Map icon SVG -->
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
-                </svg>
+        <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3.5">
+            <div class="w-12 h-12 bg-gradient-to-tr from-blue-600 to-blue-500 rounded-xl flex items-center justify-center p-2 shadow-lg shadow-blue-500/20 ring-2 ring-white/10 shrink-0">
+                <img src="{{ asset('logo1.png') }}" class="w-full h-full object-contain" alt="Logo">
             </div>
-            <div class="flex flex-col">
-                <span class="font-extrabold text-white text-sm tracking-wide uppercase">
+            <div class="flex flex-col justify-center">
+                <span class="font-extrabold text-white text-sm tracking-wide uppercase leading-tight">
                     Singgalang Jaya
                 </span>
-                <span class="font-semibold text-blue-400 text-[9px] uppercase tracking-[0.2em] leading-none opacity-90 mt-0.5">
+                <span class="font-semibold text-blue-400 text-[9px] uppercase tracking-[0.2em] leading-none opacity-90 mt-2">
                     Admin Control
                 </span>
             </div>
