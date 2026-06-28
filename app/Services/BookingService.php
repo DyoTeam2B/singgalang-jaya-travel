@@ -84,6 +84,7 @@ class BookingService
                 'jumlah_penumpang' => $data['jumlah_penumpang'],
                 'total_harga' => $totalHarga,
                 'status_booking' => Booking::STATUS_BOOKING_DIBUAT,
+                'expired_at' => now()->addMinutes(30),
             ]);
 
             return $booking;
@@ -97,5 +98,48 @@ class BookingService
     {
         $jadwal = Jadwal::with('rute')->findOrFail($jadwalId);
         return $jadwal->rute->tarif * $jumlahPenumpang;
+    }
+
+    /**
+     * Cancel and delete a booking that has expired.
+     *
+     * @param Booking $booking
+     * @return void
+     */
+    public function expireBooking(Booking $booking): void
+    {
+        DB::transaction(function () use ($booking) {
+            // 1. Double check booking is still in created status and expired
+            if ($booking->status_booking !== Booking::STATUS_BOOKING_DIBUAT) {
+                return;
+            }
+
+            if (!$booking->expired_at || !$booking->expired_at->isPast()) {
+                return;
+            }
+
+            // 2. Delete related payment files from storage
+            $booking->load('pembayaran');
+            foreach ($booking->pembayaran as $pembayaran) {
+                if ($pembayaran->bukti_pembayaran) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($pembayaran->bukti_pembayaran);
+                }
+            }
+
+            // 3. Delete pembayaran records
+            $booking->pembayaran()->delete();
+
+            // 4. Reference the schedule
+            $jadwal = $booking->jadwal;
+
+            // 5. Delete the booking itself
+            $booking->delete();
+
+            // 6. Recalculate schedule seats to return seats to schedule
+            if ($jadwal) {
+                $jadwal->refresh();
+                $jadwal->checkAndUpdateStatus();
+            }
+        });
     }
 }

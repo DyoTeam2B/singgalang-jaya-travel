@@ -39,6 +39,7 @@ class Booking extends Model
         'total_harga',
         'status_booking',
         'alasan_pembatalan',
+        'expired_at',
     ];
 
     /**
@@ -53,6 +54,7 @@ class Booking extends Model
         'longitude_tujuan' => 'float',
         'jumlah_penumpang' => 'integer',
         'total_harga' => 'integer',
+        'expired_at' => 'datetime',
     ];
 
     /**

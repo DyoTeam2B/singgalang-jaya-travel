@@ -91,3 +91,25 @@ Artisan::command('booking:send-confirmation {--dry-run : Preview pesan tanpa men
 })->purpose('Kirim WhatsApp konfirmasi pagi untuk booking yang berangkat hari ini');
 
 Schedule::command('booking:send-confirmation')->dailyAt('06:00')->timezone('Asia/Jakarta');
+
+Artisan::command('booking:expire', function () {
+    $bookingService = app(\App\Services\BookingService::class);
+
+    $expiredBookings = Booking::where('status_booking', Booking::STATUS_BOOKING_DIBUAT)
+        ->where('expired_at', '<=', now())
+        ->get();
+
+    $count = 0;
+    foreach ($expiredBookings as $booking) {
+        try {
+            $bookingService->expireBooking($booking);
+            $count++;
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Gagal memproses penghapusan booking kedaluwarsa {$booking->kode_booking}: " . $e->getMessage());
+        }
+    }
+
+    $this->info("Berhasil menghapus {$count} booking yang kedaluwarsa.");
+})->purpose('Menghapus booking yang melebihi batas waktu pembayaran DP (30 menit)');
+
+Schedule::command('booking:expire')->everyMinute();

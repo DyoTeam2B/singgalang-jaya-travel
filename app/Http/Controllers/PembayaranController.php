@@ -15,10 +15,25 @@ class PembayaranController extends Controller
     {
         $booking = Booking::with(['pelanggan', 'jadwal.rute', 'pembayaran' => fn ($query) => $query->latest()])
             ->where('kode_booking', $kode)
-            ->firstOrFail();
+            ->first();
+
+        if (!$booking) {
+            return redirect()
+                ->route('booking.index')
+                ->with('error', 'Booking tidak ditemukan atau telah dibatalkan secara otomatis karena melewati batas waktu pembayaran DP.');
+        }
 
         if ($booking->pelanggan->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
+        }
+
+        if ($booking->expired_at && $booking->expired_at->isPast()) {
+            $bookingService = app(\App\Services\BookingService::class);
+            $bookingService->expireBooking($booking);
+
+            return redirect()
+                ->route('booking.index')
+                ->with('error', 'Booking tidak ditemukan atau telah dibatalkan secara otomatis karena melewati batas waktu pembayaran DP.');
         }
 
         return view('public.pembayaran.show', [
@@ -33,12 +48,27 @@ class PembayaranController extends Controller
      */
     public function store(StorePembayaranRequest $request, $kode)
     {
-        $booking = Booking::with('pelanggan')
+        $booking = Booking::with(['pelanggan', 'jadwal.rute'])
             ->where('kode_booking', $kode)
-            ->firstOrFail();
+            ->first();
+
+        if (!$booking) {
+            return redirect()
+                ->route('booking.index')
+                ->with('error', 'Booking tidak ditemukan atau telah dibatalkan secara otomatis karena melewati batas waktu pembayaran DP.');
+        }
 
         if ($booking->pelanggan->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
+        }
+
+        if ($booking->expired_at && $booking->expired_at->isPast()) {
+            $bookingService = app(\App\Services\BookingService::class);
+            $bookingService->expireBooking($booking);
+
+            return redirect()
+                ->route('booking.index')
+                ->with('error', 'Booking tidak ditemukan atau telah dibatalkan secara otomatis karena melewati batas waktu pembayaran DP.');
         }
 
         if ($booking->status_booking !== Booking::STATUS_BOOKING_DIBUAT) {

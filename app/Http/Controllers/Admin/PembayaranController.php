@@ -33,6 +33,17 @@ class PembayaranController extends Controller
      */
     public function verify(Pembayaran $pembayaran, BookingWhatsappNotificationService $whatsappNotificationService)
     {
+        $booking = $pembayaran->booking;
+
+        if ($booking->status_booking === Booking::STATUS_EXPIRED || ($booking->expired_at && $booking->expired_at->isPast())) {
+            $bookingService = app(\App\Services\BookingService::class);
+            $bookingService->expireBooking($booking);
+
+            return redirect()
+                ->route('admin.pembayaran.index')
+                ->with('error', 'Tidak dapat memproses pembayaran. Booking terkait sudah kedaluwarsa dan dibatalkan secara otomatis.');
+        }
+
         $shouldSendNotification = $pembayaran->status_pembayaran !== Pembayaran::STATUS_TERVERIFIKASI;
 
         DB::transaction(function () use ($pembayaran) {
@@ -63,6 +74,17 @@ class PembayaranController extends Controller
      */
     public function reject(Request $request, Pembayaran $pembayaran)
     {
+        $booking = $pembayaran->booking;
+
+        if ($booking->status_booking === Booking::STATUS_EXPIRED || ($booking->expired_at && $booking->expired_at->isPast())) {
+            $bookingService = app(\App\Services\BookingService::class);
+            $bookingService->expireBooking($booking);
+
+            return redirect()
+                ->route('admin.pembayaran.index')
+                ->with('error', 'Tidak dapat memproses pembayaran. Booking terkait sudah kedaluwarsa dan dibatalkan secara otomatis.');
+        }
+
         $request->validate([
             'catatan' => 'required|string|max:500',
         ], [

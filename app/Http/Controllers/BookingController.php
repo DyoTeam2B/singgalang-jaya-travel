@@ -50,7 +50,13 @@ class BookingController extends Controller
     {
         $booking = Booking::with(['pelanggan', 'jadwal.rute'])
             ->where('kode_booking', $kode)
-            ->firstOrFail();
+            ->first();
+
+        if (!$booking) {
+            return redirect()
+                ->route('booking.index')
+                ->with('error', 'Booking tidak ditemukan atau telah dibatalkan secara otomatis karena melewati batas waktu pembayaran DP.');
+        }
 
         // Customer can only review if they own the booking
         if ($booking->pelanggan->user_id !== auth()->id()) {
@@ -125,7 +131,13 @@ class BookingController extends Controller
                 'detailTrips.trip.armada',
             ])
             ->where('kode_booking', $kode)
-            ->firstOrFail();
+            ->first();
+
+        if (!$booking) {
+            return redirect()
+                ->route('booking.index')
+                ->with('error', 'Booking tidak ditemukan atau telah dibatalkan secara otomatis karena melewati batas waktu pembayaran DP.');
+        }
 
         if ($booking->pelanggan->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
@@ -142,7 +154,13 @@ class BookingController extends Controller
     {
         $booking = Booking::with('pelanggan')
             ->where('kode_booking', $kode)
-            ->firstOrFail();
+            ->first();
+
+        if (!$booking) {
+            return redirect()
+                ->route('booking.index')
+                ->with('error', 'Booking tidak ditemukan atau telah dibatalkan secara otomatis karena melewati batas waktu pembayaran DP.');
+        }
 
         if ($booking->pelanggan->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
@@ -171,7 +189,13 @@ class BookingController extends Controller
     {
         $booking = Booking::with(['pelanggan', 'jadwal.rute'])
             ->where('kode_booking', $kode)
-            ->firstOrFail();
+            ->first();
+
+        if (!$booking) {
+            return redirect()
+                ->route('booking.index')
+                ->with('error', 'Booking tidak ditemukan atau telah dibatalkan secara otomatis karena melewati batas waktu pembayaran DP.');
+        }
 
         if ($booking->pelanggan->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');
@@ -260,7 +284,13 @@ class BookingController extends Controller
     {
         $booking = Booking::with(['pelanggan', 'jadwal.rute'])
             ->where('kode_booking', $kode)
-            ->firstOrFail();
+            ->first();
+
+        if (!$booking) {
+            return redirect()
+                ->route('booking.index')
+                ->with('error', 'Booking tidak ditemukan atau telah dibatalkan secara otomatis karena melewati batas waktu pembayaran DP.');
+        }
 
         if ($booking->pelanggan->user_id !== auth()->id()) {
             abort(403, 'Unauthorized action.');

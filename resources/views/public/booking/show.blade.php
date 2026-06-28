@@ -192,10 +192,44 @@
                     @endif
 
                     @if($booking->status_booking === \App\Models\Booking::STATUS_BOOKING_DIBUAT)
-                        <a href="{{ route('booking.pembayaran', ['kode' => $booking->kode_booking]) }}" class="inline-flex items-center justify-center gap-2 bg-blue-800 hover:bg-blue-900 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm shadow-sm">
-                            {{ $latestPayment?->status_pembayaran === 'ditolak' ? 'Upload Ulang Bukti DP' : 'Upload Bukti DP' }}
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
+                        @php
+                            $remainingSeconds = max(0, now()->diffInSeconds($booking->expired_at ?? $booking->created_at->addMinutes(30), false));
+                            $isExpired = $remainingSeconds <= 0;
+                        @endphp
+                        
+                        @if($isExpired)
+                            <div class="p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-800 space-y-1">
+                                <p class="font-bold">Waktu pembayaran DP telah habis.</p>
+                                <p class="text-xs">Booking telah dibatalkan secara otomatis.</p>
+                            </div>
+                        @else
+                            <div x-data="countdownTimer({{ $remainingSeconds }})"
+                                 x-init="init()"
+                                 class="p-5 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col items-center justify-center text-center gap-3">
+                                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Sisa Waktu Pembayaran</p>
+                                <h2 class="text-4xl font-extrabold tracking-tight" :class="isWarning ? 'text-red-600' : 'text-blue-800'">
+                                    <span x-text="timeString">--:--</span>
+                                </h2>
+                                <p class="text-xs font-semibold" :class="isWarning ? 'text-red-500' : 'text-slate-500'">
+                                    <template x-if="isWarning">
+                                        <span>Peringatan: Booking akan segera dibatalkan otomatis!</span>
+                                    </template>
+                                    <template x-if="!isWarning">
+                                        <span>Segera lakukan pembayaran DP sebelum waktu habis.</span>
+                                    </template>
+                                </p>
+                            </div>
+                            
+                            <a href="{{ route('booking.pembayaran', ['kode' => $booking->kode_booking]) }}" class="inline-flex items-center justify-center gap-2 bg-blue-800 hover:bg-blue-900 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm shadow-sm w-full md:w-auto">
+                                {{ $latestPayment?->status_pembayaran === 'ditolak' ? 'Upload Ulang Bukti DP' : 'Upload Bukti DP' }}
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </a>
+                        @endif
+                    @elseif($booking->status_booking === \App\Models\Booking::STATUS_EXPIRED)
+                        <div class="p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-800 space-y-1">
+                            <p class="font-bold">Waktu pembayaran DP telah habis.</p>
+                            <p class="text-xs">Booking telah dibatalkan secara otomatis.</p>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -262,4 +296,37 @@
         </div>
     </div>
 </div>
+
+<script>
+    function countdownTimer(initialSeconds) {
+        return {
+            secondsLeft: Math.floor(initialSeconds),
+            isWarning: false,
+            timeString: '',
+            timerId: null,
+            init() {
+                this.isWarning = this.secondsLeft < 5 * 60;
+                this.formatTime();
+                this.timerId = setInterval(() => {
+                    if (this.secondsLeft > 0) {
+                        this.secondsLeft--;
+                        this.isWarning = this.secondsLeft < 5 * 60;
+                        this.formatTime();
+                    } else {
+                        clearInterval(this.timerId);
+                        window.location.reload();
+                    }
+                }, 1000);
+            },
+            formatTime() {
+                const totalSeconds = Math.floor(this.secondsLeft);
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                this.timeString = 
+                    String(minutes).padStart(2, '0') + ':' + 
+                    String(seconds).padStart(2, '0');
+            }
+        }
+    }
+</script>
 @endsection
