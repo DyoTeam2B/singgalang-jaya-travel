@@ -31,6 +31,8 @@ Dokumen ini menjelaskan fitur aplikasi berdasarkan aktor, alur bisnis, route, co
 | Dashboard dan manifest driver | Driver | Selesai | `Driver\DashboardController`, `Driver\TripController` |
 | Laporan | Admin | Selesai | `Admin\LaporanController` |
 | Notifikasi WhatsApp | Sistem | Selesai sebagian | `FonnteService`, `BookingWhatsappNotificationService` |
+| Rating & Ulasan | Pelanggan/Admin | Selesai | `RatingController`, `Admin\RatingController`, `resources/views/public/booking/show.blade.php`, `resources/views/admin/rating/index.blade.php` |
+| Batas Waktu Pembayaran DP | Pelanggan/Sistem | Selesai | `booking:expire` command, `BookingExpirationTest`, `BookingController`, `PembayaranController` |
 
 ## 1. Authentication dan Role Redirect
 
@@ -395,7 +397,7 @@ ADMIN_WA_NUMBER=
 | `on_trip` | Penumpang/trip sedang berjalan | Driver mulai trip |
 | `completed` | Perjalanan selesai | Driver menyelesaikan trip |
 | `cancelled` | Booking dibatalkan | Pelanggan/admin cancel |
-| `expired` | Booking kedaluwarsa | Proses sistem bila diterapkan |
+| `expired` | Booking kedaluwarsa | Batas waktu pembayaran DP (30 menit) terlampaui tanpa pembayaran |
 
 ## Status Trip
 
@@ -407,6 +409,31 @@ ADMIN_WA_NUMBER=
 | `completed` | Trip selesai | Driver complete trip |
 | `cancelled` | Trip dibatalkan | Admin membatalkan trip |
 
+## 20. Rating dan Ulasan Pelanggan
+
+Tujuan: pelanggan dapat memberikan penilaian (rating 1-5 bintang) dan ulasan tertulis setelah perjalanan selesai. Admin memoderasi ulasan tersebut sebelum ditampilkan di Landing Page.
+
+Aktor: Pelanggan, Admin, Guest (melihat rating terpublikasi).
+
+Alur:
+1. Perjalanan selesai (`completed`), tombol "Berikan Rating" muncul di Detail Booking Pelanggan.
+2. Pelanggan mengisi rating bintang dan ulasan tertulis.
+3. Rating disimpan dengan status `menunggu`.
+4. Admin memoderasi rating pada Dashboard Admin (Publish, Hide, atau Delete).
+5. Rating berstatus `published` ditampilkan secara dinamis di Landing Page menggunakan Testimonial Carousel otomatis.
+
+## 21. Batas Waktu Pembayaran DP (Payment Expiration)
+
+Tujuan: membatasi waktu pelanggan mengunggah bukti pembayaran DP agar kursi tidak terblokir terus-menerus.
+
+Aktor: Pelanggan, Sistem (Scheduler).
+
+Alur:
+1. Booking berhasil dibuat, sistem otomatis mengisi `expired_at` (waktu booking + 30 menit).
+2. Detail Booking menampilkan sisa waktu pembayaran (countdown) berformat `menit:detik`.
+3. Command scheduler `booking:expire` berjalan periodik untuk membatalkan booking yang terlampaui batas waktunya (`expired_at < now`).
+4. Jika dibatalkan, status booking menjadi `expired` dan kuota kursi pada jadwal otomatis dikembalikan.
+
 ## Relasi Modul Utama
 
 ```text
@@ -415,4 +442,5 @@ User -> Pelanggan -> Booking
 User -> Driver -> Trip
 Booking -> Pembayaran
 Booking -> WhatsappNotification
+Rating -> Booking
 ```

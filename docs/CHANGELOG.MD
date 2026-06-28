@@ -2,6 +2,36 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-06-28] - Rayhan & Tim - Sprint 6 / Final UAS
+
+### Added
+
+* Fitur Ulasan & Rating Pelanggan:
+  * Membuat model `Rating` dan tabel database `ratings` dengan foreign key ke `bookings` dan `pelanggan` (cascade delete).
+  * Menambahkan tombol dan panel rating pada Detail Booking untuk perjalanan berstatus `Completed`.
+  * Panel moderasi rating admin untuk menyetujui (Publish), menyembunyikan (Hide), atau menghapus (Delete) rating.
+  * Section Carousel Testimoni pada Landing Page yang menampilkan ulasan terpublikasi dengan fitur auto slide 5 detik, pause on hover, responsive multi-card layout, dots pagination, dan swipe gestures.
+* Fitur Batas Waktu Pembayaran DP (Payment Expiration):
+  * Logika otomatis `expired_at` (booking time + 30 menit) saat booking baru dibuat.
+  * Tampilan countdown berbasis server berformat `menit:detik` di halaman Detail Booking.
+  * Command scheduler `booking:expire` untuk membatalkan booking kedaluwarsa secara otomatis dan mengembalikan kuota kursi.
+
+### Changed
+
+* Refactor Alur Pemilihan Jadwal:
+  * Halaman booking disederhanakan dengan menghapus daftar/card seluruh jadwal.
+  * Mengarahkan pelanggan langsung ke halaman pencarian `jadwal.index`.
+* GitHub Actions CI:
+  * Upgrade versi PHP runner dari `8.3` menjadi `8.4` agar kompatibel dengan Laravel 13 dan dependensi Symfony 8.1.
+  * Menyelaraskan minimal requirement PHP pada `composer.json` menjadi `"php": "^8.4"`.
+  * Memperbarui `"platform": { "php": "^8.4" }` di dalam `composer.lock`.
+  * Menghapus opsi `--no-interaction` yang tidak didukung pada perintah `php artisan test` di CI.
+
+### Tested
+
+* Menjalankan seluruh test suite: `php artisan test` (77 passed, 300 assertions).
+* Memastikan CI build hijau di GitHub.
+
 ## [2026-06-24] - Kevin - Sprint 5
 
 ### Added

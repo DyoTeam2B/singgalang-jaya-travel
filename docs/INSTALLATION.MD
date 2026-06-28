@@ -8,7 +8,7 @@ Pastikan perangkat sudah memiliki:
 
 | Kebutuhan | Versi rekomendasi | Keterangan |
 | --- | --- | --- |
-| PHP | 8.3 atau lebih baru | Sesuai `composer.json` (`php: ^8.3`) |
+| PHP | 8.4 atau lebih baru | Sesuai `composer.json` (`php: ^8.4`) |
 | Composer | 2.x | Dependency manager backend Laravel |
 | Node.js | 22 LTS atau lebih baru | Untuk Vite, Tailwind CSS, dan asset frontend |
 | NPM | Sesuai Node.js | Dependency manager frontend |
