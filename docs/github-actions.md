@@ -31,7 +31,7 @@ Workflow berjalan pada:
 | Komponen | Konfigurasi |
 | --- | --- |
 | Runner | `ubuntu-latest` |
-| PHP | `8.3` |
+| PHP | `8.4` |
 | Node.js | `22` |
 | Database | MySQL 8.0 service |
 | Database name | `singgalang_travel_system` |
@@ -42,7 +42,7 @@ Workflow berjalan pada:
 | Urutan | Step | Fungsi |
 | --- | --- | --- |
 | 1 | Checkout repository | Mengambil source code dari GitHub |
-| 2 | Setup PHP | Menyiapkan PHP 8.3 dan ekstensi yang dibutuhkan Laravel |
+| 2 | Setup PHP | Menyiapkan PHP 8.4 dan ekstensi yang dibutuhkan Laravel |
 | 3 | Setup Node.js | Menyiapkan Node 22 dan cache NPM |
 | 4 | Install Composer dependencies | Menjalankan `composer install` |
 | 5 | Install NPM dependencies | Menjalankan `npm ci` |
@@ -104,7 +104,7 @@ php artisan test
 
 | Masalah | Penyebab umum | Solusi |
 | --- | --- | --- |
-| Composer install gagal | Versi PHP tidak sesuai atau lock file bermasalah | Pastikan PHP 8.3 dan `composer.lock` valid |
+| Composer install gagal | Versi PHP tidak sesuai atau lock file bermasalah | Pastikan PHP 8.4 dan `composer.lock` valid |
 | NPM install gagal | `package-lock.json` tidak sinkron | Jalankan `npm install`, commit perubahan lock file |
 | Migration gagal | Konfigurasi database salah atau migration error | Cek env DB di workflow dan file migration terakhir |
 | Test Fonnte gagal | Request eksternal tidak dimock | Pastikan test memakai `Http::fake()` atau token kosong ditangani |

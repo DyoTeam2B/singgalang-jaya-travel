@@ -7,7 +7,7 @@ Dokumen ini mencatat dependency backend, frontend, dan layanan eksternal yang di
 | Layer | Teknologi | Versi/Constraint | Kegunaan |
 | --- | --- | --- | --- |
 | Backend | Laravel Framework | `^13.0` | MVC, routing, ORM, migration, validation, queue, testing |
-| Runtime backend | PHP | `^8.3` | Bahasa utama aplikasi |
+| Runtime backend | PHP | `^8.4` | Bahasa utama aplikasi |
 | Frontend server-rendered | Blade | Laravel built-in | Template UI admin, driver, dan publik |
 | Frontend interaktif | Livewire | `^4.3` | Form booking dan tabel interaktif admin |
 | UI utility | Tailwind CSS | `^3.1.0` | Styling halaman dan komponen |

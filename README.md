@@ -33,6 +33,16 @@ Singgalang Jaya Travel System adalah aplikasi web untuk digitalisasi operasional
 - Notifikasi WhatsApp berbasis Fonnte API.
 - GitHub Action CI untuk validasi build dan test.
 
+## Tampilan Aplikasi (Screenshots)
+
+Berikut adalah beberapa tampilan dari Singgalang Jaya Travel System:
+
+### 1. Landing Page & Testimonial Carousel
+![Landing Page & Testimonial Carousel](public/ss1.png)
+
+### 2. Detail Booking & Pembayaran DP
+![Detail Booking & Pembayaran DP](public/ss2.png)
+
 ## Dokumentasi UAS
 
 Dokumen luaran UAS tersedia di folder `docs/`:
