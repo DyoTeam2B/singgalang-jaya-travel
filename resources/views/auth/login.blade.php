@@ -11,15 +11,13 @@
             </div>
 
             <div class="relative z-10">
-                <a href="{{ route('home') }}" class="inline-flex items-center gap-3 group" aria-label="Singgalang Jaya Travel">
-                    <span class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
-                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 2l7 19-7-4-7 4 7-19Z" />
-                        </svg>
-                    </span>
-                    <span class="flex flex-col">
-                        <span class="font-extrabold text-white text-xl leading-none tracking-tight mb-0.5">Singgalang Jaya</span>
-                        <span class="font-bold text-blue-400 text-[11px] uppercase tracking-[0.15em] leading-none">Travel</span>
+                <a href="{{ route('home') }}" class="inline-flex items-center gap-3.5 group" aria-label="Singgalang Jaya Travel">
+                    <div class="w-14 h-14 bg-blue-600 shadow-sm border border-slate-100/10 rounded-xl flex items-center justify-center p-2 group-hover:scale-105 transition-transform">
+                        <img src="{{ asset('logo1.png') }}" class="w-full h-full object-contain" alt="Logo">
+                    </div>
+                    <span class="flex flex-col justify-center">
+                        <span class="font-extrabold text-white text-2xl leading-tight tracking-tight">Singgalang Jaya</span>
+                        <span class="font-bold text-blue-400 text-xs uppercase tracking-[0.15em] mt-1.5 leading-none">Travel</span>
                     </span>
                 </a>
             </div>

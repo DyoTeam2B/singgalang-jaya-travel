@@ -21,15 +21,13 @@
 <nav x-data="{ isMobileMenuOpen: false, isProfileOpen: false }" class="sticky top-0 z-50 bg-white border-b border-slate-100 shadow-sm transition-all">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
-            <a href="{{ route('home') }}" class="flex items-center gap-3 shrink-0 cursor-pointer group">
-                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-md shadow-blue-600/20 group-hover:scale-105 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="3 11 22 2 13 21 11 13 3 11" />
-                    </svg>
+            <a href="{{ route('home') }}" class="flex items-center gap-3.5 shrink-0 cursor-pointer group">
+                <div class="w-12 h-12 bg-blue-600 shadow-md shadow-blue-600/20 rounded-xl flex items-center justify-center p-2 group-hover:scale-105 transition-transform">
+                    <img src="{{ asset('logo1.png') }}" class="w-full h-full object-contain" alt="Logo">
                 </div>
-                <div class="flex flex-col">
-                    <span class="font-extrabold text-slate-900 text-lg leading-none tracking-tight mb-0.5">Singgalang Jaya</span>
-                    <span class="font-bold text-blue-600 text-[10px] uppercase tracking-[0.15em] leading-none">Travel</span>
+                <div class="flex flex-col justify-center">
+                    <span class="font-extrabold text-slate-900 text-lg leading-tight tracking-tight">Singgalang Jaya</span>
+                    <span class="font-bold text-blue-600 text-[10px] uppercase tracking-[0.15em] mt-1.5">Travel</span>
                 </div>
             </a>
 
