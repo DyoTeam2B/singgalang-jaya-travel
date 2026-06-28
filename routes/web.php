@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/booking/{kode}/cancel', [\App\Http\Controllers\BookingController::class, 'cancel'])->name('booking.cancel');
         Route::get('/booking-saya', [\App\Http\Controllers\BookingController::class, 'index'])->name('booking.index');
         Route::get('/booking/{kode}', [\App\Http\Controllers\BookingController::class, 'show'])->name('booking.show');
+        Route::post('/booking/{kode}/rating', [\App\Http\Controllers\RatingController::class, 'store'])->name('booking.rating.store');
     });
 
     // Redirection Dashboard (Breeze Default)
@@ -68,6 +69,9 @@ Route::middleware('auth')->group(function () {
              Route::resource('pembayaran', \App\Http\Controllers\Admin\PembayaranController::class)->only(['index', 'show']);
              Route::put('pembayaran/{pembayaran}/verify', [\App\Http\Controllers\Admin\PembayaranController::class, 'verify'])->name('pembayaran.verify');
              Route::put('pembayaran/{pembayaran}/reject', [\App\Http\Controllers\Admin\PembayaranController::class, 'reject'])->name('pembayaran.reject');
+             Route::resource('rating', \App\Http\Controllers\Admin\RatingController::class)->only(['index', 'show', 'destroy']);
+             Route::put('rating/{rating}/publish', [\App\Http\Controllers\Admin\RatingController::class, 'publish'])->name('rating.publish');
+             Route::put('rating/{rating}/hide', [\App\Http\Controllers\Admin\RatingController::class, 'hide'])->name('rating.hide');
 
              // Admin Laporan (Sprint 3 - Rayfo)
              Route::get('laporan', [\App\Http\Controllers\Admin\LaporanController::class, 'index'])->name('laporan.index');

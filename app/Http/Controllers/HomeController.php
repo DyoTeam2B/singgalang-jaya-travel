@@ -37,6 +37,12 @@ class HomeController extends Controller
 
         $drivers = \App\Models\Driver::with('armada')->where('status_driver', 'aktif')->take(4)->get();
 
-        return view('public.home', compact('schedules', 'drivers'));
+        $ratings = \App\Models\Rating::with(['pelanggan', 'booking.jadwal.rute'])
+            ->where('status', \App\Models\Rating::STATUS_PUBLISHED)
+            ->latest()
+            ->take(6)
+            ->get();
+
+        return view('public.home', compact('schedules', 'drivers', 'ratings'));
     }
 }

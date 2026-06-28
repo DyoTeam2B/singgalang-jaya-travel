@@ -637,17 +637,73 @@
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- TESTIMONIALS SECTION -->
-    <section class="py-24 md:py-32 bg-slate-50 relative overflow-hidden">
+        <!-- TESTIMONIALS SECTION -->
+    <section id="testimoni" class="py-24 md:py-32 bg-slate-50 relative overflow-hidden border-t border-slate-200/50">
         <!-- GlowBackground Variant: Section -->
         <div class="absolute inset-0 overflow-hidden pointer-events-none -z-0">
             <div class="absolute top-[6%] right-[14%] w-[420px] h-[420px] rounded-full blur-[110px] opacity-[0.05] bg-[#4F46E5]"></div>
             <div class="absolute bottom-[14%] left-[4%] w-[360px] h-[360px] rounded-full blur-[100px] opacity-[0.04] bg-[#0EA5E9]"></div>
         </div>
 
-        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10" 
+             x-data="{
+                active: 0,
+                items: {{ $ratings->count() }},
+                visibleCount: 3,
+                autoPlayInterval: null,
+                touchStartX: 0,
+                init() {
+                    this.updateVisibleCount();
+                    window.addEventListener('resize', () => this.updateVisibleCount());
+                    this.play();
+                },
+                updateVisibleCount() {
+                    if (window.innerWidth >= 1024) {
+                        this.visibleCount = 3;
+                    } else if (window.innerWidth >= 768) {
+                        this.visibleCount = 2;
+                    } else {
+                        this.visibleCount = 1;
+                    }
+                    if (this.active > this.maxIndex()) {
+                        this.active = this.maxIndex();
+                    }
+                },
+                maxIndex() {
+                    return Math.max(0, this.items - this.visibleCount);
+                },
+                next() {
+                    if (this.active >= this.maxIndex()) {
+                        this.active = 0;
+                    } else {
+                        this.active++;
+                    }
+                },
+                prev() {
+                    if (this.active <= 0) {
+                        this.active = this.maxIndex();
+                    } else {
+                        this.active--;
+                    }
+                },
+                play() {
+                    this.pause();
+                    this.autoPlayInterval = setInterval(() => {
+                        this.next();
+                    }, 5000);
+                },
+                pause() {
+                    if (this.autoPlayInterval) {
+                        clearInterval(this.autoPlayInterval);
+                    }
+                }
+             }" 
+             x-init="init()"
+             @mouseenter="pause()" 
+             @mouseleave="play()"
+             @touchstart="touchStartX = $event.touches[0].clientX"
+             @touchend="if (touchStartX - $event.changedTouches[0].clientX > 50) next(); if ($event.changedTouches[0].clientX - touchStartX > 50) prev();"
+        >
             <div class="text-center max-w-3xl mx-auto mb-16">
                 <span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
                     <!-- MessageSquareHeart Icon -->
@@ -665,46 +721,73 @@
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-6 lg:gap-8">
-                @php
-                    $testimonials = [
-                        ['id' => 1, 'name' => 'Rina Marlina', 'role' => 'Karyawan Swasta', 'avatar' => 'RM', 'rating' => 5, 'text' => 'Dijemput tepat waktu di depan rumah, drivernya ramah dan mobilnya bersih. Perjalanan Padang Panjang ke Pekanbaru jadi nyaman banget!'],
-                        ['id' => 2, 'name' => 'Andi Saputra', 'role' => 'Mahasiswa', 'avatar' => 'AS', 'rating' => 5, 'text' => 'Booking online-nya gampang, tinggal pilih jadwal dan bayar DP. Nggak perlu antri di loket. Recommended buat anak rantau!'],
-                        ['id' => 3, 'name' => 'Dewi Anggraini', 'role' => 'Ibu Rumah Tangga', 'avatar' => 'DA', 'rating' => 5, 'text' => 'Sudah langganan PP tiap bulan. Selalu tepat waktu dan aman. Pelayanan adminnya juga cepat tanggap di WhatsApp.']
-                    ];
-                @endphp
-                @foreach ($testimonials as $t)
-                    <div class="bg-white rounded-2xl border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_45px_rgb(37,99,235,0.08)] hover:-translate-y-1.5 transition-all duration-300 p-8 flex flex-col relative overflow-hidden">
-                        <!-- Quote Icon -->
-                        <svg class="w-12 h-12 text-blue-50 absolute top-6 right-6 opacity-30" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.988zm-12 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"></path>
-                        </svg>
-
-                        <div class="flex items-center gap-1 mb-5 relative z-10">
-                            @for ($i = 0; $i < $t['rating']; $i++)
-                                <svg class="w-4 h-4 fill-amber-400 text-amber-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                                </svg>
-                            @endfor
-                        </div>
-
-                        <p class="text-slate-600 font-medium leading-relaxed mb-8 relative z-10">
-                            “{{ $t['text'] }}”
-                        </p>
-
-                        <div class="flex items-center gap-3 mt-auto pt-6 border-t border-slate-100">
-                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-sm shadow-md shadow-blue-600/20">
-                                {{ $t['avatar'] }}
-                            </div>
-                            <div>
-                                <p class="font-extrabold text-slate-900 text-sm">{{ $t['name'] }}</p>
-                                <p class="text-xs font-semibold text-slate-400">{{ $t['role'] }}</p>
-                            </div>
-                        </div>
+            @if($ratings->isEmpty())
+                <div class="text-center py-16 bg-white border border-slate-200/60 rounded-3xl p-8 max-w-xl mx-auto shadow-sm">
+                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-100">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.977-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
                     </div>
-                @endforeach
-            </div>
+                    <h3 class="text-lg font-bold text-slate-800">Belum ada testimoni pelanggan.</h3>
+                    <p class="text-slate-400 font-semibold mt-1 text-sm">Jadilah pelanggan pertama yang memberikan pengalaman Anda.</p>
+                </div>
+            @else
+                <!-- Slider Outer Container -->
+                <div class="relative overflow-hidden py-4 -mx-3 px-3">
+                    <!-- Slider Track -->
+                    <div class="flex transition-transform duration-500 ease-out" 
+                         :style="'transform: translateX(-' + (active * (100 / visibleCount)) + '%);'">
+                        
+                        @foreach($ratings as $rating)
+                            <div class="px-3 shrink-0 w-full md:w-1/2 lg:w-1/3">
+                                <div class="bg-white border border-slate-200/60 rounded-3xl p-8 relative flex flex-col justify-between h-full shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_45px_rgb(37,99,235,0.08)] hover:-translate-y-1.5 transition-all duration-300">
+                                    <div>
+                                        <!-- Stars -->
+                                        <div class="flex items-center gap-1 mb-5">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <svg class="w-5 h-5 {{ $i <= $rating->rating ? 'text-amber-400 fill-amber-400' : 'text-slate-200' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                                </svg>
+                                            @endfor
+                                        </div>
+                                        
+                                        <!-- Review Comment -->
+                                        <p class="text-slate-600 italic text-sm leading-relaxed mb-6 font-medium">
+                                            "{{ $rating->ulasan }}"
+                                        </p>
+                                    </div>
+                                    
+                                    <!-- User Info & Route -->
+                                    <div class="flex items-center gap-4 pt-6 border-t border-slate-100 mt-auto">
+                                        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center font-extrabold text-xs uppercase shrink-0 shadow-md">
+                                            {{ substr($rating->pelanggan->nama, 0, 2) }}
+                                        </div>
+                                        <div>
+                                            <h4 class="text-sm font-extrabold text-slate-900">{{ $rating->pelanggan->nama }}</h4>
+                                            <p class="text-[10px] font-black text-slate-450 uppercase tracking-wider mt-0.5">
+                                                {{ $rating->booking->jadwal->rute->asal }} &rarr; {{ $rating->booking->jadwal->rute->tujuan }}
+                                            </p>
+                                            <p class="text-[9px] font-semibold text-slate-350 mt-0.5">
+                                                {{ $rating->booking->jadwal->tanggal_keberangkatan->format('d M Y') }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+
+                    </div>
+                </div>
+
+                <!-- Navigation Controls (Dots) -->
+                <div class="flex justify-center items-center gap-2.5 mt-8" x-show="maxIndex() > 0">
+                    <template x-for="index in Array.from({length: maxIndex() + 1}, (_, i) => i)">
+                        <button @click="active = index; play()" 
+                                class="w-2.5 h-2.5 rounded-full transition-all duration-300 focus:outline-none"
+                                :class="active === index ? 'bg-blue-600 w-6' : 'bg-slate-200 hover:bg-slate-350'"></button>
+                    </template>
+                </div>
+            @endif
         </div>
+    </section>>
     </section>
 
     <!-- CONTACT SECTION -->

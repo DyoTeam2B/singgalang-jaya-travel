@@ -136,4 +136,9 @@ class Booking extends Model
     {
         return $this->hasMany(WhatsappNotification::class, 'booking_id');
     }
+
+    public function rating()
+    {
+        return $this->hasOne(Rating::class, 'booking_id');
+    }
 }

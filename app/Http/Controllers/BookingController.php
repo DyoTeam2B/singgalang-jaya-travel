@@ -129,6 +129,7 @@ class BookingController extends Controller
                 'pembayaran' => fn ($query) => $query->latest(),
                 'detailTrips.trip.driver',
                 'detailTrips.trip.armada',
+                'rating',
             ])
             ->where('kode_booking', $kode)
             ->first();
