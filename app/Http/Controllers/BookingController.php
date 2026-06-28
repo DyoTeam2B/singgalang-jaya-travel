@@ -27,34 +27,8 @@ class BookingController extends Controller
     public function create(Request $request)
     {
         $preselectedJadwalId = $request->query('jadwal_id');
-        
-        // Retrieve active schedules with remaining kuota
-        $today = now()->toDateString();
-        $currentTime = now()->toTimeString();
 
-        $schedules = Jadwal::with('rute')
-            ->aktif()
-            ->withSum(['bookings as booked_seats' => function ($q) {
-                $q->whereNotIn('status_booking', [Booking::STATUS_CANCELLED, Booking::STATUS_EXPIRED]);
-            }], 'jumlah_penumpang')
-            ->whereDoesntHave('trips', function ($query) {
-                $query->whereIn('status_trip', [\App\Models\Trip::STATUS_ON_TRIP, \App\Models\Trip::STATUS_COMPLETED]);
-            })
-            ->where(function ($q) use ($today, $currentTime) {
-                $q->where('tanggal_keberangkatan', '>', $today)
-                  ->orWhere(function ($sq) use ($today, $currentTime) {
-                      $sq->where('tanggal_keberangkatan', $today)
-                         ->where('jam_berangkat', '>=', $currentTime);
-                  });
-            })
-            ->orderBy('tanggal_keberangkatan', 'asc')
-            ->orderBy('jam_berangkat', 'asc')
-            ->get()
-            ->filter(function ($schedule) {
-                return ($schedule->kuota - ($schedule->booked_seats ?? 0)) > 0;
-            });
-
-        return view('public.booking.create', compact('schedules', 'preselectedJadwalId'));
+        return view('public.booking.create', compact('preselectedJadwalId'));
     }
 
     /**

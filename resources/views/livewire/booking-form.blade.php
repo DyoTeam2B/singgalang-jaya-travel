@@ -15,47 +15,68 @@
             </div>
 
             <div class="p-6 space-y-6">
-                {{-- Jadwal Picker — Card Grid --}}
+                {{-- Jadwal Picker — Pencarian Jadwal Terintegrasi --}}
                 <div class="space-y-3">
-                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Pilih Jadwal Tersedia</label>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        @foreach($schedules as $schedule)
-                            @php
-                                $available = $schedule->kuota - ($schedule->booked_seats ?? 0);
-                                $isSelected = $selectedJadwalId == $schedule->id;
-                            @endphp
+                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Jadwal Perjalanan</label>
+                    
+                    @if($selectedJadwal)
+                        <div class="p-5 rounded-2xl border border-blue-100 bg-blue-50/50 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-800 text-white">
+                                        Shift {{ ucfirst($selectedJadwal->shift) }}
+                                    </span>
+                                    <span class="text-xs font-medium text-slate-500">
+                                        {{ $selectedJadwal->tanggal_keberangkatan->format('d M Y') }}
+                                    </span>
+                                </div>
+                                <h3 class="font-extrabold text-slate-800 text-base sm:text-lg">
+                                    {{ $selectedJadwal->rute->asal }} &rarr; {{ $selectedJadwal->rute->tujuan }}
+                                </h3>
+                                <div class="flex flex-wrap items-center gap-3 sm:gap-4 text-xs font-semibold text-slate-500">
+                                    <span class="flex items-center gap-1">
+                                        <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        {{ $selectedJadwal->jam_berangkat->format('H:i') }} WIB
+                                    </span>
+                                    <span class="flex items-center gap-1">
+                                        <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                                        Sisa {{ $available_seats }} kursi
+                                    </span>
+                                    <span class="text-blue-800 font-bold">
+                                        Rp {{ number_format($tarif_per_orang, 0, ',', '.') }} / orang
+                                    </span>
+                                </div>
+                            </div>
+                            
                             <button
                                 type="button"
-                                wire:click="$set('selectedJadwalId', {{ $schedule->id }})"
-                                class="p-4 rounded-2xl border text-left transition-all
-                                    {{ $isSelected
-                                        ? 'bg-blue-800 border-blue-800 text-white shadow-sm ring-2 ring-blue-800/20'
-                                        : 'bg-white border-slate-200 text-slate-800 hover:bg-slate-50 hover:border-slate-300'
-                                    }}"
+                                wire:click="cariJadwal"
+                                class="px-4 py-2.5 rounded-xl border border-blue-300 hover:bg-blue-100/50 text-blue-800 text-xs font-bold uppercase tracking-wider transition-colors shrink-0 flex items-center justify-center gap-2"
                             >
-                                <div class="flex justify-between items-start mb-2">
-                                    <span class="text-xs font-bold uppercase tracking-wider {{ $isSelected ? 'text-blue-200' : 'text-blue-600' }}">
-                                        {{ ucfirst($schedule->shift) }}
-                                    </span>
-                                    <span class="text-xs font-medium {{ $isSelected ? 'text-blue-200' : 'text-slate-400' }}">
-                                        {{ $schedule->tanggal_keberangkatan->format('d M Y') }}
-                                    </span>
-                                </div>
-                                <p class="font-bold text-sm mb-1.5">
-                                    {{ $schedule->rute->asal }} → {{ $schedule->rute->tujuan }}
-                                </p>
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-1.5 {{ $isSelected ? 'text-blue-200' : 'text-slate-500' }}">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        <span class="text-xs font-semibold">{{ $schedule->jam_berangkat->format('H:i') }} WIB</span>
-                                    </div>
-                                    <span class="text-xs font-semibold {{ $isSelected ? 'text-blue-200' : 'text-slate-400' }}">
-                                        Sisa {{ $available }} kursi
-                                    </span>
-                                </div>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 7.89H18m0 0V5"></path></svg>
+                                Ganti Jadwal
                             </button>
-                        @endforeach
-                    </div>
+                        </div>
+                    @else
+                        <div class="p-8 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 text-center flex flex-col items-center justify-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-700 text-sm">Belum ada jadwal dipilih</h4>
+                                <p class="text-xs text-slate-400 mt-1">Silakan cari dan pilih jadwal perjalanan Anda terlebih dahulu.</p>
+                            </div>
+                            <button
+                                type="button"
+                                wire:click="cariJadwal"
+                                class="px-5 py-3 rounded-xl bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-2 shadow-sm"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                Cari & Pilih Jadwal
+                            </button>
+                        </div>
+                    @endif
+                    
                     @error('selectedJadwalId')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -184,20 +205,15 @@
 
                         {{-- Detail Fields --}}
                         <div class="space-y-3 px-1">
-                            @if($selectedJadwalId && $tarif_per_orang > 0)
-                                @php
-                                    $selectedSchedule = $schedules->firstWhere('id', $selectedJadwalId);
-                                @endphp
-                                @if($selectedSchedule)
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Rute</span>
-                                        <span class="text-sm font-bold text-slate-800">{{ $selectedSchedule->rute->asal }} → {{ $selectedSchedule->rute->tujuan }}</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Waktu</span>
-                                        <span class="text-sm font-bold text-slate-800">{{ ucfirst($selectedSchedule->shift) }}, {{ $selectedSchedule->jam_berangkat->format('H:i') }}</span>
-                                    </div>
-                                @endif
+                            @if($selectedJadwal && $tarif_per_orang > 0)
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Rute</span>
+                                    <span class="text-sm font-bold text-slate-800">{{ $selectedJadwal->rute->asal }} → {{ $selectedJadwal->rute->tujuan }}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Waktu</span>
+                                    <span class="text-sm font-bold text-slate-800">{{ ucfirst($selectedJadwal->shift) }}, {{ $selectedJadwal->jam_berangkat->format('H:i') }} WIB</span>
+                                </div>
                             @endif
                             <div class="flex justify-between items-center">
                                 <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Penumpang</span>
@@ -248,9 +264,9 @@
                 </div>
             </div>
 
-            <a href="{{ route('jadwal.index') }}" class="w-full flex items-center justify-center gap-2 text-slate-400 hover:text-slate-800 text-xs font-semibold uppercase tracking-wider transition-colors">
+            <button type="button" wire:click="cariJadwal" class="w-full flex items-center justify-center gap-2 text-slate-400 hover:text-slate-800 text-xs font-semibold uppercase tracking-wider transition-colors">
                 ← Ganti Jadwal
-            </a>
+            </button>
         </div>
     </div>
 </div>

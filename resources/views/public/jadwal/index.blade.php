@@ -15,6 +15,9 @@
                 <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50/40 rounded-full blur-3xl pointer-events-none"></div>
                 
                 <form action="{{ route('jadwal.index') }}" method="GET" class="relative z-10 grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+                    @if(request('select_mode'))
+                        <input type="hidden" name="select_mode" value="1">
+                    @endif
                     <!-- Origin -->
                     <div>
                         <label for="asal" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Kota Asal</label>
@@ -68,7 +71,7 @@
                             Cari
                         </button>
                         @if(request()->anyFilled(['asal', 'tujuan', 'tanggal']))
-                            <a href="{{ route('jadwal.index') }}" class="h-12 w-12 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl transition-all flex items-center justify-center border border-slate-200" title="Reset Filter">
+                            <a href="{{ route('jadwal.index', request('select_mode') ? ['select_mode' => 1] : []) }}" class="h-12 w-12 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl transition-all flex items-center justify-center border border-slate-200" title="Reset Filter">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/>
                                 </svg>
@@ -88,7 +91,7 @@
                     </div>
                     <h3 class="text-xl font-bold text-slate-900 mb-2">Jadwal Tidak Ditemukan</h3>
                     <p class="text-slate-500 text-sm font-medium mb-6">Maaf, jadwal dengan kriteria pencarian Anda belum tersedia saat ini.</p>
-                    <a href="{{ route('jadwal.index') }}" class="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors">
+                    <a href="{{ route('jadwal.index', request('select_mode') ? ['select_mode' => 1] : []) }}" class="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors">
                         Tampilkan Semua Jadwal
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
@@ -196,9 +199,15 @@
 
                             <!-- Button -->
                             @if($sisaKursi > 0)
-                                <a href="{{ Route::has('booking.create') ? route('booking.create', ['jadwal_id' => $schedule->id]) : '#' }}" class="w-full h-12 mt-6 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold transition-all shadow-lg shadow-slate-900/15 active:scale-[0.98] flex justify-center items-center relative z-10">
-                                    Booking Sekarang
-                                </a>
+                                @if(request('select_mode'))
+                                    <a href="{{ route('booking.create', ['jadwal_id' => $schedule->id]) }}" class="w-full h-12 mt-6 bg-blue-800 hover:bg-blue-900 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-800/15 active:scale-[0.98] flex justify-center items-center relative z-10">
+                                        Pilih Jadwal
+                                    </a>
+                                @else
+                                    <a href="{{ Route::has('booking.create') ? route('booking.create', ['jadwal_id' => $schedule->id]) : '#' }}" class="w-full h-12 mt-6 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold transition-all shadow-lg shadow-slate-900/15 active:scale-[0.98] flex justify-center items-center relative z-10">
+                                        Booking Sekarang
+                                    </a>
+                                @endif
                             @else
                                 <button disabled class="w-full h-12 mt-6 bg-slate-200 text-slate-400 rounded-xl font-bold cursor-not-allowed flex justify-center items-center relative z-10">
                                     Habis Terjual

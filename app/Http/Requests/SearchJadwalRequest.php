@@ -25,6 +25,7 @@ class SearchJadwalRequest extends FormRequest
             'asal' => ['nullable', 'string', 'max:100'],
             'tujuan' => ['nullable', 'string', 'max:100'],
             'tanggal' => ['nullable', 'date', 'after_or_equal:today'],
+            'select_mode' => ['nullable', 'string'],
         ];
     }
 

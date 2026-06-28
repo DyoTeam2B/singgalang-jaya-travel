@@ -52,7 +52,7 @@
         @endif
 
         {{-- Livewire Component --}}
-        <livewire:booking-form :schedules="$schedules" :preselectedJadwalId="$preselectedJadwalId" />
+        <livewire:booking-form :preselectedJadwalId="$preselectedJadwalId" />
     </div>
 </div>
 @endsection

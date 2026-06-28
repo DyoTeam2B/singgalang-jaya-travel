@@ -22,6 +22,9 @@ class BookingForm extends Component
     public $longitude_tujuan;
     public $jumlah_penumpang = 1;
 
+    // Selected Schedule model
+    public $selectedJadwal;
+
     // Computed properties
     public $tarif_per_orang = 0;
     public $total_harga = 0;
@@ -30,11 +33,28 @@ class BookingForm extends Component
     /**
      * Component mount lifecycle.
      */
-    public function mount($schedules, $preselectedJadwalId = null)
+    public function mount($schedules = null, $preselectedJadwalId = null)
     {
+        // Restore from session if exists
+        if (session()->has('booking_form_state')) {
+            $state = session()->get('booking_form_state');
+            $this->nama = $state['nama'] ?? auth()->user()->name;
+            $this->no_hp = $state['no_hp'] ?? (auth()->user()->pelanggan?->no_hp ?? '');
+            $this->alamat_jemput = $state['alamat_jemput'] ?? '';
+            $this->latitude_jemput = $state['latitude_jemput'] ?? null;
+            $this->longitude_jemput = $state['longitude_jemput'] ?? null;
+            $this->alamat_tujuan = $state['alamat_tujuan'] ?? '';
+            $this->latitude_tujuan = $state['latitude_tujuan'] ?? null;
+            $this->longitude_tujuan = $state['longitude_tujuan'] ?? null;
+            $this->jumlah_penumpang = $state['jumlah_penumpang'] ?? 1;
+
+            session()->forget('booking_form_state');
+        } else {
+            $this->nama = auth()->user()->name;
+            $this->no_hp = auth()->user()->pelanggan?->no_hp ?? '';
+        }
+
         $this->schedules = $schedules;
-        $this->nama = auth()->user()->name;
-        $this->no_hp = auth()->user()->pelanggan?->no_hp ?? '';
 
         if ($preselectedJadwalId) {
             $this->selectedJadwalId = $preselectedJadwalId;
@@ -50,6 +70,7 @@ class BookingForm extends Component
         if ($value) {
             $jadwal = Jadwal::with('rute')->find($value);
             if ($jadwal) {
+                $this->selectedJadwal = $jadwal;
                 $this->tarif_per_orang = $jadwal->rute->tarif;
                 
                 // Calculate available seats
@@ -59,12 +80,34 @@ class BookingForm extends Component
                 
                 $this->available_seats = max(0, $jadwal->kuota - $bookedSeats);
             } else {
+                $this->selectedJadwal = null;
                 $this->resetCalculations();
             }
         } else {
+            $this->selectedJadwal = null;
             $this->resetCalculations();
         }
         $this->calculateTotal();
+    }
+
+    /**
+     * Save form state to session and redirect to schedule search.
+     */
+    public function cariJadwal()
+    {
+        session()->put('booking_form_state', [
+            'nama' => $this->nama,
+            'no_hp' => $this->no_hp,
+            'alamat_jemput' => $this->alamat_jemput,
+            'latitude_jemput' => $this->latitude_jemput,
+            'longitude_jemput' => $this->longitude_jemput,
+            'alamat_tujuan' => $this->alamat_tujuan,
+            'latitude_tujuan' => $this->latitude_tujuan,
+            'longitude_tujuan' => $this->longitude_tujuan,
+            'jumlah_penumpang' => $this->jumlah_penumpang,
+        ]);
+
+        return redirect()->route('jadwal.index', ['select_mode' => 1]);
     }
 
     /**
