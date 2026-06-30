@@ -7,16 +7,92 @@
 
     <title>{{ config('app.name', 'Laravel') }} - Admin Panel</title>
 
-    <!-- Google Fonts Poppins -->
+    <!-- Google Fonts Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Scripts and Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+
+    <!-- Prevent Sidebar Layout Flash -->
+    <script>
+        (function () {
+            if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                document.documentElement.classList.add('sidebar-collapsed-preload');
+            }
+        })();
+    </script>
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        @media (min-width: 1024px) {
+            .admin-sidebar-shell {
+                width: 18rem;
+            }
+
+            .admin-main-shell {
+                padding-left: 18rem;
+            }
+
+            html.sidebar-collapsed-preload .admin-sidebar-shell,
+            .admin-layout.is-sidebar-collapsed .admin-sidebar-shell {
+                width: 5rem;
+            }
+
+            html.sidebar-collapsed-preload .admin-main-shell,
+            .admin-layout.is-sidebar-collapsed .admin-main-shell {
+                padding-left: 5rem;
+            }
+
+            html.sidebar-collapsed-preload [\:class*="lg:overflow-visible"] {
+                overflow: visible !important;
+            }
+
+            html.sidebar-collapsed-preload [\:class*="lg:justify-center"] {
+                justify-content: center !important;
+            }
+
+            html.sidebar-collapsed-preload [\:class*="lg:px-0"] {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+
+            html.sidebar-collapsed-preload [\:class*="lg:p-0"] {
+                padding: 0 !important;
+            }
+
+            html.sidebar-collapsed-preload [\:class*="lg:p-2"] {
+                padding: 0.5rem !important;
+            }
+
+            html.sidebar-collapsed-preload [\:class*="lg:w-10"] {
+                width: 2.5rem !important;
+            }
+
+            html.sidebar-collapsed-preload [\:class*="lg:h-10"] {
+                height: 2.5rem !important;
+            }
+
+            html.sidebar-collapsed-preload [\:class*="lg:mx-auto"] {
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
+
+            html.sidebar-collapsed-preload [\:class*="lg:hidden"] {
+                display: none !important;
+            }
+
+            html.sidebar-collapsed-preload [\:class*="lg:block"] {
+                display: block !important;
+            }
+        }
+    </style>
 </head>
-<body class="antialiased font-poppins text-slate-800 bg-slate-50">
+<body class="antialiased font-sans text-slate-900 bg-slate-50/50">
     @php
         $pendingPaymentCount = \App\Models\Pembayaran::where('status_pembayaran', \App\Models\Pembayaran::STATUS_MENUNGGU)->count();
         $pendingBookingCount = \App\Models\Booking::where('status_booking', \App\Models\Booking::STATUS_MENUNGGU_VERIFIKASI)->count();
@@ -44,10 +120,13 @@
         $notificationCount = $notificationItems->sum('count');
     @endphp
 
-    <div x-data="{ sidebarMobileOpen: false, profileDropdownOpen: false, notificationDropdownOpen: false, logoutModalOpen: false }" class="min-h-screen flex relative overflow-x-hidden">
-        
+    <div x-data="{ sidebarMobileOpen: false, profileDropdownOpen: false, notificationDropdownOpen: false, logoutModalOpen: false, sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true' }"
+         x-init="$watch('sidebarCollapsed', val => localStorage.setItem('sidebarCollapsed', val)); $nextTick(() => document.documentElement.classList.remove('sidebar-collapsed-preload'))"
+         :class="{ 'is-sidebar-collapsed': sidebarCollapsed }"
+         class="admin-layout min-h-screen flex relative overflow-x-hidden">
+
         <!-- Sidebar - Desktop (Static) -->
-        <aside class="hidden lg:flex lg:flex-col lg:w-72 lg:fixed lg:inset-y-0 lg:bg-[#0B1329] lg:text-slate-300 lg:z-50 lg:border-r lg:border-white/5 lg:shadow-2xl">
+        <aside class="admin-sidebar-shell hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 lg:bg-[#0B1329] lg:text-slate-300 lg:z-50 lg:border-r lg:border-white/5 lg:shadow-2xl transition-all duration-300 ease-in-out">
             <x-sidebar-admin />
         </aside>
 
@@ -61,11 +140,11 @@
              x-transition:leave="transition-all duration-300 ease-in"
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0">
-            
+
             <!-- Dark Overlay background -->
             <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
                  @click="sidebarMobileOpen = false"></div>
-            
+
             <!-- Drawer Content -->
             <aside class="absolute inset-y-0 left-0 w-72 bg-[#0B1329] text-slate-300 shadow-2xl flex flex-col"
                    x-show="sidebarMobileOpen"
@@ -75,7 +154,7 @@
                    x-transition:leave="transition-transform duration-300 ease-in"
                    x-transition:leave-start="translate-x-0"
                    x-transition:leave-end="-translate-x-full">
-                
+
                 <!-- Close Button (Absolute positioned at top-right of sidebar header) -->
                 <button @click="sidebarMobileOpen = false"
                         class="absolute top-6 right-6 p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-xl transition-all lg:hidden z-50">
@@ -84,21 +163,23 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
-                
+
                 <x-sidebar-admin />
             </aside>
         </div>
 
         <!-- Main Content Wrapper -->
-        <div class="flex-1 flex flex-col lg:pl-72 min-h-screen min-w-0 w-full max-w-full overflow-x-hidden">
-            
+        <div class="admin-main-shell flex-1 flex flex-col min-h-screen min-w-0 w-full max-w-full overflow-x-hidden transition-all duration-300 ease-in-out">
+
             <!-- Top Navbar -->
             <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 sticky top-0 z-40 shrink-0">
                 <div class="flex items-center gap-4">
-                    <!-- Hamburger menu button (mobile) -->
-                    <button @click="sidebarMobileOpen = true"
-                            class="lg:hidden p-3 text-slate-500 hover:bg-slate-100 rounded-xl transition-all active:scale-95">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Hamburger menu button (mobile & desktop toggle) -->
+                    <button @click="window.innerWidth < 1024 ? sidebarMobileOpen = true : sidebarCollapsed = !sidebarCollapsed"
+                            class="p-3 text-slate-500 hover:bg-slate-100 rounded-xl transition-all active:scale-95">
+                        <svg class="w-6 h-6 transition-transform duration-300 ease-in-out"
+                             :class="sidebarCollapsed ? 'rotate-180' : ''"
+                             fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
                     </button>
@@ -195,11 +276,11 @@
                              x-transition:leave="transition ease-in duration-75"
                              x-transition:leave-start="transform opacity-100 scale-100"
                              x-transition:leave-end="transform opacity-0 scale-95">
-                            
+
                             <div class="px-6 py-2 mb-2 border-b border-slate-50">
                                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Akun Admin</p>
                             </div>
-                            
+
                             <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-6 py-3 text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">
                                 <!-- User circle SVG -->
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -207,7 +288,7 @@
                                 </svg>
                                 <span class="text-[11px] font-black uppercase tracking-widest">Profil Saya</span>
                             </a>
-                            
+
                             <a href="{{ route('profile.edit') }}?tab=password" class="flex items-center gap-3 px-6 py-3 text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-colors">
                                 <!-- Key Icon SVG -->
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -215,7 +296,7 @@
                                 </svg>
                                 <span class="text-[11px] font-black uppercase tracking-widest">Ubah Password</span>
                             </a>
-                            
+
                             <button @click="logoutModalOpen = true; profileDropdownOpen = false"
                                     class="w-full flex items-center gap-3 px-6 py-3 text-rose-500 hover:bg-rose-50 transition-colors border-t border-slate-50 mt-2 text-left">
                                 <!-- LogOut Icon -->
@@ -245,7 +326,7 @@
              x-transition:leave="transition-all duration-300 ease-in"
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0">
-            
+
             <div class="bg-white w-full max-w-sm rounded-[3rem] shadow-2xl overflow-hidden p-10 text-center"
                  @click.outside="logoutModalOpen = false"
                  x-show="logoutModalOpen"
@@ -255,7 +336,7 @@
                  x-transition:leave="transition-all duration-300 ease-in"
                  x-transition:leave-start="transform scale-100"
                  x-transition:leave-end="transform scale-95">
-                
+
                 <div class="w-20 h-20 bg-rose-50 rounded-[2.5rem] flex items-center justify-center text-rose-500 mx-auto mb-6 shadow-xl shadow-rose-500/10">
                     <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
@@ -263,11 +344,11 @@
                 </div>
                 <h3 class="text-2xl font-black text-slate-900 tracking-tight mb-2">Konfirmasi Logout</h3>
                 <p class="text-sm font-bold text-slate-400 mb-8 px-4 leading-relaxed">Apakah Anda yakin ingin keluar dari Panel Admin?</p>
-                
+
                 <div class="grid grid-cols-2 gap-4">
                     <button @click="logoutModalOpen = false"
                             class="py-4 bg-white border border-slate-200 text-slate-600 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-50 transition-all">Batal</button>
-                    
+
                     <button @click="event.preventDefault(); document.getElementById('logout-form').submit();"
                             class="py-4 bg-rose-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-rose-500/20 hover:bg-rose-600 transition-all">
                         Logout
