@@ -80,7 +80,7 @@
                 <div class="lg:col-span-6 relative z-0">
                     <div class="relative rounded-2xl overflow-hidden shadow-2xl shadow-blue-900/10 border-8 border-white bg-white">
                         <img 
-                            src="https://images.unsplash.com/photo-1596429916858-6f97b5b9cf48?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3aGl0ZSUyMHRveW90YSUyMGF2YW56YSUyMGNhciUyMG9uJTIwc3RyZWV0fGVufDF8fHx8MTc3OTExMjczNHww&ixlib=rb-4.1.0&q=80&w=1080" 
+                            src="{{ asset('travel_avanza_hero.png') }}" 
                             alt="Toyota Avanza Travel Singgalang Jaya"
                             class="w-full h-auto object-cover aspect-[4/3] transform hover:scale-105 transition-transform duration-700"
                         />
