@@ -44,9 +44,9 @@
                             </svg>
                         </a>
                         <a href="#jadwal" 
-                           class="bg-white hover:bg-slate-50 text-slate-700 px-8 h-14 rounded-xl font-bold text-base transition-all shadow-sm border border-slate-200 flex items-center justify-center gap-2 group w-full sm:w-auto active:scale-[0.98]">
+                           class="bg-white hover:bg-blue-50/50 hover:text-blue-800 hover:border-blue-200 text-slate-700 px-8 h-14 rounded-xl font-bold text-base transition-all shadow-sm border border-slate-200 flex items-center justify-center gap-2 group w-full sm:w-auto active:scale-[0.98]">
                             <!-- Calendar icon -->
-                            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <svg class="w-5 h-5 text-blue-500 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zM14.25 15h.008v.008H14.25V15zm0 2.25h.008v.008H14.25v-.008zm2.25-2.25h.008v.008H16.5V15zm0 2.25h.008v.008H16.5v-.008z"></path>
                             </svg>
                             Lihat Jadwal
