@@ -61,7 +61,7 @@
                         </div>
                         <div>
                             <p class="text-2xl font-black text-slate-900 flex items-center gap-1.5 tracking-tight">
-                                4.9
+                                {{ number_format($averageRating, 1) }}
                                 <!-- Star Icon -->
                                 <svg class="w-4 h-4 fill-amber-400 text-amber-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
@@ -232,7 +232,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499c-.196-.396-.65-.396-.847 0L8.14 8.78l-5.83.826c-.439.062-.616.6-.297.913l4.22 4.112-1.002 5.795c-.075.438.384.77.778.558l5.222-2.747 5.22 2.746c.395.208.854-.124.778-.558l-1.001-5.795 4.22-4.112c.319-.313.142-.851-.297-.913l-5.83-.828-2.523-5.283z"></path>
                             </svg>
                         </div>
-                        <p class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">4.9 / 5</p>
+                        <p class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">{{ number_format($averageRating, 1) }} / 5</p>
                         <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Rating Pelanggan</p>
                     </div>
                     <!-- Stat 3 -->

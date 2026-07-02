@@ -47,6 +47,12 @@ class HomeController extends Controller
         $totalPassengers = Booking::where('status_booking', Booking::STATUS_COMPLETED)
             ->sum('jumlah_penumpang');
 
-        return view('public.home', compact('schedules', 'drivers', 'ratings', 'totalPassengers'));
+        // Calculate average rating from database: Total Bintang ÷ Jumlah Ulasan
+        $ratingQuery = \App\Models\Rating::where('status', \App\Models\Rating::STATUS_PUBLISHED);
+        $totalBintang = $ratingQuery->sum('rating');
+        $jumlahUlasan = $ratingQuery->count();
+        $averageRating = $jumlahUlasan > 0 ? round($totalBintang / $jumlahUlasan, 1) : 4.9;
+
+        return view('public.home', compact('schedules', 'drivers', 'ratings', 'totalPassengers', 'averageRating'));
     }
 }
