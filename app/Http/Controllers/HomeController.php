@@ -43,6 +43,10 @@ class HomeController extends Controller
             ->take(6)
             ->get();
 
-        return view('public.home', compact('schedules', 'drivers', 'ratings'));
+        // Get total passengers from completed bookings
+        $totalPassengers = Booking::where('status_booking', Booking::STATUS_COMPLETED)
+            ->sum('jumlah_penumpang');
+
+        return view('public.home', compact('schedules', 'drivers', 'ratings', 'totalPassengers'));
     }
 }

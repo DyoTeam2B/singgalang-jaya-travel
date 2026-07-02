@@ -7,6 +7,7 @@ Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 ### Changed
 
 * Ubah susunan kalimat perjalanan di Hero section landing page dari "Padang Panjang ke Pekanbaru" menjadi "Pekanbaru ↔ Padang Panjang" (Ref: perbaikan.md #2)
+* Jumlah penumpang di Hero stats dan Stats Band sekarang diambil dari database (SUM jumlah_penumpang dari booking completed) (Ref: perbaikan.md #3)
 
 ### Notes
 
