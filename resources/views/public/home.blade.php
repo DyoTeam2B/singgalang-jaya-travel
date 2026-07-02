@@ -25,9 +25,9 @@
 
                     <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 leading-[1.05] tracking-tight">
                         Perjalanan <br />
-                        <span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Padang Panjang</span>
+                        <span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Pekanbaru</span>
                         <span class="flex items-center gap-3 mt-1 text-slate-900">
-                            ke Pekanbaru
+                            ↔ Padang Panjang
                         </span>
                     </h1>
                     

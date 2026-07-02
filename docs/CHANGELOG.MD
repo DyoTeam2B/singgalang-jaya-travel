@@ -2,6 +2,17 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-07-02] - Rayfo - Perbaikan
+
+### Changed
+
+* Ubah susunan kalimat perjalanan di Hero section landing page dari "Padang Panjang ke Pekanbaru" menjadi "Pekanbaru ↔ Padang Panjang" (Ref: perbaikan.md #2)
+
+### Notes
+
+* Perubahan hanya pada Hero section `home.blade.php`, tidak mengubah section lain
+* Task selanjutnya: Rayfo perbaikan No. 2-10
+
 ## [2026-06-28] - Rayhan & Tim - Sprint 6 / Final UAS
 
 ### Added
