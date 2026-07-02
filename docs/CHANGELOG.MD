@@ -10,6 +10,8 @@ Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 * Jumlah penumpang di Hero stats dan Stats Band sekarang diambil dari database (SUM jumlah_penumpang dari booking completed) (Ref: perbaikan.md #3)
 * Mengubah teks estimasi keberangkatan "2 Jam" di Hero Section menjadi "± 2 Jam" (Ref: perbaikan.md #5)
 * Rating di Hero stats dan Stats Band sekarang diambil dari database dengan rumus Total Bintang ÷ Jumlah Ulasan (Ref: perbaikan.md #4)
+* Mengganti ikon SVG rute di Stats Band dengan logo `rute.png` (Ref: perbaikan.md #6)
+* Menambahkan transisi efek hover interaktif dengan border dan background biru muda pada tombol Login di navbar (Ref: user request)
 
 ### Notes
 

@@ -82,7 +82,7 @@
                         </a>
                     @endif
                 @else
-                    <a href="{{ route('login') }}" class="flex items-center gap-2 text-sm font-bold text-slate-700 bg-white border border-slate-200 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-all shadow-sm">
+                    <a href="{{ route('login') }}" class="flex items-center gap-2 text-sm font-bold text-slate-700 bg-white border border-slate-200 px-5 py-2.5 rounded-xl hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition-all duration-300 shadow-sm">
                         Login
                     </a>
                     <a href="{{ route('register') }}" class="flex items-center gap-2 text-sm font-bold text-white bg-slate-900 px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-all shadow-sm">
@@ -137,7 +137,7 @@
                     <a href="{{ route('dashboard') }}" @click="isMobileMenuOpen = false" class="w-full flex justify-center items-center text-sm font-bold text-white bg-blue-800 px-5 py-3 rounded-xl hover:bg-blue-900 transition-all shadow-sm">Dashboard</a>
                 @endif
             @else
-                <a href="{{ route('login') }}" @click="isMobileMenuOpen = false" class="w-full flex justify-center items-center text-sm font-bold text-slate-700 bg-white border border-slate-200 px-5 py-3 rounded-xl hover:bg-slate-50 transition-all shadow-sm">Login</a>
+                <a href="{{ route('login') }}" @click="isMobileMenuOpen = false" class="w-full flex justify-center items-center text-sm font-bold text-slate-700 bg-white border border-slate-200 px-5 py-3 rounded-xl hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition-all duration-300 shadow-sm">Login</a>
                 <a href="{{ route('register') }}" @click="isMobileMenuOpen = false" class="w-full flex justify-center items-center text-sm font-bold text-white bg-slate-900 px-5 py-3 rounded-xl hover:bg-slate-800 transition-all shadow-sm">Register</a>
             @endauth
         </div>
