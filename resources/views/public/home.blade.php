@@ -70,7 +70,7 @@
                             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Rating</p>
                         </div>
                         <div>
-                            <p class="text-2xl font-black text-slate-900 tracking-tight">2 Jam</p>
+                            <p class="text-2xl font-black text-slate-900 tracking-tight">± 2 Jam</p>
                             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Estimasi Keberangkatan</p>
                         </div>
                     </div>
