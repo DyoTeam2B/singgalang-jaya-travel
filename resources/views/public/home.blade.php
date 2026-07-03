@@ -254,7 +254,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <p class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">99%</p>
+                        <p class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">{{ $onTimePercentage }}%</p>
                         <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Tepat Waktu</p>
                     </div>
                 </div>

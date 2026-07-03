@@ -14,6 +14,7 @@ Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 * Menambahkan transisi efek hover interaktif dengan border dan background biru muda pada tombol Login di navbar (Ref: user request)
 * Jumlah rating (ulasan) di Hero stats dan Stats Band sekarang diambil secara dinamis dari database (Ref: perbaikan.md #8)
 * Jumlah rute di Stats Band sekarang diambil secara dinamis dari database (Ref: perbaikan.md #9)
+* Persentase Tepat Waktu di Stats Band sekarang diambil secara dinamis dari database berdasarkan perbandingan waktu mulai trip aktual dengan jadwal keberangkatan (Ref: perbaikan.md #10)
 
 ### Notes
 

@@ -56,6 +56,33 @@ class HomeController extends Controller
         // Get total routes count
         $totalRoutes = \App\Models\Rute::count();
 
-        return view('public.home', compact('schedules', 'drivers', 'ratings', 'totalPassengers', 'averageRating', 'jumlahUlasan', 'totalRoutes'));
+        // Calculate on-time percentage (Tepat Waktu) based on completed trips
+        $completedTrips = \App\Models\Trip::where('status_trip', \App\Models\Trip::STATUS_COMPLETED)
+            ->with('jadwal')
+            ->get();
+
+        $totalCompleted = $completedTrips->count();
+        if ($totalCompleted > 0) {
+            $onTimeCount = 0;
+            foreach ($completedTrips as $trip) {
+                if ($trip->jadwal && $trip->started_at) {
+                    $scheduledDateStr = $trip->jadwal->tanggal_keberangkatan->toDateString();
+                    $scheduledTimeStr = $trip->jadwal->jam_berangkat instanceof \DateTime 
+                        ? $trip->jadwal->jam_berangkat->format('H:i:s') 
+                        : \Carbon\Carbon::parse($trip->jadwal->jam_berangkat)->toTimeString();
+                    
+                    $scheduledTime = \Carbon\Carbon::parse($scheduledDateStr . ' ' . $scheduledTimeStr);
+                    
+                    if ($trip->started_at->lte($scheduledTime->copy()->addHours(2))) {
+                        $onTimeCount++;
+                    }
+                }
+            }
+            $onTimePercentage = round(($onTimeCount / $totalCompleted) * 100);
+        } else {
+            $onTimePercentage = 99;
+        }
+
+        return view('public.home', compact('schedules', 'drivers', 'ratings', 'totalPassengers', 'averageRating', 'jumlahUlasan', 'totalRoutes', 'onTimePercentage'));
     }
 }
