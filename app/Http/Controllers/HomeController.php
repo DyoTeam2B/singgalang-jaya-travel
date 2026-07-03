@@ -73,7 +73,7 @@ class HomeController extends Controller
                     
                     $scheduledTime = \Carbon\Carbon::parse($scheduledDateStr . ' ' . $scheduledTimeStr);
                     
-                    if ($trip->started_at->lte($scheduledTime->copy()->addHours(2))) {
+                    if ($trip->started_at->lt($scheduledTime->copy()->addHours(3))) {
                         $onTimeCount++;
                     }
                 }
