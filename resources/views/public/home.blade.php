@@ -243,7 +243,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75h3.75a8.25 8.25 0 018.25 8.25v3.75m-18 0V15a8.25 8.25 0 018.25-8.25M2.25 10.5h3.75a3.75 3.75 0 013.75 3.75v3.75m10.5-12h3.75M2.25 15h3.75m0-4.5h3.75"></path>
                             </svg>
                         </div>
-                        <p class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">2 Rute</p>
+                        <p class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">{{ $totalRoutes }} Rute</p>
                         <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Pulang & Pergi</p>
                     </div>
                     <!-- Stat 4 -->

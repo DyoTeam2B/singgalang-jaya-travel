@@ -53,6 +53,9 @@ class HomeController extends Controller
         $jumlahUlasan = $ratingQuery->count();
         $averageRating = $jumlahUlasan > 0 ? round($totalBintang / $jumlahUlasan, 1) : 4.9;
 
-        return view('public.home', compact('schedules', 'drivers', 'ratings', 'totalPassengers', 'averageRating', 'jumlahUlasan'));
+        // Get total routes count
+        $totalRoutes = \App\Models\Rute::count();
+
+        return view('public.home', compact('schedules', 'drivers', 'ratings', 'totalPassengers', 'averageRating', 'jumlahUlasan', 'totalRoutes'));
     }
 }
