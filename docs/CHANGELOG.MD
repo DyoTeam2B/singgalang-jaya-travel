@@ -12,6 +12,7 @@ Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 * Rating di Hero stats dan Stats Band sekarang diambil dari database dengan rumus Total Bintang ÷ Jumlah Ulasan (Ref: perbaikan.md #4)
 * Mengganti ikon SVG rute di Stats Band dengan logo `rute.png` (Ref: perbaikan.md #6)
 * Menambahkan transisi efek hover interaktif dengan border dan background biru muda pada tombol Login di navbar (Ref: user request)
+* Jumlah rating (ulasan) di Hero stats dan Stats Band sekarang diambil secara dinamis dari database (Ref: perbaikan.md #8)
 
 ### Notes
 

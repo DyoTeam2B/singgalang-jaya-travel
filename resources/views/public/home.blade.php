@@ -67,7 +67,7 @@
                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                                 </svg>
                             </p>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Rating</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Rating ({{ $jumlahUlasan }} Ulasan)</p>
                         </div>
                         <div>
                             <p class="text-2xl font-black text-slate-900 tracking-tight">± 2 Jam</p>
@@ -233,7 +233,7 @@
                             </svg>
                         </div>
                         <p class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">{{ number_format($averageRating, 1) }} / 5</p>
-                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Rating Pelanggan</p>
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Rating Pelanggan ({{ $jumlahUlasan }} Ulasan)</p>
                     </div>
                     <!-- Stat 3 -->
                     <div class="p-8 lg:p-10 flex flex-col items-center text-center gap-2">

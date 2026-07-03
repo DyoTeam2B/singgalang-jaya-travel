@@ -53,6 +53,6 @@ class HomeController extends Controller
         $jumlahUlasan = $ratingQuery->count();
         $averageRating = $jumlahUlasan > 0 ? round($totalBintang / $jumlahUlasan, 1) : 4.9;
 
-        return view('public.home', compact('schedules', 'drivers', 'ratings', 'totalPassengers', 'averageRating'));
+        return view('public.home', compact('schedules', 'drivers', 'ratings', 'totalPassengers', 'averageRating', 'jumlahUlasan'));
     }
 }
