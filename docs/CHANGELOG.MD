@@ -15,6 +15,7 @@ Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 * Jumlah rating (ulasan) di Hero stats dan Stats Band sekarang diambil secara dinamis dari database (Ref: perbaikan.md #8)
 * Jumlah rute di Stats Band sekarang diambil secara dinamis dari database (Ref: perbaikan.md #9)
 * Persentase Tepat Waktu di Stats Band sekarang diambil secara dinamis dari database berdasarkan perbandingan waktu mulai trip aktual dengan jadwal keberangkatan (Ref: perbaikan.md #10)
+* Perbaiki format dan estetika template notifikasi WhatsApp untuk pelanggan dan driver agar lebih rapi, terstruktur, dan informatif (Ref: perbaikan.md #28)
 
 ### Notes
 

@@ -65,88 +65,93 @@ class BookingWhatsappNotificationService
     private function buildDpVerifiedMessage(Booking $booking): string
     {
         return implode("\n", [
-            '*SINGGALANG JAYA TRAVEL*',
-            '*DP DIVERIFIKASI*',
+            '🚗 *SINGGALANG JAYA TRAVEL* 🚗',
+            '━━━━━━━━━━━━━━━━━━━━━━━━',
+            '*PEMBAYARAN DP DIVERIFIKASI*',
             '',
-            "Halo {$booking->pelanggan->nama},",
+            "Halo *{$booking->pelanggan->nama}*,",
+            'Pembayaran uang muka (DP) Anda untuk pemesanan berikut telah berhasil diverifikasi oleh Admin.',
             '',
-            "Pembayaran DP untuk booking *{$booking->kode_booking}* sudah diverifikasi oleh admin.",
+            '*📋 DETAIL BOOKING:*',
+            "• *Kode Booking* : `{$booking->kode_booking}`",
+            "• *Rute*         : {$this->routeText($booking)}",
+            "• *Jadwal*       : {$this->scheduleText($booking)}",
+            '• *Status*       : *Dikonfirmasi* (DP Lunas)',
+            '━━━━━━━━━━━━━━━━━━━━━━━━',
+            'Pemesanan Anda akan segera dimasukkan ke dalam manifest perjalanan (Trip). Detail driver dan nomor plat armada akan dikirimkan kepada Anda setelah ditentukan oleh Admin.',
             '',
-            '*Detail Booking*',
-            "Kode   : {$booking->kode_booking}",
-            'Status : Dikonfirmasi',
-            "Rute   : {$this->routeText($booking)}",
-            "Jadwal : {$this->scheduleText($booking)}",
-            '',
-            'Booking Anda akan dimasukkan ke trip oleh admin. Informasi driver dan armada akan dikirim setelah trip ditentukan.',
-            '',
-            'Terima kasih,',
-            'Singgalang Jaya Travel',
+            'Terima kasih telah memilih kami,',
+            '*Singgalang Jaya Travel*',
         ]);
     }
 
     private function buildCustomerTripAssignedMessage(Booking $booking, Trip $trip): string
     {
         return implode("\n", [
-            '*SINGGALANG JAYA TRAVEL*',
-            '*TRIP SUDAH DITENTUKAN*',
+            '🚗 *SINGGALANG JAYA TRAVEL* 🚗',
+            '━━━━━━━━━━━━━━━━━━━━━━━━',
+            '*JADWAL PERJALANAN (TRIP) DIKONFIRMASI*',
             '',
-            "Halo {$booking->pelanggan->nama},",
+            "Halo *{$booking->pelanggan->nama}*,",
+            'Detail perjalanan Anda telah ditentukan. Driver kami akan melakukan penjemputan sesuai jadwal berikut:',
             '',
-            "Booking *{$booking->kode_booking}* sudah masuk ke trip.",
+            '*📋 DETAIL PERJALANAN:*',
+            "• *Kode Booking* : `{$booking->kode_booking}`",
+            "• *Rute*         : {$this->routeText($booking)}",
+            "• *Jadwal*       : {$this->scheduleText($booking)}",
+            "• *Penumpang*    : {$booking->jumlah_penumpang} orang",
             '',
-            '*Detail Trip*',
-            "Kode      : {$booking->kode_booking}",
-            "Rute      : {$this->routeText($booking)}",
-            "Jadwal    : {$this->scheduleText($booking)}",
-            "Driver    : {$this->driverText($trip)}",
-            "Armada    : {$this->armadaText($trip)}",
-            "Penumpang : {$booking->jumlah_penumpang} orang",
+            '*👤 DETAIL DRIVER & ARMADA:*',
+            "• *Nama Driver*  : *{$trip->driver->nama_driver}*",
+            "• *No. HP/WA*    : {$trip->driver->no_hp}",
+            "• *Armada*       : {$this->armadaText($trip)}",
             '',
-            '*Penjemputan*',
-            "Alamat : {$booking->alamat_jemput}",
-            "Tujuan : {$booking->alamat_tujuan}",
+            '*📍 ALAMAT LOKASI:*',
+            "• *Penjemputan*  : {$booking->alamat_jemput}",
+            "• *Tujuan*        : {$booking->alamat_tujuan}",
+            '━━━━━━━━━━━━━━━━━━━━━━━━',
+            'Mohon bersiap di lokasi penjemputan sesuai jadwal dan pastikan nomor HP Anda selalu aktif agar driver mudah berkoordinasi.',
             '',
-            'Mohon bersiap di lokasi penjemputan sesuai jadwal.',
-            '',
-            'Terima kasih,',
-            'Singgalang Jaya Travel',
+            'Selamat menikmati perjalanan Anda,',
+            '*Singgalang Jaya Travel*',
         ]);
     }
 
     private function buildDriverTripAssignedMessage(Booking $booking, Trip $trip): string
     {
         return implode("\n", [
-            '*SINGGALANG JAYA TRAVEL*',
-            '*BOOKING BARU DI TRIP*',
+            '🔔 *SINGGALANG JAYA TRAVEL* 🔔',
+            '━━━━━━━━━━━━━━━━━━━━━━━━',
+            '*PENUGASAN BOOKING BARU*',
             '',
-            "Halo {$trip->driver->nama_driver},",
+            "Halo *{$trip->driver->nama_driver}*,",
+            'Ada booking pelanggan baru yang telah dimasukkan ke dalam manifest perjalanan Anda.',
             '',
-            'Ada booking baru yang masuk ke trip Anda.',
+            '*📋 DETAIL TRIP:*',
+            "• *Kode Booking* : `{$booking->kode_booking}`",
+            "• *Rute*         : {$this->routeText($booking)}",
+            "• *Jadwal*       : {$this->scheduleText($booking)}",
+            "• *Armada*       : {$this->armadaText($trip)}",
             '',
-            '*Detail Trip*',
-            "Kode      : {$booking->kode_booking}",
-            "Rute      : {$this->routeText($booking)}",
-            "Jadwal    : {$this->scheduleText($booking)}",
-            "Armada    : {$this->armadaText($trip)}",
+            '*👤 DATA PELANGGAN:*',
+            "• *Nama*         : *{$booking->pelanggan->nama}*",
+            "• *No. HP/WA*     : {$booking->pelanggan->no_hp}",
+            "• *Penumpang*    : {$booking->jumlah_penumpang} orang",
             '',
-            '*Data Pelanggan*',
-            "Nama      : {$booking->pelanggan->nama}",
-            "No. HP    : {$booking->pelanggan->no_hp}",
-            "Penumpang : {$booking->jumlah_penumpang} orang",
-            "Jemput    : {$booking->alamat_jemput}",
-            "Tujuan    : {$booking->alamat_tujuan}",
+            '*📍 ALAMAT LOKASI:*',
+            "• *Titik Jemput*  : {$booking->alamat_jemput}",
+            "• *Titik Tujuan*  : {$booking->alamat_tujuan}",
+            '━━━━━━━━━━━━━━━━━━━━━━━━',
+            'Silakan hubungi pelanggan untuk konfirmasi penjemputan, dan cek manifest trip lengkap di Dashboard Aplikasi Driver.',
             '',
-            'Silakan cek manifest trip di dashboard driver.',
-            '',
-            'Terima kasih,',
-            'Singgalang Jaya Travel',
+            'Utamakan keselamatan berkendara!',
+            '*Singgalang Jaya Travel*',
         ]);
     }
 
     private function routeText(Booking $booking): string
     {
-        return ($booking->jadwal->rute->asal ?? '-') . ' -> ' . ($booking->jadwal->rute->tujuan ?? '-');
+        return ($booking->jadwal->rute->asal ?? '-') . ' ↔ ' . ($booking->jadwal->rute->tujuan ?? '-');
     }
 
     private function scheduleText(Booking $booking): string
@@ -155,7 +160,7 @@ class BookingWhatsappNotificationService
         $shift = ucfirst($booking->jadwal->shift ?? '-');
         $time = $booking->jadwal->jam_berangkat?->format('H:i') ?? '-';
 
-        return "{$date} - {$shift} {$time} WIB";
+        return "{$date} - {$shift} ({$time} WIB)";
     }
 
     private function driverText(Trip $trip): string
@@ -172,6 +177,6 @@ class BookingWhatsappNotificationService
             return '-';
         }
 
-        return "{$trip->armada->nama_mobil} ({$trip->armada->nomor_plat})";
+        return "{$trip->armada->nama_mobil} (`{$trip->armada->nomor_plat}`)";
     }
 }
