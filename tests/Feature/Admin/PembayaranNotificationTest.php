@@ -98,9 +98,9 @@ class PembayaranNotificationTest extends TestCase
             ->firstOrFail();
 
         $this->assertStringContainsString('*SINGGALANG JAYA TRAVEL*', $notification->message);
-        $this->assertStringContainsString('*DP DIVERIFIKASI*', $notification->message);
-        $this->assertStringContainsString('*Detail Booking*', $notification->message);
-        $this->assertStringContainsString('Status : Dikonfirmasi', $notification->message);
+        $this->assertStringContainsString('*PEMBAYARAN DP DIVERIFIKASI*', $notification->message);
+        $this->assertStringContainsString('DETAIL BOOKING', $notification->message);
+        $this->assertStringContainsString('Dikonfirmasi', $notification->message);
 
         $this->actingAs($admin)
             ->put(route('admin.pembayaran.verify', $pembayaran->id))
