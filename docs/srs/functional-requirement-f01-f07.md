@@ -22,6 +22,13 @@ Fitur Akses Publik & Autentikasi Pengguna membatasi hak akses sistem agar hanya 
     *   UC-05 Logout
 *   **Prioritas**: Kritis (*Critical*)
 
+| Komponen | Nilai | Alasan |
+| :--- | :--- | :--- |
+| Benefit | 9 | Sangat penting untuk mengamankan data pengguna, memisahkan dashboard admin/driver/pelanggan secara teratur. |
+| Penalty | 9 | Tanpa otentikasi dan otorisasi yang aman, siapa saja bisa mengakses dan memanipulasi data operasional penting travel. |
+| Cost | 4 | Laravel Breeze dan role middleware menyediakan struktur dasar yang stabil dan efisien untuk diimplementasikan. |
+| Risk | 3 | Risiko keamanan sesi login atau SQL injection rendah karena dilindungi oleh security layer bawaan Laravel. |
+
 ## 4.2.2 Urutan Stimulus dan Response
 
 | Stimulus (Aktor) | Response (Sistem) |
@@ -64,6 +71,13 @@ Manajemen Data Master berfungsi sebagai penyedia data acuan (*lookup data*) yang
     *   UC-15 Mengelola Driver
     *   UC-16 Mengelola Jadwal Keberangkatan
 *   **Prioritas**: Tinggi (*High*)
+
+| Komponen | Nilai | Alasan |
+| :--- | :--- | :--- |
+| Benefit | 9 | Seluruh proses operasional bergantung pada data master yang valid dan konsisten. |
+| Penalty | 8 | Kesalahan pada data master dapat menyebabkan kesalahan jadwal, penugasan driver, maupun proses booking pelanggan. |
+| Cost | 5 | Implementasi melibatkan beberapa modul CRUD, validasi data, serta relasi antar tabel pada basis data. |
+| Risk | 4 | Risiko relatif rendah karena dapat diminimalkan melalui validasi data, foreign key, dan pembatasan hak akses admin. |
 
 ## 4.3.2 Urutan Stimulus dan Response
 
@@ -118,6 +132,13 @@ Untuk menjaga ketersediaan kuota kursi, sistem menerapkan aturan pencegahan peme
     *   UC-11 Melihat Riwayat Booking
 *   **Prioritas**: Kritis (*Critical*)
 
+| Komponen | Nilai | Alasan |
+| :--- | :--- | :--- |
+| Benefit | 9 | Mempermudah pelanggan memesan tiket secara online secara real-time dan meningkatkan okupansi travel. |
+| Penalty | 9 | Kegagalan modul booking berakibat langsung pada hilangnya potensi transaksi pemesanan dari pelanggan. |
+| Cost | 6 | Memerlukan komponen Livewire dinamis untuk kalkulasi tarif reaktif, validasi sisa kursi secara real-time, dan integrasi Leaflet map picker. |
+| Risk | 5 | Risiko race condition atau pemesanan kursi ganda jika ada pemesanan bersamaan, tetapi dapat dikendalikan dengan status check. |
+
 ## 4.4.2 Urutan Stimulus dan Response
 
 | Stimulus (Aktor) | Response (Sistem) |
@@ -160,6 +181,13 @@ Proses verifikasi oleh Admin dilakukan melalui transaksi database yang memperbar
     *   UC-12 Memverifikasi Pembayaran DP
 *   **Prioritas**: Kritis (*Critical*)
 
+| Komponen | Nilai | Alasan |
+| :--- | :--- | :--- |
+| Benefit | 8 | Mengurangi risiko pembatalan sepihak dan memastikan komitmen finansial pelanggan sebelum trip dijadwalkan. |
+| Penalty | 8 | Tanpa verifikasi DP, kuota kursi pada jadwal travel dapat tersumbat oleh pesanan fiktif yang tidak dibayar. |
+| Cost | 5 | Melibatkan unggah file bukti transfer, verifikasi manual oleh admin, pencatatan transaksi pembayaran, dan pengiriman notifikasi otomatis. |
+| Risk | 4 | Risiko pemalsuan bukti transfer oleh pelanggan, sehingga verifikasi mutasi bank riil oleh admin menjadi kunci utama. |
+
 ## 4.5.2 Urutan Stimulus dan Response
 
 | Stimulus (Aktor) | Response (Sistem) |
@@ -201,6 +229,13 @@ Pengalokasian penumpang ke dalam trip dilakukan secara interaktif menggunakan pa
     *   UC-19 Assign Driver dan Armada ke Trip
     *   UC-20 Memasukkan Booking ke Trip
 *   **Prioritas**: Tinggi (*High*)
+
+| Komponen | Nilai | Alasan |
+| :--- | :--- | :--- |
+| Benefit | 9 | Memungkinkan pengalokasian manifest, pengemudi, dan armada travel terstruktur dengan validasi pencegahan bentrok shift. |
+| Penalty | 9 | Ketidakmampuan menyusun trip menghambat keberangkatan travel secara fisik dan mengacaukan operasional di lapangan. |
+| Cost | 6 | Memerlukan join relasi yang kompleks, form assignment driver/armada dengan logic filter kesibukan driver, serta listener cascade status. |
+| Risk | 5 | Risiko kekeliruan alokasi driver/armada jika terjadi perubahan jadwal mendadak yang memicu ketidakpuasan pelanggan. |
 
 ## 4.6.2 Urutan Stimulus dan Response
 
@@ -250,6 +285,13 @@ Proses operasional trip diatur dalam state machine yang ketat di bawah kendali d
     *   UC-30 Melihat Riwayat Trip Driver
 *   **Prioritas**: Tinggi (*High*)
 
+| Komponen | Nilai | Alasan |
+| :--- | :--- | :--- |
+| Benefit | 8 | Membantu driver melihat manifes secara langsung, navigasi lokasi jemput presisi, checklist penumpang, dan rekap pelunasan cash. |
+| Penalty | 8 | Tanpa modul driver, koordinasi lapangan menjadi manual (kertas/telepon) dan rawan salah jemput atau sisa biaya lupa ditagih. |
+| Cost | 5 | Memerlukan pembuatan dashboard mobile-friendly bagi pengemudi, pemetaan Leaflet koordinat, dan otomasi pelunasan cash saat dropoff. |
+| Risk | 4 | Risiko keterbatasan jaringan internet driver di jalan yang dapat mengganggu update realtime status perjalanan. |
+
 ## 4.7.2 Urutan Stimulus dan Response
 
 | Stimulus (Aktor) | Response (Sistem) |
@@ -292,6 +334,13 @@ Fitur notifikasi diimplementasikan menggunakan `BookingWhatsappNotificationServi
     *   UC-23 Melihat Laporan Pendapatan
     *   UC-31 Mengirim Notifikasi WhatsApp
 *   **Prioritas**: Tinggi (*High*)
+
+| Komponen | Nilai | Alasan |
+| :--- | :--- | :--- |
+| Benefit | 8 | Memberikan visualisasi omset harian bagi admin, melacak okupansi armada, serta menginfokan keberangkatan otomatis via WhatsApp. |
+| Penalty | 7 | Tanpa laporan, keputusan bisnis tidak terukur. Tanpa notifikasi WA, koordinasi keberangkatan dengan pelanggan menjadi lambat. |
+| Cost | 5 | Melibatkan integrasi API pihak ketiga (Fonnte) untuk WhatsApp, scheduled cron job harian, Chart.js, serta ekspor file format CSV. |
+| Risk | 5 | Ketergantungan penuh pada kestabilan API pihak ketiga dan sisa kuota pengiriman pesan WhatsApp. |
 
 ## 4.8.2 Urutan Stimulus dan Response
 
