@@ -63,9 +63,10 @@ class FonnteService
 
         try {
             // 2. Make the HTTP Request
-            $response = Http::withHeaders([
-                'Authorization' => $token,
-            ])->asForm()->post($url, [
+            $response = Http::withoutVerifying()
+                ->withHeaders([
+                    'Authorization' => $token,
+                ])->asForm()->post($url, [
                 'target' => $normalizedTarget,
                 'message' => $message,
                 'countryCode' => config('services.fonnte.country_code', '62'),

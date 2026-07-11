@@ -14,8 +14,16 @@ Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 * Membatasi kapasitas trip di Manajemen Trip Admin ke nilai terkecil antara kuota jadwal dan kapasitas armada (`min(kuota, kapasitas)`) untuk mencegah alokasi kursi berlebih (okupansi melebihi kuota jadwal).
 * Memperbaiki halaman manifes dan dashboard driver agar menjumlahkan jumlah riil penumpang dari tiap pesanan (`sum(jumlah_penumpang)`) alih-alih menghitung jumlah baris booking (`count()`).
 * Mencegah admin mengubah/menambahkan armada driver jika armada tersebut telah terpakai oleh driver lain, lengkap dengan pesan error validasi ("Armada telah terpakai oleh driver lain.").
+* Mematikan verifikasi SSL (`withoutVerifying()`) pada client HTTP FonnteService untuk mengatasi masalah `cURL error 60` (unable to get local issuer certificate) di lingkungan pengembangan Windows lokal.
 * Memperbarui file pengujian `PembayaranNotificationTest` dan `TripAssignTest` agar sesuai dengan format pesan WhatsApp Fonnte terbaru.
 * Menambahkan skenario pengujian `test_admin_cannot_assign_armada_already_in_use` untuk memvalidasi penolakan penugasan armada ganda.
+* Menambahkan skenario unit test `test_driver_cannot_start_another_drivers_trip` (TC-01) dan `test_driver_cannot_start_trip_if_not_ready` (TC-02) pada `DriverTripTest.php` untuk melengkapi pengujian driver trip start.
+* Menambahkan skenario unit test `test_driver_cannot_dropoff_passenger_of_another_driver` (TC-01) dan `test_driver_can_dropoff_passenger_already_paid_via_transfer` (TC-03) pada `DriverTripTest.php` untuk melengkapi pengujian driver trip dropoff.
+* Menambahkan skenario unit test `test_customer_cannot_update_invalid_booking` (TC-01), `test_customer_cannot_update_another_customers_booking` (TC-02), dan `test_customer_cannot_update_passengers_exceeding_quota` (TC-04) pada `BookingCustomerFeaturesTest.php` untuk melengkapi pengujian update booking pelanggan.
+* Menambahkan pengujian otomatis unit test pada `HomeControllerTest.php` untuk memvalidasi performa statistik landing page (TC-01, TC-02, TC-03) secara otomatis.
+* Menambahkan pengujian otomatis unit test pada `PembayaranControllerTest.php` untuk memvalidasi alur unggah bukti pembayaran DP pelanggan (TC-01 s/d TC-05) secara otomatis.
+* Menambahkan pengujian otomatis unit test pada `CekBookingControllerTest.php` untuk memvalidasi pencarian status booking non-login (TC-01, TC-02, TC-03) secara otomatis.
+
 
 ## [2026-07-02] - Rayfo - Perbaikan
 
