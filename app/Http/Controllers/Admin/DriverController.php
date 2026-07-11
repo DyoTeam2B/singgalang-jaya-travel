@@ -79,6 +79,15 @@ class DriverController extends Controller
      */
     public function store(StoreDriverRequest $request)
     {
+        // Check if the armada is already assigned to another driver
+        $existingDriver = Driver::where('armada_id', $request->armada_id)->first();
+        if ($existingDriver) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Armada telah terpakai oleh driver lain.');
+        }
+
         try {
             DB::transaction(function () use ($request) {
                 // Create user login account for the driver
@@ -115,6 +124,17 @@ class DriverController extends Controller
      */
     public function update(UpdateDriverRequest $request, Driver $driver)
     {
+        // Check if the armada is already assigned to another driver
+        $existingDriver = Driver::where('armada_id', $request->armada_id)
+            ->where('id', '!=', $driver->id)
+            ->first();
+        if ($existingDriver) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Armada telah terpakai oleh driver lain.');
+        }
+
         try {
             DB::transaction(function () use ($request, $driver) {
                 // Update corresponding User account

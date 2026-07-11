@@ -197,6 +197,15 @@
         </div>
     @endif
 
+    @if($totalPax >= $capacity)
+        <div class="p-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-2xl text-xs font-semibold flex items-center gap-2 mb-6 shadow-sm">
+            <svg class="w-5 h-5 text-blue-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.063.852l-.708 2.836a.75.75 0 001.063.852l.041-.028M12 20.25a8.25 8.25 0 110-16.5 8.25 8.25 0 010 16.5zM12 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z"/>
+            </svg>
+            <span>Perhatian: Kapasitas trip sudah penuh.</span>
+        </div>
+    @endif
+
     <!-- Top Info Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
 

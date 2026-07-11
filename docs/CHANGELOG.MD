@@ -4,11 +4,17 @@ Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
 ## [2026-07-11] - Kevin & Nayasha - Perbaikan Bug
 
+### Added
+
+* Menambahkan komponen alert peringatan biru pada detail trip admin (`show.blade.php`) saat kapasitas penumpang trip sudah penuh.
+
 ### Fixed
 
 * Membatasi kapasitas trip di Manajemen Trip Admin ke nilai terkecil antara kuota jadwal dan kapasitas armada (`min(kuota, kapasitas)`) untuk mencegah alokasi kursi berlebih (okupansi melebihi kuota jadwal).
 * Memperbaiki halaman manifes dan dashboard driver agar menjumlahkan jumlah riil penumpang dari tiap pesanan (`sum(jumlah_penumpang)`) alih-alih menghitung jumlah baris booking (`count()`).
+* Mencegah admin mengubah/menambahkan armada driver jika armada tersebut telah terpakai oleh driver lain, lengkap dengan pesan error validasi ("Armada telah terpakai oleh driver lain.").
 * Memperbarui file pengujian `PembayaranNotificationTest` dan `TripAssignTest` agar sesuai dengan format pesan WhatsApp Fonnte terbaru.
+* Menambahkan skenario pengujian `test_admin_cannot_assign_armada_already_in_use` untuk memvalidasi penolakan penugasan armada ganda.
 
 ## [2026-07-02] - Rayfo - Perbaikan
 

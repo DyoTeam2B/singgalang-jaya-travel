@@ -173,4 +173,63 @@ class DriverTest extends TestCase
         $this->assertDatabaseMissing('users', ['id' => $driverUser->id]);
         $this->assertDatabaseMissing('drivers', ['id' => $driver->id]);
     }
+
+    /**
+     * Test admin cannot assign an armada already in use by another driver.
+     */
+    public function test_admin_cannot_assign_armada_already_in_use(): void
+    {
+        // 1. Create first driver with the armada
+        $driverUser1 = User::create([
+            'name' => 'Driver Satu',
+            'email' => 'driver1@test.com',
+            'password' => bcrypt('password123'),
+            'role' => 'driver',
+        ]);
+        $driver1 = Driver::create([
+            'user_id' => $driverUser1->id,
+            'nama_driver' => 'Driver Satu',
+            'no_hp' => '081234567891',
+            'armada_id' => $this->armada->id,
+            'status_driver' => 'aktif',
+        ]);
+
+        // 2. Create second driver with a different armada
+        $armada2 = Armada::create([
+            'nama_mobil' => 'Suzuki Ertiga',
+            'nomor_plat' => 'BA 5678 ZZ',
+            'kapasitas' => 5,
+            'status_armada' => 'aktif',
+        ]);
+        $driverUser2 = User::create([
+            'name' => 'Driver Dua',
+            'email' => 'driver2@test.com',
+            'password' => bcrypt('password123'),
+            'role' => 'driver',
+        ]);
+        $driver2 = Driver::create([
+            'user_id' => $driverUser2->id,
+            'nama_driver' => 'Driver Dua',
+            'no_hp' => '081234567892',
+            'armada_id' => $armada2->id,
+            'status_driver' => 'aktif',
+        ]);
+
+        // 3. Try to update second driver to use the first driver's armada
+        $response = $this->actingAs($this->adminUser)
+            ->from(route('admin.drivers.index'))
+            ->put(route('admin.drivers.update', $driver2->id), [
+                'nama_driver' => 'Driver Dua',
+                'email' => 'driver2@test.com',
+                'no_hp' => '081234567892',
+                'armada_id' => $this->armada->id,
+                'status_driver' => 'aktif',
+            ]);
+
+        $response->assertRedirect(route('admin.drivers.index'));
+        $response->assertSessionHas('error', 'Armada telah terpakai oleh driver lain.');
+
+        // Verify database did not change driver2's armada
+        $this->assertEquals($armada2->id, $driver2->fresh()->armada_id);
+    }
 }
