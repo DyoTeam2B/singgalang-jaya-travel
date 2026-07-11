@@ -185,4 +185,174 @@ class BookingCustomerFeaturesTest extends TestCase
         $this->assertTrue($historyData->contains($historyBooking));
         $this->assertFalse($historyData->contains($activeBooking));
     }
+
+    /**
+     * TC-01 (Function review): Kode booking fiktif/salah -> Redirect kembali dengan error
+     */
+    public function test_customer_review_with_invalid_booking_code(): void
+    {
+        $response = $this->actingAs($this->customerUser)
+            ->get(route('booking.review', ['kode' => 'SJT-INVALID-CODE']));
+
+        $response->assertRedirect(route('booking.index'));
+        $response->assertSessionHas('error', 'Booking tidak ditemukan atau telah dibatalkan secara otomatis karena melewati batas waktu pembayaran DP.');
+    }
+
+    /**
+     * TC-02 (Function review): Buka booking milik orang lain -> HTTP 403
+     */
+    public function test_customer_cannot_review_another_customers_booking(): void
+    {
+        // Buat customer & booking lain
+        $otherUser = User::create([
+            'name' => 'Other Customer',
+            'email' => 'other@cust.com',
+            'password' => bcrypt('password123'),
+            'role' => 'pelanggan',
+        ]);
+        $otherPelanggan = Pelanggan::create([
+            'user_id' => $otherUser->id,
+            'nama' => 'Other Customer',
+            'no_hp' => '081200003333',
+        ]);
+        $otherBooking = Booking::create([
+            'pelanggan_id' => $otherPelanggan->id,
+            'jadwal_id' => $this->jadwal->id,
+            'kode_booking' => 'SJT-OTHER-123',
+            'alamat_jemput' => 'Alamat Jemput O',
+            'alamat_tujuan' => 'Alamat Tujuan O',
+            'jumlah_penumpang' => 1,
+            'total_harga' => 150000,
+            'status_booking' => Booking::STATUS_BOOKING_DIBUAT,
+        ]);
+
+        $response = $this->actingAs($this->customerUser)
+            ->get(route('booking.review', ['kode' => $otherBooking->kode_booking]));
+
+        $response->assertStatus(403);
+    }
+
+    /**
+     * TC-03 (Function review): Booking sudah dikonfirmasi -> Redirect ke halaman pembayaran
+     */
+    public function test_customer_review_on_confirmed_booking_redirects_to_payment(): void
+    {
+        $booking = Booking::create([
+            'pelanggan_id' => $this->pelanggan->id,
+            'jadwal_id' => $this->jadwal->id,
+            'kode_booking' => 'SJT-CONFIRMED-123',
+            'alamat_jemput' => 'Alamat Jemput C',
+            'alamat_tujuan' => 'Alamat Tujuan C',
+            'jumlah_penumpang' => 2,
+            'total_harga' => 300000,
+            'status_booking' => Booking::STATUS_DIKONFIRMASI,
+        ]);
+
+        $response = $this->actingAs($this->customerUser)
+            ->get(route('booking.review', ['kode' => $booking->kode_booking]));
+
+        $response->assertRedirect(route('booking.pembayaran', ['kode' => $booking->kode_booking]));
+    }
+
+    /**
+     * TC-04 (Function review): Buka booking yang baru saja dibuat -> Render view review
+     */
+    public function test_customer_can_access_review_page_on_newly_created_booking(): void
+    {
+        $booking = Booking::create([
+            'pelanggan_id' => $this->pelanggan->id,
+            'jadwal_id' => $this->jadwal->id,
+            'kode_booking' => 'SJT-NEW-123',
+            'alamat_jemput' => 'Alamat Jemput N',
+            'alamat_tujuan' => 'Alamat Tujuan N',
+            'jumlah_penumpang' => 2,
+            'total_harga' => 300000,
+            'status_booking' => Booking::STATUS_BOOKING_DIBUAT,
+        ]);
+
+        $response = $this->actingAs($this->customerUser)
+            ->get(route('booking.review', ['kode' => $booking->kode_booking]));
+
+        $response->assertOk();
+        $response->assertViewIs('public.booking.review');
+        $response->assertSee('Tinjau Pemesanan');
+    }
+
+    /**
+     * TC-01 (Function update): Kode booking salah -> Redirect error
+     */
+    public function test_customer_cannot_update_invalid_booking(): void
+    {
+        $response = $this->actingAs($this->customerUser)
+            ->put(route('booking.update', ['kode' => 'SJT-INVALID-CODE']), [
+                'alamat_jemput' => 'Alamat Jemput Baru',
+            ]);
+
+        $response->assertRedirect(route('booking.index'));
+        $response->assertSessionHas('error', 'Booking tidak ditemukan atau telah dibatalkan secara otomatis karena melewati batas waktu pembayaran DP.');
+    }
+
+    /**
+     * TC-02 (Function update): Booking milik orang lain -> HTTP 403
+     */
+    public function test_customer_cannot_update_another_customers_booking(): void
+    {
+        // Buat customer & booking lain
+        $otherUser = User::create([
+            'name' => 'Other Customer',
+            'email' => 'other_update@cust.com',
+            'password' => bcrypt('password123'),
+            'role' => 'pelanggan',
+        ]);
+        $otherPelanggan = Pelanggan::create([
+            'user_id' => $otherUser->id,
+            'nama' => 'Other Customer',
+            'no_hp' => '081200004444',
+        ]);
+        $otherBooking = Booking::create([
+            'pelanggan_id' => $otherPelanggan->id,
+            'jadwal_id' => $this->jadwal->id,
+            'kode_booking' => 'SJT-OTHER-UPDATE-123',
+            'alamat_jemput' => 'Alamat Jemput O',
+            'alamat_tujuan' => 'Alamat Tujuan O',
+            'jumlah_penumpang' => 1,
+            'total_harga' => 150000,
+            'status_booking' => Booking::STATUS_BOOKING_DIBUAT,
+        ]);
+
+        $response = $this->actingAs($this->customerUser)
+            ->put(route('booking.update', ['kode' => $otherBooking->kode_booking]), [
+                'alamat_jemput' => 'Alamat Jemput Baru',
+            ]);
+
+        $response->assertStatus(403);
+    }
+
+    /**
+     * TC-04 (Function update): Jumlah penumpang > kuota sisa -> Ditolak, error kuota
+     */
+    public function test_customer_cannot_update_passengers_exceeding_quota(): void
+    {
+        $booking = Booking::create([
+            'pelanggan_id' => $this->pelanggan->id,
+            'jadwal_id' => $this->jadwal->id,
+            'kode_booking' => 'SJT-QUOTA-TEST',
+            'alamat_jemput' => 'Alamat Jemput N',
+            'alamat_tujuan' => 'Alamat Tujuan N',
+            'jumlah_penumpang' => 2,
+            'total_harga' => 300000,
+            'status_booking' => Booking::STATUS_BOOKING_DIBUAT,
+        ]);
+
+        // Kuota total adalah 10. Jika diubah menjadi 12 (melebihi kuota), harusnya ditolak.
+        $response = $this->actingAs($this->customerUser)
+            ->from(route('booking.show', ['kode' => $booking->kode_booking]))
+            ->put(route('booking.update', ['kode' => $booking->kode_booking]), [
+                'alamat_jemput' => 'Alamat Jemput N',
+                'jumlah_penumpang' => 12,
+            ]);
+
+        $response->assertRedirect(route('booking.show', ['kode' => $booking->kode_booking]));
+        $response->assertSessionHas('error', 'Jumlah penumpang melebihi kuota kursi yang tersedia (10 kursi tersisa).');
+    }
 }
