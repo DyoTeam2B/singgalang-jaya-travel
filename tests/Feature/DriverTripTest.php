@@ -238,4 +238,109 @@ class DriverTripTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Riwayat Perjalanan');
     }
+
+    /**
+     * TC-01: Driver lain mencoba menekan tombol start trip ini -> Akses ditolak (HTTP 403)
+     */
+    public function test_driver_cannot_start_another_drivers_trip(): void
+    {
+        // Buat driver lain
+        $otherDriverUser = User::create([
+            'name' => 'Other Driver',
+            'email' => 'other@driver.com',
+            'password' => bcrypt('password123'),
+            'role' => 'driver',
+        ]);
+        Driver::create([
+            'user_id' => $otherDriverUser->id,
+            'nama_driver' => 'Other Driver',
+            'no_hp' => '081299998888',
+            'armada_id' => $this->armada->id,
+            'status_driver' => 'aktif',
+        ]);
+
+        $response = $this->actingAs($otherDriverUser)
+            ->put(route('driver.trips.start', $this->trip->id));
+
+        $response->assertStatus(403);
+    }
+
+    /**
+     * TC-02: Menjalankan trip yang statusnya masih 'new' atau sudah 'completed' -> Dicegat
+     */
+    public function test_driver_cannot_start_trip_if_not_ready(): void
+    {
+        // Ubah status ke completed
+        $this->trip->update(['status_trip' => Trip::STATUS_COMPLETED]);
+
+        $response = $this->actingAs($this->driverUser)
+            ->from(route('driver.dashboard'))
+            ->put(route('driver.trips.start', $this->trip->id));
+
+        $response->assertRedirect(route('driver.dashboard'));
+        $response->assertSessionHas('error', 'Trip tidak berada dalam status siap berangkat.');
+    }
+
+    /**
+     * TC-01 (Function dropoff): Driver lain mengklik dropoff -> Ditolak HTTP 403
+     */
+    public function test_driver_cannot_dropoff_passenger_of_another_driver(): void
+    {
+        // Buat driver lain
+        $otherDriverUser = User::create([
+            'name' => 'Other Driver',
+            'email' => 'other_driver@test.com',
+            'password' => bcrypt('password123'),
+            'role' => 'driver',
+        ]);
+        Driver::create([
+            'user_id' => $otherDriverUser->id,
+            'nama_driver' => 'Other Driver',
+            'no_hp' => '081299991111',
+            'armada_id' => $this->armada->id,
+            'status_driver' => 'aktif',
+        ]);
+
+        $detailTrip = $this->trip->detailTrips->first();
+
+        $response = $this->actingAs($otherDriverUser)
+            ->put(route('driver.trips.dropoff', [$this->trip->id, $detailTrip->id]));
+
+        $response->assertStatus(403);
+    }
+
+    /**
+     * TC-03 (Function dropoff): Penumpang sudah melunasi tiket via transfer sebelumnya -> Penumpang ditandai sampai, sistem melompati pembuatan pembayaran cash baru
+     */
+    public function test_driver_can_dropoff_passenger_already_paid_via_transfer(): void
+    {
+        // Buat data pembayaran pelunasan terverifikasi
+        Pembayaran::create([
+            'booking_id' => $this->booking->id,
+            'jenis_pembayaran' => Pembayaran::JENIS_PELUNASAN,
+            'jumlah_bayar' => 250000,
+            'status_pembayaran' => Pembayaran::STATUS_TERVERIFIKASI,
+            'metode_pembayaran' => 'Transfer Bank BCA',
+        ]);
+
+        $this->trip->update(['status_trip' => Trip::STATUS_ON_TRIP]);
+        $detailTrip = $this->trip->detailTrips->first();
+        $detailTrip->update(['status_jemput' => 'sudah_dijemput']);
+
+        $response = $this->actingAs($this->driverUser)
+            ->put(route('driver.trips.dropoff', [$this->trip->id, $detailTrip->id]));
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseHas('detail_trip', [
+            'id' => $detailTrip->id,
+            'status_antar' => 'sudah_diantar',
+        ]);
+
+        // Pastikan tidak ada pembayaran baru yang terbuat (tetap hanya ada 1 pembayaran pelunasan transfer di DB)
+        $this->assertEquals(1, Pembayaran::where('booking_id', $this->booking->id)
+            ->where('jenis_pembayaran', Pembayaran::JENIS_PELUNASAN)
+            ->count());
+    }
 }
