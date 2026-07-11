@@ -7,6 +7,7 @@ Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 ### Added
 
 * Menambahkan komponen alert peringatan biru pada detail trip admin (`show.blade.php`) saat kapasitas penumpang trip sudah penuh.
+* Menambahkan validasi sisi klien (client-side) berbasis Alpine.js pada form upload bukti pembayaran DP (`public/pembayaran/show.blade.php`) agar memunculkan peringatan "Metode Transfer Bank wajib diisi" tanpa merefresh halaman jika belum terpilih.
 
 ### Fixed
 

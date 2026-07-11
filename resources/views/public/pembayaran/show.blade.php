@@ -50,6 +50,7 @@
                 x-data="{
                     previewUrl: null,
                     fileName: null,
+                    errorMetode: null,
                     handleFile(event) {
                         const file = event.target.files[0];
                         if (!file) return;
@@ -60,6 +61,15 @@
                         this.previewUrl = null;
                         this.fileName = null;
                         document.getElementById('bukti-upload').value = '';
+                    },
+                    submitForm(event) {
+                        const select = event.target.querySelector('select[name=metode_pembayaran]');
+                        if (!select || !select.value) {
+                            event.preventDefault();
+                            this.errorMetode = 'Metode Transfer Bank wajib diisi.';
+                            return false;
+                        }
+                        this.errorMetode = null;
                     }
                 }">
                 <div class="lg:col-span-7 space-y-6">
@@ -133,7 +143,7 @@
 
                 <div class="lg:col-span-5">
                     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                        <form action="{{ route('booking.pembayaran.store', ['kode' => $booking->kode_booking]) }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
+                        <form action="{{ route('booking.pembayaran.store', ['kode' => $booking->kode_booking]) }}" method="POST" enctype="multipart/form-data" @submit="submitForm($event)" class="p-6 space-y-6">
                             @csrf
 
                             <div>
@@ -181,6 +191,9 @@
                                     <option value="">-- Pilih Rekening Tujuan --</option>
                                     <option value="Transfer Bank BCA" {{ old('metode_pembayaran') == 'Transfer Bank BCA' ? 'selected' : '' }}>Transfer Bank BCA (123 456 7890)</option>
                                 </select>
+                                <template x-if="errorMetode">
+                                    <p class="text-red-500 text-sm mt-1" x-text="errorMetode"></p>
+                                </template>
                                 @error('metode_pembayaran')
                                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                 @enderror

@@ -294,7 +294,7 @@ Semua tugas fondasi telah diselesaikan: Setup project, Breeze auth, RoleMiddlewa
 | Error handling & flash messages | Semua | Alert component | ✅ Selesai (RYH) / 🔲 (Lainnya) |
 | UI polish (Poppins font, spacing, shadows) | Semua | Sesuai design rules | ✅ Selesai (RYH) / 🔲 (Lainnya) |
 | Loading states | Semua | Button loading, Livewire loading | ✅ Selesai (RYH) / 🔲 (Lainnya) |
-| Perbaikan bug okupansi trip, penumpang driver, dan validasi armada ganda | NYS/KVN | Pembatasan kapasitas, sum penumpang, dan cek ganda armada | ✅ Selesai |
+| Perbaikan bug okupansi trip, penumpang driver, validasi armada, & validasi transfer | NYS/KVN | Pembatasan kapasitas, sum penumpang, cek ganda armada, & validasi transfer client-side | ✅ Selesai |
 
 **Deliverable**: Seluruh halaman responsive. UI production-ready.
 
