@@ -97,11 +97,14 @@ class TripController extends Controller
                 ->map(function (Trip $trip) {
                     $currentPax = $trip->detailTrips->sum(fn ($detail) => $detail->booking?->jumlah_penumpang ?? 0);
 
+                    $armadaCapacity = $trip->armada->kapasitas ?? 5;
+                    $capacity = $trip->jadwal ? min($trip->jadwal->kuota, $armadaCapacity) : $armadaCapacity;
+
                     return [
                         'id' => $trip->id,
                         'driver_name' => $trip->driver->nama_driver ?? 'Belum Ditugaskan',
                         'plate' => $trip->armada->nomor_plat ?? '-',
-                        'capacity' => $trip->armada->kapasitas ?? 5,
+                        'capacity' => $capacity,
                         'pax' => $currentPax,
                         'departure_date' => $trip->jadwal->tanggal_keberangkatan->format('d M Y'),
                         'shift' => ucfirst($trip->jadwal->shift),
@@ -322,7 +325,8 @@ class TripController extends Controller
         $currentPax = $trip->detailTrips->sum(function($dt) {
             return $dt->booking ? $dt->booking->jumlah_penumpang : 0;
         });
-        $capacity = $trip->armada ? $trip->armada->kapasitas : 5;
+        $armadaCapacity = $trip->armada ? $trip->armada->kapasitas : 5;
+        $capacity = $trip->jadwal ? min($trip->jadwal->kuota, $armadaCapacity) : $armadaCapacity;
         $remainingSeats = $capacity - $currentPax;
 
         if ($booking->jumlah_penumpang > $remainingSeats) {

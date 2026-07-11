@@ -2,6 +2,14 @@
 
 Semua perubahan penting pada proyek akan dicatat pada dokumen ini.
 
+## [2026-07-11] - Kevin & Nayasha - Perbaikan Bug
+
+### Fixed
+
+* Membatasi kapasitas trip di Manajemen Trip Admin ke nilai terkecil antara kuota jadwal dan kapasitas armada (`min(kuota, kapasitas)`) untuk mencegah alokasi kursi berlebih (okupansi melebihi kuota jadwal).
+* Memperbaiki halaman manifes dan dashboard driver agar menjumlahkan jumlah riil penumpang dari tiap pesanan (`sum(jumlah_penumpang)`) alih-alih menghitung jumlah baris booking (`count()`).
+* Memperbarui file pengujian `PembayaranNotificationTest` dan `TripAssignTest` agar sesuai dengan format pesan WhatsApp Fonnte terbaru.
+
 ## [2026-07-02] - Rayfo - Perbaikan
 
 ### Changed

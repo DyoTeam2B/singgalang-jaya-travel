@@ -114,7 +114,7 @@
                         </div>
                         <div class="min-w-0">
                             <p class="text-[8px] font-black text-white/40 uppercase tracking-widest mb-0.5">Tingkat Okupansi</p>
-                            <p class="text-[10px] font-black text-white uppercase truncate">{{ $trip->detailTrips->count() }} Penumpang</p>
+                            <p class="text-[10px] font-black text-white uppercase truncate">{{ $trip->detailTrips->sum(fn($dt) => $dt->booking ? $dt->booking->jumlah_penumpang : 0) }} Penumpang</p>
                         </div>
                     </div>
                 </div>

@@ -8,7 +8,8 @@
         }
         return 0;
     });
-    $capacity = $trip->armada ? $trip->armada->kapasitas : 5;
+    $armadaCapacity = $trip->armada ? $trip->armada->kapasitas : 5;
+    $capacity = $trip->jadwal ? min($trip->jadwal->kuota, $armadaCapacity) : $armadaCapacity;
     $remainingSeats = $capacity - $totalPax;
     $estRevenue = $trip->detailTrips->sum(function($dt) {
         return $dt->booking ? $dt->booking->total_harga : 0;

@@ -147,11 +147,11 @@ class TripAssignTest extends TestCase
             ->firstOrFail()
             ->message;
 
-        $this->assertStringContainsString('*TRIP SUDAH DITENTUKAN*', $customerMessage);
-        $this->assertStringContainsString('*Detail Trip*', $customerMessage);
+        $this->assertStringContainsString('*JADWAL PERJALANAN (TRIP) DIKONFIRMASI*', $customerMessage);
+        $this->assertStringContainsString('DETAIL PERJALANAN:*', $customerMessage);
         $this->assertStringContainsString('*Penjemputan*', $customerMessage);
-        $this->assertStringContainsString('*BOOKING BARU DI TRIP*', $driverMessage);
-        $this->assertStringContainsString('*Data Pelanggan*', $driverMessage);
+        $this->assertStringContainsString('*PENUGASAN BOOKING BARU*', $driverMessage);
+        $this->assertStringContainsString('DATA PELANGGAN:*', $driverMessage);
     }
 
     public function test_trip_create_form_uses_driver_armada_without_armada_select(): void

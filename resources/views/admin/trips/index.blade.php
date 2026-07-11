@@ -197,7 +197,8 @@
                             $totalPax = $trip->detailTrips->sum(function($dt) {
                                 return $dt->booking ? $dt->booking->jumlah_penumpang : 0;
                             });
-                            $capacity = $trip->armada ? $trip->armada->kapasitas : 5;
+                            $armadaCapacity = $trip->armada ? $trip->armada->kapasitas : 5;
+                            $capacity = $trip->jadwal ? min($trip->jadwal->kuota, $armadaCapacity) : $armadaCapacity;
                             $isFull = $totalPax >= $capacity;
                             $percentage = min(100, ($totalPax / $capacity) * 100);
                         @endphp

@@ -156,7 +156,7 @@
                                         <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                                         </svg>
-                                        <span>{{ $trip->detailTrips->count() }} PAX</span>
+                                        <span>{{ $trip->detailTrips->sum(fn($dt) => $dt->booking ? $dt->booking->jumlah_penumpang : 0) }} PAX</span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 font-black text-emerald-600">
