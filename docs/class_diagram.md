@@ -1,20 +1,28 @@
 # Class Diagram - Sistem Informasi Singgalang Jaya Travel
 
-Diagram kelas (Class Diagram) berikut dihasilkan berdasarkan implementasi nyata struktur *Database* dan *Model Relations* (Eloquent) pada proyek Laravel Singgalang Jaya Travel.
+Diagram kelas (Class Diagram) berikut menampilkan seluruh kelengkapan entitas sistem:
+1. **Atribut Lengkap** (Semua field database termasuk Primary Key, Foreign Key, dan Timestamps).
+2. **Operasi (Method)** menampilkan perilaku model dan fungsi pemanggilan relasi antar kelas.
+3. **Relasi** menggunakan notasi UML yang sesuai (**Composition**, **Aggregation**, dan **Association**).
 
 ```mermaid
 classDiagram
-    %% Definisi Kelas (Model) dan Atribut (Kolom)
+    %% ==========================================
+    %% Definisi Kelas, Atribut, dan Operasi (Method)
+    %% ==========================================
     
     class User {
         +BigInt id
         +String name
         +String email
+        +Timestamp email_verified_at
         +String password
         +Enum role
         +String remember_token
         +Timestamp created_at
         +Timestamp updated_at
+        +driver()
+        +pelanggan()
     }
 
     class Pelanggan {
@@ -24,14 +32,23 @@ classDiagram
         +String no_hp
         +Timestamp created_at
         +Timestamp updated_at
+        +user()
+        +bookings()
     }
 
     class Driver {
         +BigInt id
         +BigInt user_id
+        +String nama_driver
+        +String no_hp
         +BigInt armada_id
+        +Enum status_driver
         +Timestamp created_at
         +Timestamp updated_at
+        +user()
+        +armada()
+        +trips()
+        +getDynamicStatusAttribute()
     }
 
     class Armada {
@@ -42,6 +59,8 @@ classDiagram
         +Enum status_armada
         +Timestamp created_at
         +Timestamp updated_at
+        +driver()
+        +trips()
     }
 
     class Rute {
@@ -51,6 +70,7 @@ classDiagram
         +Decimal tarif
         +Timestamp created_at
         +Timestamp updated_at
+        +jadwal()
     }
 
     class Jadwal {
@@ -63,6 +83,11 @@ classDiagram
         +Enum status_jadwal
         +Timestamp created_at
         +Timestamp updated_at
+        +checkAndUpdateStatus()
+        +getIsExpiredAttribute()
+        +rute()
+        +bookings()
+        +trips()
     }
 
     class Booking {
@@ -80,9 +105,19 @@ classDiagram
         +Decimal total_harga
         +Enum status_booking
         +Text alasan_pembatalan
-        +Timestamp expired_at
+        +DateTime expired_at
         +Timestamp created_at
         +Timestamp updated_at
+        +isMenungguVerifikasi()
+        +isDikonfirmasi()
+        +isDibatalkan()
+        +isExpired()
+        +pelanggan()
+        +jadwal()
+        +pembayaran()
+        +detailTrips()
+        +whatsappNotifications()
+        +rating()
     }
 
     class Pembayaran {
@@ -96,6 +131,8 @@ classDiagram
         +Text catatan
         +Timestamp created_at
         +Timestamp updated_at
+        +isTerverifikasi()
+        +booking()
     }
 
     class Trip {
@@ -104,10 +141,14 @@ classDiagram
         +BigInt driver_id
         +BigInt armada_id
         +Enum status_trip
-        +Timestamp started_at
-        +Timestamp completed_at
+        +DateTime started_at
+        +DateTime completed_at
         +Timestamp created_at
         +Timestamp updated_at
+        +driver()
+        +armada()
+        +jadwal()
+        +detailTrips()
     }
 
     class DetailTrip {
@@ -116,10 +157,12 @@ classDiagram
         +BigInt booking_id
         +Enum status_jemput
         +Enum status_antar
-        +Timestamp picked_up_at
-        +Timestamp dropped_off_at
+        +DateTime picked_up_at
+        +DateTime dropped_off_at
         +Timestamp created_at
         +Timestamp updated_at
+        +trip()
+        +booking()
     }
 
     class Rating {
@@ -131,6 +174,8 @@ classDiagram
         +Enum status
         +Timestamp created_at
         +Timestamp updated_at
+        +booking()
+        +pelanggan()
     }
 
     class WhatsappNotification {
@@ -143,27 +188,39 @@ classDiagram
         +Text response
         +Timestamp created_at
         +Timestamp updated_at
+        +booking()
     }
 
-    %% Relasi Antar Kelas (Relationships)
+    %% ==========================================
+    %% Relasi (Association, Aggregation, Composition)
+    %% ==========================================
     
-    User "1" -- "0..1" Pelanggan : hasOne
-    User "1" -- "0..1" Driver : hasOne
-    Armada "1" -- "0..*" Driver : hasMany
-    Rute "1" -- "0..*" Jadwal : hasMany
-    
-    Jadwal "1" -- "0..*" Booking : hasMany
-    Jadwal "1" -- "0..*" Trip : hasMany
-    Pelanggan "1" -- "0..*" Booking : hasMany
-    
-    Booking "1" -- "0..*" Pembayaran : hasMany
-    Booking "1" -- "0..*" WhatsappNotification : hasMany
-    Booking "1" -- "0..1" Rating : hasOne
-    Pelanggan "1" -- "0..*" Rating : hasMany
-    
-    Driver "1" -- "0..*" Trip : hasMany
-    Armada "1" -- "0..*" Trip : hasMany
-    
-    Trip "1" -- "0..*" DetailTrip : hasMany
-    Booking "1" -- "0..*" DetailTrip : hasMany
+    %% Composition: Pelanggan & Driver adalah bagian dari eksistensi entitas User. Jika User dihapus, mereka juga terhapus.
+    User *-- Pelanggan : memiliki
+    User *-- Driver : memiliki
+
+    %% Aggregation: Armada dikemudikan oleh Driver, namun keduanya bisa berdiri sendiri jika tidak ada jadwal.
+    Armada "1" o-- "0..*" Driver : ditugaskan ke
+
+    %% Composition: Jadwal keberangkatan bergantung secara eksistensial pada master data Rute.
+    Rute "1" *-- "0..*" Jadwal : memiliki rute
+
+    %% Association & Aggregation: Booking melibatkan Pelanggan dan mengisi kapasitas Jadwal.
+    Pelanggan "1" --> "0..*" Booking : melakukan
+    Jadwal "1" o-- "0..*" Booking : memuat pesanan
+
+    %% Composition: Transaksi Booking membawahi Pembayaran, Rating, dan log Whatsapp (siklus hidupnya terikat pada Booking).
+    Booking "1" *-- "0..*" Pembayaran : memiliki rincian bayar
+    Booking "1" *-- "0..*" WhatsappNotification : memicu log
+    Booking "1" *-- "0..1" Rating : menerima
+    Pelanggan "1" --> "0..*" Rating : memberikan umpan balik
+
+    %% Aggregation: Trip terbentuk dengan menyatukan Jadwal, Driver, dan Armada yang ada.
+    Jadwal "1" o-- "0..*" Trip : direalisasikan menjadi
+    Driver "1" o-- "0..*" Trip : menjalankan
+    Armada "1" o-- "0..*" Trip : digunakan dalam
+
+    %% Composition: DetailTrip (Manifest Penumpang) hanya eksis sebagai penghubung fisik di dalam Trip dan Booking.
+    Trip "1" *-- "0..*" DetailTrip : memuat manifest
+    Booking "1" *-- "0..*" DetailTrip : terdaftar ke dalam kursi
 ```
