@@ -1,347 +1,377 @@
 # Use Case Description - Sistem Informasi Singgalang Jaya Travel
 
-Dokumen ini berisi penjelasan detail (Use Case Description) untuk setiap usecase yang terdapat pada **Sistem Informasi Singgalang Jaya Travel** sesuai dengan Use Case Diagram dan spesifikasi kebutuhan sistem.
+Dokumen ini berisi penjelasan skenario detail untuk 31 use case pada sistem sesuai dengan dokumen spesifikasi kebutuhan fungsional (UC-01 s.d. UC-31).
 
 ---
 
-## Daftar Aktor dan Use Case
+### UC-01 Registrasi Pelanggan
 
-| No | Nama Use Case | Aktor Utama | Deskripsi Singkat |
-|---|---|---|---|
-| **Umum** | | | |
-| 1 | Login | Pelanggan, Admin, Driver | Masuk ke sistem menggunakan kredensial terdaftar. |
-| 2 | Logout | Pelanggan, Admin, Driver | Keluar dari sesi aktif sistem. |
-| **Pelanggan** | | | |
-| 3 | Melihat Informasi Travel | Pelanggan | Melihat profil travel, rute, tarif dasar, armada, kontak, dll. |
-| 4 | Mencari & Memilih Shift Keberangkatan | Pelanggan | Menyaring jadwal berdasarkan asal, tujuan, tanggal, dan shift (pagi/malam). |
-| 5 | Melakukan Pemesanan (Booking) | Pelanggan | Memesan kursi dengan memilih nomor kursi, mengisi data diri, dan alamat penjemputan. |
-| 6 | Membayar DP | Pelanggan | Melakukan pembayaran DP minimal dan mengunggah bukti transfer (Include). |
-| 7 | Membatalkan Booking | Pelanggan | Membatalkan transaksi pemesanan yang belum terverifikasi/lunas. |
-| 8 | Cek Booking Saya | Pelanggan | Melihat riwayat transaksi dan status pemesanan aktif. |
-| 9 | Memberikan Ulasan & Rating | Pelanggan | Memberikan umpan balik rating bintang dan ulasan setelah perjalanan selesai. |
-| 10 | Melakukan Pelunasan Sisa Bayar ke Driver | Pelanggan | Membayar sisa tagihan secara tunai langsung ke driver. |
-| 11 | Mengelola Lokasi Penjemputan [Edit Maps] | Pelanggan | Menentukan titik koordinat penjemputan presisi pada peta digital. |
-| 12 | Mengelola Edit Jumlah Penumpang | Pelanggan | Mengubah jumlah penumpang serta nomor kursi sebelum trip masuk manifes final. |
-| **Admin** | | | |
-| 13 | Kelola Laporan | Admin | Mengakses dan mengekspor laporan pendapatan, trip, dan booking. |
-| 14 | CRUD Kelola Data Driver | Admin | Menambah, mengubah, menampilkan, dan menghapus data driver. |
-| 15 | CRUD Rute dan Tarif | Admin | Menambah, mengubah, menampilkan, dan menghapus data rute beserta tarifnya. |
-| 16 | CRUD Jadwal Keberangkatan | Admin | Menambah, mengubah, menampilkan, dan menghapus jadwal keberangkatan harian. |
-| 17 | Kelola Trip | Admin | Membuat trip baru, memasukkan penumpang ke trip, dan menugaskan driver/armada. |
-| 18 | CRUD Armada | Admin | Menambah, mengubah, menampilkan, dan menghapus data armada mobil travel. |
-| 19 | Verifikasi Bukti DP | Admin | Memvalidasi bukti transfer yang diunggah pelanggan (Terima/Tolak DP). |
-| **Driver** | | | |
-| 20 | Lihat Data Trip & Manifest Penumpang | Driver | Melihat rincian rute perjalanan dan manifest penumpang yang ditugaskan. |
-| 21 | Mengonfirmasi Status Penjemputan | Driver | Memperbarui status penjemputan (Pickup) dan penurunan (Dropoff) penumpang. |
-| 22 | Mengonfirmasi Pelunasan Tunai | Driver | Memverifikasi pembayaran tunai sisa biaya perjalanan dari penumpang. |
-| 23 | Menyelesaikan Status Perjalanan Trip | Driver | Menutup trip setelah seluruh penumpang diantar ke tujuan dan pembayaran lunas. |
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Registrasi Pelanggan |
+| **Aktor** | Pengunjung / Pelanggan |
+| **Deskripsi** | Pengunjung membuat akun pelanggan baru menggunakan nama, email, nomor WhatsApp, dan password. |
+| **Kondisi Awal** | Pengunjung mengakses sistem dan belum memiliki akun terdaftar. |
+| **Kondisi Akhir** | Akun pelanggan berhasil dibuat dan disimpan dalam database sistem. |
+| **Alur Utama** | 1. Pengunjung memilih menu pendaftaran.<br>2. Sistem menampilkan form registrasi.<br>3. Pengunjung mengisi data nama, email, password, dan no WhatsApp.<br>4. Pengunjung menekan tombol Daftar.<br>5. Sistem memvalidasi data dan menyimpannya ke database.<br>6. Sistem menampilkan pesan sukses dan mengarahkan ke halaman login. |
+| **Alur Alternatif** | Jika email atau nomor WhatsApp sudah terdaftar, sistem akan menampilkan pesan error dan meminta pengunjung memasukkan informasi yang berbeda. |
 
----
+### UC-02 Login Pelanggan
 
-## 1. Use Case Umum (General)
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Login Pelanggan |
+| **Aktor** | Pelanggan |
+| **Deskripsi** | Pelanggan masuk ke sistem menggunakan email dan password untuk mengakses fitur pelanggan. |
+| **Kondisi Awal** | Pelanggan berada di halaman login. |
+| **Kondisi Akhir** | Pelanggan berhasil login dan diarahkan ke halaman beranda/dashboard pelanggan. |
+| **Alur Utama** | 1. Pelanggan memasukkan email dan password.<br>2. Pelanggan menekan tombol login.<br>3. Sistem memvalidasi kredensial di database.<br>4. Sistem mengarahkan ke halaman utama pelanggan. |
+| **Alur Alternatif** | Jika kredensial salah, sistem menampilkan notifikasi kesalahan (error) dan meminta pelanggan mencoba lagi. |
 
-### Use Case 1: Login
-* **Aktor Utama**: Pelanggan, Admin, Driver
-* **Deskripsi**: Aktor memasukkan kredensial berupa email/nomor telepon dan password untuk masuk ke dalam sistem sesuai hak akses masing-masing.
-* **Pre-kondisi**: Aktor berada di halaman login dan belum masuk (terautentikasi) ke sistem.
-* **Post-kondisi**: Aktor berhasil diarahkan ke halaman beranda atau dashboard yang sesuai dengan perannya.
-* **Alur Utama (Basic Flow)**:
-  1. Aktor membuka halaman login.
-  2. Sistem menampilkan form isian email dan password.
-  3. Aktor memasukkan email dan password yang terdaftar, lalu menekan tombol "Login".
-  4. Sistem melakukan validasi kredensial ke database.
-  5. Sistem mengenali peran aktor (role redirection) dan mengarahkan aktor ke halaman tujuan:
-     * **Admin** diarahkan ke halaman `/admin/dashboard`.
-     * **Driver** diarahkan ke halaman `/driver/dashboard`.
-     * **Pelanggan** diarahkan ke halaman beranda utama (landing page).
-* **Alur Alternatif (Alternative Flow)**:
-  * **Kredensial Salah**: Jika email atau password tidak cocok, sistem menampilkan pesan error ("Kredensial tidak cocok dengan data kami") dan meminta aktor mengisi ulang.
+### UC-03 Login Admin
 
-### Use Case 2: Logout
-* **Aktor Utama**: Pelanggan, Admin, Driver
-* **Deskripsi**: Aktor keluar dari sesi aktif di sistem untuk menjaga keamanan akun.
-* **Pre-kondisi**: Aktor dalam keadaan login di sistem.
-* **Post-kondisi**: Sesi aktif aktor dihapus dan sistem mengarahkan aktor kembali ke halaman login atau beranda publik.
-* **Alur Utama (Basic Flow)**:
-  1. Aktor mengklik tombol "Logout".
-  2. Sistem menghapus data sesi (session) login aktor tersebut.
-  3. Sistem mengarahkan aktor kembali ke halaman utama (landing page) atau form login.
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Login Admin |
+| **Aktor** | Admin |
+| **Deskripsi** | Admin masuk ke sistem menggunakan email dan password untuk mengakses dashboard administrasi. |
+| **Kondisi Awal** | Admin berada di halaman login. |
+| **Kondisi Akhir** | Admin berhasil login dan diarahkan ke dashboard admin. |
+| **Alur Utama** | 1. Admin memasukkan email dan password.<br>2. Admin menekan tombol login.<br>3. Sistem memvalidasi kredensial dan hak akses (role).<br>4. Sistem mengarahkan ke halaman dashboard admin. |
+| **Alur Alternatif** | Jika kredensial salah atau role bukan admin, sistem menolak akses dan menampilkan error. |
 
----
+### UC-04 Login Driver
 
-## 2. Use Case Aktor: Pelanggan
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Login Driver |
+| **Aktor** | Driver |
+| **Deskripsi** | Driver masuk ke sistem menggunakan email dan password untuk mengakses fitur operasional perjalanan. |
+| **Kondisi Awal** | Driver berada di halaman login. |
+| **Kondisi Akhir** | Driver berhasil login dan diarahkan ke dashboard driver. |
+| **Alur Utama** | 1. Driver memasukkan email dan password.<br>2. Driver menekan tombol login.<br>3. Sistem memvalidasi kredensial dan hak akses (role).<br>4. Sistem mengarahkan ke halaman dashboard operasional driver. |
+| **Alur Alternatif** | Jika kredensial salah, sistem menolak akses dan menampilkan error. |
 
-### Use Case 3: Melihat Informasi Travel
-* **Aktor Utama**: Pelanggan (termasuk Guest/belum login)
-* **Deskripsi**: Pelanggan melihat profil perusahaan travel, rute yang disediakan, tarif perjalanan, armada kendaraan, testimoni/ulasan, dan kontak resmi.
-* **Pre-kondisi**: Pelanggan mengakses sistem.
-* **Post-kondisi**: Pelanggan mendapatkan informasi lengkap mengenai layanan travel.
-* **Alur Utama (Basic Flow)**:
-  1. Pelanggan membuka website Singgalang Jaya Travel.
-  2. Sistem menampilkan halaman landing page utama.
-  3. Pelanggan menjelajahi informasi rute populer, rincian kontak, deskripsi armada, serta charter mobil yang tersedia.
+### UC-05 Logout
 
-### Use Case 4: Mencari & Memilih Shift Keberangkatan
-* **Aktor Utama**: Pelanggan (termasuk Guest/belum login)
-* **Deskripsi**: Pelanggan menyaring dan memilih jadwal keberangkatan berdasarkan stasiun asal, tujuan, tanggal, serta memilih shift pagi atau malam.
-* **Pre-kondisi**: Pelanggan berada di halaman jadwal keberangkatan.
-* **Post-kondisi**: Pelanggan menemukan jadwal yang diinginkan dan siap melakukan pemesanan.
-* **Alur Utama (Basic Flow)**:
-  1. Pelanggan membuka menu "Jadwal" atau fitur pencarian tiket di halaman utama.
-  2. Pelanggan memasukkan kota asal, tujuan, dan tanggal keberangkatan yang diinginkan.
-  3. Pelanggan memilih filter shift keberangkatan (Pagi atau Malam).
-  4. Pelanggan menekan tombol "Cari".
-  5. Sistem menampilkan daftar jadwal yang tersedia beserta sisa kuota kursi, tarif, jenis mobil, dan jam keberangkatan.
-  6. Pelanggan memilih jadwal yang diinginkan untuk dipesan.
-* **Alur Alternatif (Alternative Flow)**:
-  * **Jadwal Tidak Ditemukan**: Jika rute pada tanggal tersebut tidak ada, sistem akan menampilkan pesan "Jadwal keberangkatan tidak tersedia untuk tanggal atau rute ini."
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Logout |
+| **Aktor** | Pelanggan, Admin, Driver |
+| **Deskripsi** | Pengguna keluar dari sesi sistem untuk mengakhiri akses aplikasi. |
+| **Kondisi Awal** | Pengguna dalam keadaan terautentikasi (login) di sistem. |
+| **Kondisi Akhir** | Sesi pengguna dihapus dari sistem dan diarahkan kembali ke halaman login atau beranda. |
+| **Alur Utama** | 1. Pengguna menekan tombol/menu logout.<br>2. Sistem menghapus sesi aktif (session) dari cache/database.<br>3. Sistem mengarahkan kembali ke halaman publik/login. |
+| **Alur Alternatif** | - |
 
-### Use Case 5: Melakukan Pemesanan (Booking)
-* **Aktor Utama**: Pelanggan (harus Login)
-* **Deskripsi**: Pelanggan melakukan pemesanan kursi travel untuk jadwal keberangkatan yang telah dipilih sebelumnya.
-* **Pre-kondisi**: Pelanggan sudah login dan sudah memilih jadwal keberangkatan tertentu.
-* **Post-kondisi**: Pemesanan tersimpan di database dengan status "Menunggu Pembayaran DP".
-* **Alur Utama (Basic Flow)**:
-  1. Pelanggan menekan tombol "Pesan Sekarang" pada jadwal yang telah dipilih.
-  2. Sistem menampilkan halaman form booking.
-  3. Pelanggan mengisi data penumpang (Nama, No. Telepon/WhatsApp), jumlah penumpang, dan memilih nomor kursi kosong yang tersedia secara visual.
-  4. Pelanggan menuliskan alamat penjemputan dan pengantaran secara tekstual.
-  5. Sistem menghitung total tarif serta nominal minimum DP yang harus dibayarkan.
-  6. Pelanggan meninjau ringkasan pemesanan dan menekan tombol "Konfirmasi Pemesanan".
-  7. Sistem menyimpan data pemesanan, memperbarui status kursi sementara menjadi dipesan, dan memberikan kode booking serta batas waktu pembayaran DP (misal 2 jam).
-* **Alur Alternatif (Alternative Flow)**:
-  * **Kursi Telah Terisi**: Jika nomor kursi yang dipilih tiba-tiba terisi oleh pemesan lain sesaat sebelum konfirmasi, sistem membatalkan proses dan meminta pelanggan memilih nomor kursi lain.
+### UC-06 Melihat Jadwal Travel
 
-### Use Case 6: Membayar DP (Down Payment)
-* **Aktor Utama**: Pelanggan
-* **Deskripsi**: Pelanggan membayar uang muka minimum yang disyaratkan untuk mengunci pesanan kursi travel. Proses ini mewajibkan (include) pengunggahan bukti transfer bank.
-* **Pre-kondisi**: Pelanggan memiliki transaksi booking berstatus "Menunggu Pembayaran DP".
-* **Post-kondisi**: Bukti pembayaran terkirim ke admin dan status booking berubah menjadi "Menunggu Verifikasi".
-* **Alur Utama (Basic Flow)**:
-  1. Pelanggan masuk ke menu "Booking Saya" dan memilih detail booking yang belum dibayar.
-  2. Sistem menampilkan informasi jumlah DP yang harus ditransfer dan nomor rekening bank tujuan.
-  3. Pelanggan melakukan transfer bank secara eksternal.
-  4. Pelanggan mengklik tombol "Unggah Bukti Transfer" di sistem.
-  5. Pelanggan mengunggah berkas foto/screenshot bukti transfer, lalu memasukkan nama pengirim dan tanggal transfer. **[Include: Mengunggah Bukti Transfer DP]**
-  6. Sistem memvalidasi berkas, menyimpannya, lalu mengubah status booking menjadi "Menunggu Verifikasi Pembayaran".
-* **Alur Alternatif (Alternative Flow)**:
-  * **Waktu Pembayaran Habis (Expired)**: Jika batas waktu pembayaran terlampaui sebelum pelanggan mengunggah bukti transfer, sistem (via background job) otomatis membatalkan booking tersebut dan membebaskan kursi kembali. Pelanggan tidak dapat mengunggah bukti lagi.
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Melihat Jadwal Travel |
+| **Aktor** | Pengunjung, Pelanggan |
+| **Deskripsi** | Pengunjung atau pelanggan melihat jadwal keberangkatan, rute, tarif, shift, dan ketersediaan kursi. |
+| **Kondisi Awal** | Pengguna membuka menu jadwal atau pencarian rute. |
+| **Kondisi Akhir** | Daftar jadwal beserta status kursi dan harga tertampil di layar. |
+| **Alur Utama** | 1. Pengguna membuka menu pencarian tiket/jadwal.<br>2. Pengguna memasukkan kriteria (rute asal, tujuan, atau tanggal).<br>3. Pengguna menekan tombol "Cari".<br>4. Sistem menampilkan daftar ketersediaan keberangkatan sesuai kriteria. |
+| **Alur Alternatif** | Jika kriteria pencarian tidak cocok dengan jadwal manapun, sistem menampilkan pesan "Jadwal travel tidak ditemukan". |
 
-### Use Case 7: Membatalkan Booking
-* **Aktor Utama**: Pelanggan
-* **Deskripsi**: Pelanggan membatalkan pesanan travel yang telah dibuat secara sepihak sebelum diverifikasi oleh admin.
-* **Pre-kondisi**: Booking terdaftar di sistem dengan status masih "Menunggu Pembayaran DP" atau "Menunggu Verifikasi Pembayaran".
-* **Post-kondisi**: Status booking berubah menjadi "Dibatalkan" dan nomor kursi dilepaskan kembali agar bisa dipesan orang lain.
-* **Alur Utama (Basic Flow)**:
-  1. Pelanggan membuka menu "Booking Saya".
-  2. Pelanggan memilih booking aktif yang ingin dibatalkan.
-  3. Pelanggan menekan tombol "Batalkan Booking".
-  4. Sistem menampilkan pop-up konfirmasi pembatalan.
-  5. Pelanggan mengklik "Ya, Batalkan".
-  6. Sistem mengubah status pemesanan menjadi "Dibatalkan" dan membebaskan nomor kursi terkait di database.
+### UC-07 Melakukan Booking Travel
 
-### Use Case 8: Cek Booking Saya
-* **Aktor Utama**: Pelanggan
-* **Deskripsi**: Pelanggan melihat riwayat transaksi pemesanan perjalanan miliknya beserta status terbaru dari tiap transaksi.
-* **Pre-kondisi**: Pelanggan sudah login ke sistem.
-* **Post-kondisi**: Pelanggan dapat melihat daftar dan status detail booking mereka.
-* **Alur Utama (Basic Flow)**:
-  1. Pelanggan mengakses menu "Booking Saya" pada navigasi profil.
-  2. Sistem mengambil data transaksi berdasarkan user ID yang login.
-  3. Sistem menampilkan daftar booking (kode booking, rute, tanggal pergi, shift, nominal DP, dan status seperti: *Menunggu DP, Menunggu Verifikasi, Dikonfirmasi, Dibatalkan, Selesai*).
-  4. Pelanggan dapat menekan tombol "Detail" pada salah satu pemesanan untuk melihat rincian manifest, nomor kursi, titik maps penjemputan, dan log transaksi.
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Melakukan Booking Travel |
+| **Aktor** | Pelanggan |
+| **Deskripsi** | Pelanggan melakukan pemesanan travel dengan mengisi data perjalanan dan penumpang. |
+| **Kondisi Awal** | Pelanggan telah login dan menemukan jadwal perjalanan yang sesuai. |
+| **Kondisi Akhir** | Transaksi pemesanan tercatat di database dengan status menunggu pembayaran DP. |
+| **Alur Utama** | 1. Pelanggan menekan tombol pesan pada jadwal terpilih.<br>2. Pelanggan mengisi formulir data penumpang, menentukan nomor kursi, dan lokasi penjemputan.<br>3. Pelanggan menyetujui pemesanan.<br>4. Sistem menyimpan data booking ke database dan mengunci nomor kursi sementara waktu.<br>5. Sistem menampilkan halaman instruksi tagihan DP (Down Payment). |
+| **Alur Alternatif** | Jika kursi yang diincar pelanggan keduluan dipesan orang lain sesaat sebelum menekan persetujuan, sistem akan menolak dan meminta pelanggan merestart form pemilihan kursi. |
 
-### Use Case 9: Memberikan Ulasan & Rating
-* **Aktor Utama**: Pelanggan
-* **Deskripsi**: Pelanggan memberikan umpan balik (rating bintang 1-5 dan komentar) atas pelayanan driver, armada, dan kenyamanan travel.
-* **Pre-kondisi**: Transaksi pemesanan pelanggan sudah berstatus "Selesai" (perjalanan telah rampung).
-* **Post-kondisi**: Ulasan dan rating tersimpan dan dapat dilihat secara publik di landing page atau oleh admin.
-* **Alur Utama (Basic Flow)**:
-  1. Pelanggan membuka detail booking yang sudah selesai di menu "Booking Saya".
-  2. Pelanggan menekan tombol "Berikan Ulasan".
-  3. Sistem menampilkan form isian berupa bintang (1 s.d. 5) dan kotak teks ulasan.
-  4. Pelanggan memilih jumlah bintang, mengetik ulasan, dan menekan tombol "Kirim".
-  5. Sistem menyimpan ulasan dan memperbarui skor rating kumulatif sistem.
+### UC-08 Menentukan Titik Jemput dan Tujuan
 
-### Use Case 10: Melakukan Pelunasan Sisa Pembayaran ke Driver
-* **Aktor Utama**: Pelanggan (berinteraksi dengan Driver)
-* **Deskripsi**: Pelanggan menyerahkan sisa biaya tiket (total tiket dikurangi DP) secara tunai langsung kepada driver ketika dijemput atau saat tiba di tujuan.
-* **Pre-kondisi**: Status booking pelanggan adalah "Dikonfirmasi" (DP sudah diverifikasi oleh admin) dan perjalanan sedang berlangsung.
-* **Post-kondisi**: Pelanggan menyelesaikan kewajiban bayar secara tunai.
-* **Alur Utama (Basic Flow)**:
-  1. Pelanggan bertemu dengan driver di titik penjemputan/armada.
-  2. Pelanggan menanyakan sisa tagihan tiket (jika lupa) kepada driver.
-  3. Pelanggan menyerahkan uang tunai senilai sisa tagihan kepada driver.
-  4. Pelanggan menerima konfirmasi dari driver bahwa pembayaran tunai telah diterima dan dicatat lunas pada sistem.
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Menentukan Titik Jemput dan Tujuan |
+| **Aktor** | Pelanggan |
+| **Deskripsi** | Pelanggan menentukan lokasi penjemputan dan tujuan menggunakan peta digital (OpenStreetMap/Leaflet). |
+| **Kondisi Awal** | Pelanggan sedang melakukan pengisian form booking. |
+| **Kondisi Akhir** | Titik koordinat jemput/tujuan (latitude, longitude) disimpan ke sistem. |
+| **Alur Utama** | 1. Pelanggan membuka peta dari formulir pemesanan.<br>2. Pelanggan menggeser penanda (marker) pada peta ke titik lokasi penjemputan akurat.<br>3. Pelanggan menekan "Simpan Titik Peta".<br>4. Sistem menyimpan nilai koordinat ke formulir yang akan dikirim ke sistem. |
+| **Alur Alternatif** | Jika peta gagal dimuat (misal karena jaringan lambat), pelanggan tetap bisa mengetikkan nama/deskripsi jalan secara manual pada kotak alamat. |
 
-### Use Case 11: Mengelola Lokasi Penjemputan [Edit Maps]
-* **Aktor Utama**: Pelanggan
-* **Deskripsi**: Pelanggan menentukan letak geografis titik penjemputan secara visual melalui modul peta digital (Google Maps/OpenStreetMap) agar driver mendapat rute navigasi yang akurat.
-* **Pre-kondisi**: Pelanggan sedang melakukan pengisian form booking atau mengubah lokasi penjemputan sebelum keberangkatan dijadwalkan secara permanen.
-* **Post-kondisi**: Koordinat latitude dan longitude lokasi penjemputan tersimpan di sistem.
-* **Alur Utama (Basic Flow)**:
-  1. Pelanggan mengklik tombol "Pilih Lokasi di Peta" pada form alamat penjemputan.
-  2. Sistem menampilkan modul peta digital interaktif.
-  3. Pelanggan menyeret pin (marker) peta ke posisi rumah atau titik kumpul yang tepat.
-  4. Sistem mengambil nilai koordinat lintang (latitude) dan bujur (longitude) dari posisi pin tersebut.
-  5. Pelanggan menekan tombol "Simpan Titik Peta".
-  6. Sistem menyimpan data koordinat GPS tersebut ke dalam detail pesanan.
+### UC-09 Mengunggah Bukti Pembayaran DP
 
-### Use Case 12: Mengelola / Edit Jumlah Penumpang
-* **Aktor Utama**: Pelanggan
-* **Deskripsi**: Pelanggan mengubah jumlah kursi yang dipesan dalam satu kode booking (menambah/mengurangi penumpang) selama transaksi belum masuk ke dalam manifes trip keberangkatan final.
-* **Pre-kondisi**: Booking terdaftar dengan status "Menunggu Pembayaran DP" atau "Menunggu Verifikasi Pembayaran".
-* **Post-kondisi**: Jumlah penumpang, nomor kursi, dan total tagihan diperbarui di sistem.
-* **Alur Utama (Basic Flow)**:
-  1. Pelanggan membuka detail booking miliknya.
-  2. Pelanggan menekan tombol "Edit Detail Penumpang".
-  3. Pelanggan menambah atau mengurangi jumlah penumpang, lalu memilih ulang posisi nomor kursi yang tersedia.
-  4. Sistem mengkalkulasi ulang total tagihan tiket dan minimal DP yang harus dibayarkan.
-  5. Pelanggan menyimpan perubahan.
-* **Alur Alternatif (Alternative Flow)**:
-  * **Sisa Kursi Tidak Cukup**: Jika pelanggan menambah jumlah penumpang tetapi kursi yang tersisa pada jadwal tersebut tidak mencukupi, sistem menampilkan pesan error "Kapasitas kursi tidak mencukupi."
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Mengunggah Bukti Pembayaran DP |
+| **Aktor** | Pelanggan |
+| **Deskripsi** | Pelanggan mengunggah bukti pembayaran uang muka (DP) sebesar Rp50.000 untuk proses verifikasi. |
+| **Kondisi Awal** | Pelanggan memiliki transaksi booking berstatus menunggu pembayaran DP. |
+| **Kondisi Akhir** | Bukti transfer (gambar) terkirim dan status pemesanan menjadi "Menunggu Verifikasi Admin". |
+| **Alur Utama** | 1. Pelanggan telah mentransfer sejumlah uang secara eksternal.<br>2. Pelanggan membuka halaman tagihan/booking-nya.<br>3. Pelanggan memilih file berkas bukti transaksi dan menambah catatan pengirim.<br>4. Pelanggan menekan "Unggah".<br>5. Sistem menyimpan file di server dan memperbarui status pembayaran. |
+| **Alur Alternatif** | Jika format file salah (bukan PDF/JPG/PNG), sistem menolak unggahan dan menampilkan peringatan error format file. |
 
----
+### UC-10 Memverifikasi Pembayaran DP
 
-## 3. Use Case Aktor: Admin
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Memverifikasi Pembayaran DP |
+| **Aktor** | Admin |
+| **Deskripsi** | Admin memeriksa dan memvalidasi bukti pembayaran DP yang diunggah pelanggan. |
+| **Kondisi Awal** | Sistem menerima unggahan bukti transfer dan berstatus menunggu verifikasi. |
+| **Kondisi Akhir** | Transaksi disetujui, pembayaran DP tercatat, dan status booking menjadi "Dikonfirmasi". |
+| **Alur Utama** | 1. Admin masuk ke modul verifikasi pembayaran.<br>2. Admin memeriksa kecocokan mutasi bank dan gambar bukti unggahan.<br>3. Admin menekan tombol konfirmasi/validasi pembayaran.<br>4. Sistem meresmikan status transaksi menjadi "Dikonfirmasi" dan (via trigger UC-31) mengirim pemberitahuan validasi ke pelanggan. |
+| **Alur Alternatif** | Jika bukti tidak sah atau tidak ditemukan pada mutasi, admin menolak DP, dan status booking dikembalikan ke "Menunggu Pembayaran Ulang". |
 
-### Use Case 13: Kelola Laporan
-* **Aktor Utama**: Admin
-* **Deskripsi**: Admin mengelola, menganalisis, dan mengekspor laporan kinerja operasional travel. Use case ini di-extend oleh tiga jenis laporan spesifik.
-* **Pre-kondisi**: Admin login dan berada di panel administrasi.
-* **Post-kondisi**: Admin mendapatkan laporan dalam bentuk tabel, grafik, atau file cetak (PDF/Excel).
-* **Alur Utama (Basic Flow)**:
-  1. Admin membuka menu "Laporan" pada dashboard admin.
-  2. Admin menyaring data berdasarkan rentang tanggal awal dan akhir (filter periode).
-  3. Admin memilih format laporan yang diinginkan:
-     * **Laporan Pendapatan (Extend)**: Menampilkan total kas masuk dari DP bank dan pelunasan tunai driver.
-     * **Laporan Trip (Extend)**: Menampilkan riwayat perjalanan, keterisian kursi rata-rata, driver bertugas, dan armada terpakai.
-     * **Laporan Booking (Extend)**: Menampilkan jumlah tiket terpesan, dibatalkan, atau kedaluwarsa.
-  4. Sistem memproses data dan menayangkannya di layar.
-  5. Admin dapat menekan tombol "Export" untuk mengunduh dokumen laporan.
+### UC-11 Mengunggah Ulang Bukti Pembayaran DP
 
-### Use Case 14: CRUD Kelola Data Driver
-* **Aktor Utama**: Admin
-* **Deskripsi**: Admin melakukan pengelolaan data master pengemudi (driver) yang bertugas dalam operasional perjalanan.
-* **Pre-kondisi**: Admin sudah login.
-* **Post-kondisi**: Database driver terbarui.
-* **Alur Utama (Basic Flow)**:
-  1. Admin mengakses menu "Data Driver".
-  2. Sistem menampilkan tabel daftar driver aktif.
-  3. Admin dapat memilih salah satu aksi berikut:
-     * **Tambah Driver (Extend)**: Admin menekan tombol "Tambah", mengisi data nama lengkap, nomor SIM, nomor telepon, email, password akun driver, dan status keaktifan, kemudian klik "Simpan".
-     * **Edit Driver (Extend)**: Admin memilih salah satu driver, mengklik tombol "Edit", memperbarui informasi (misal nomor telepon atau status aktif), kemudian klik "Simpan".
-     * **Hapus Driver (Extend)**: Admin memilih driver, mengklik tombol "Hapus", lalu memberikan konfirmasi. Sistem menghapus data driver dari database (atau menonaktifkan akun jika ada riwayat trip terkait).
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Mengunggah Ulang Bukti Pembayaran DP |
+| **Aktor** | Pelanggan |
+| **Deskripsi** | Pelanggan mengunggah kembali bukti pembayaran apabila pembayaran sebelumnya ditolak oleh admin. |
+| **Kondisi Awal** | Status pemesanan ditolak verifikasinya oleh admin. |
+| **Kondisi Akhir** | Berkas baru masuk ke sistem untuk diverifikasi kembali. |
+| **Alur Utama** | 1. Pelanggan menerima notifikasi penolakan verifikasi pembayaran.<br>2. Pelanggan membuka kembali laman tagihan pada pesanan terkait.<br>3. Pelanggan menghapus/mengganti file lama dan mengunggah gambar bukti yang sah/jelas.<br>4. Sistem mengubah status kembali ke "Menunggu Verifikasi Admin". |
+| **Alur Alternatif** | Jika batas waktu penguncian jadwal habis, transaksi booking otomatis dibatalkan sistem, sehingga pelanggan tidak dapat mengunggahnya lagi. |
 
-### Use Case 15: CRUD Rute dan Tarif
-* **Aktor Utama**: Admin
-* **Deskripsi**: Admin mengelola daftar rute perjalanan (kota asal ke kota tujuan) beserta harga tiket standar yang dikenakan kepada penumpang.
-* **Pre-kondisi**: Admin sudah login.
-* **Post-kondisi**: Rute perjalanan dan tarif diperbarui dalam sistem.
-* **Alur Utama (Basic Flow)**:
-  1. Admin masuk ke menu "Rute & Tarif".
-  2. Sistem memuat daftar rute perjalanan yang aktif.
-  3. Admin memilih salah satu aksi:
-     * **Tambah Rute (Extend)**: Admin klik "Tambah", mengisi nama rute (misal: Padang - Pekanbaru), tarif dasar, dan perkiraan durasi perjalanan, lalu klik "Simpan".
-     * **Edit Rute dan Tarif (Extend)**: Admin memilih rute, memperbarui tarif tiket karena penyesuaian harga, lalu klik "Simpan".
-     * **Hapus Rute (Extend)**: Admin menghapus rute yang sudah tidak beroperasi dari daftar aktif.
+### UC-12 Mengelola Rute
 
-### Use Case 16: CRUD Jadwal Keberangkatan
-* **Aktor Utama**: Admin
-* **Deskripsi**: Admin mengelola templat jadwal keberangkatan harian, menentukan jam berangkat, shift kerja (pagi/malam), serta rute yang dilewati.
-* **Pre-kondisi**: Admin sudah login.
-* **Post-kondisi**: Jadwal harian yang menjadi acuan booking pelanggan terbarui.
-* **Alur Utama (Basic Flow)**:
-  1. Admin masuk ke menu "Kelola Jadwal".
-  2. Sistem menampilkan daftar jadwal keberangkatan.
-  3. Admin memilih aksi:
-     * **Tambah Jadwal (Extend)**: Admin mengisi form berupa pilihan rute, jam keberangkatan (misal jam 09.00), kategori shift (Pagi/Malam), dan menetapkan armada default, lalu klik "Simpan".
-     * **Edit Jadwal (Extend)**: Admin mengubah jam keberangkatan atau shift jadwal tertentu, lalu klik "Simpan".
-     * **Hapus Jadwal (Extend)**: Admin menghapus jadwal keberangkatan tertentu.
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Mengelola Rute |
+| **Aktor** | Admin |
+| **Deskripsi** | Admin menambah, mengubah, dan menghapus data rute beserta tarif perjalanan. |
+| **Kondisi Awal** | Admin berada di menu Master Data Rute. |
+| **Kondisi Akhir** | Perubahan database rute dan tarif travel berhasil disimpan. |
+| **Alur Utama** | 1. Admin memilih tambah, ubah, atau hapus rute.<br>2. Admin mengisi atau mengubah form rute (nama kota asal, kota tujuan, harga dasar).<br>3. Sistem memvalidasi logika pengisian data (misal: harga > 0).<br>4. Sistem menyimpan/menghapus catatan rute dari database.<br>5. Sistem menampilkan pop-up/alert berhasil. |
+| **Alur Alternatif** | Jika admin menghapus rute yang telah digunakan atau terkait pada jadwal aktif, sistem akan menolak operasi penghapusan (Dependency Check Constraint). |
 
-### Use Case 17: Kelola Trip
-* **Aktor Utama**: Admin
-* **Deskripsi**: Admin membuat lembar perjalanan riil (trip) pada tanggal tertentu, menugaskan driver dan armada mobil, serta menata manifes penumpang.
-* **Pre-kondisi**: Admin sudah login, terdapat daftar booking terkonfirmasi (DP lunas) pada tanggal terkait.
-* **Post-kondisi**: Terbentuk trip keberangkatan yang siap dijalankan oleh driver.
-* **Alur Utama (Basic Flow)**:
-  1. Admin membuka menu "Manajemen Trip".
-  2. Admin memilih opsi berikut:
-     * **Tambah Trip (Extend)**: Admin membuat instansi trip keberangkatan dengan menentukan tanggal jalan dan mencocokkannya dengan template jadwal keberangkatan.
-     * **Assign Driver ke Trip (Extend)**: Admin menugaskan driver yang sedang kosong (available) dan menetapkan armada mobil yang siap jalan ke dalam trip tersebut.
-     * **Memasukkan Penumpang ke Trip (Extend)**: Admin menyaring daftar booking terkonfirmasi pada rute dan tanggal yang sama, kemudian memasukkan nama-nama penumpang tersebut ke dalam manifest trip.
-  3. Admin menekan tombol "Publish/Siapkan Trip".
-  4. Sistem memperbarui status trip menjadi "Siap Berangkat" dan memunculkan data trip tersebut pada dashboard driver yang bertugas.
+### UC-13 Mengelola Armada
 
-### Use Case 18: CRUD Armada
-* **Aktor Utama**: Admin
-* **Deskripsi**: Admin mengelola daftar armada mobil travel milik perusahaan (seperti Toyota Hiace, Isuzu Elf) beserta status ketersediaannya.
-* **Pre-kondisi**: Admin sudah login.
-* **Post-kondisi**: Data inventaris armada terbarui.
-* **Alur Utama (Basic Flow)**:
-  1. Admin masuk ke menu "Kelola Armada".
-  2. Sistem menyajikan daftar unit kendaraan yang dimiliki.
-  3. Admin memilih aksi:
-     * **Tambah Armada (Extend)**: Admin klik "Tambah", mengisi nama armada, nomor plat kendaraan, kapasitas total kursi, dan status, lalu klik "Simpan".
-     * **Edit Armada (Extend)**: Admin memperbarui data (misalnya mengubah status dari "Aktif" menjadi "Servis" karena sedang perbaikan), lalu klik "Simpan".
-     * **Hapus Armada (Extend)**: Admin menghapus data armada yang sudah dijual atau tidak digunakan lagi.
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Mengelola Armada |
+| **Aktor** | Admin |
+| **Deskripsi** | Admin mengelola data armada operasional yang digunakan untuk perjalanan travel. |
+| **Kondisi Awal** | Admin berada di menu Master Data Armada. |
+| **Kondisi Akhir** | Data inventaris dan identitas armada mobil terbarui di database. |
+| **Alur Utama** | 1. Admin mengklik tambah atau ubah armada.<br>2. Admin mengisi informasi kendaraan (nopol, jenis, kapasitas kursi maksimal, status ketersediaan).<br>3. Sistem memvalidasi format inputan.<br>4. Sistem merekam atau memperbarui data kendaraan tersebut.<br>5. Sistem menayangkan alert sukses. |
+| **Alur Alternatif** | Pada saat menghapus, jika kendaraan (armada) tersebut sedang bertugas aktif dalam trip harian berjalan, operasi penghapusan digagalkan. |
 
-### Use Case 19: Verifikasi Bukti DP
-* **Aktor Utama**: Admin
-* **Deskripsi**: Admin melakukan pemeriksaan manual terhadap bukti transfer DP yang dikirimkan oleh pelanggan untuk disinkronkan dengan mutasi rekening bank perusahaan.
-* **Pre-kondisi**: Pelanggan telah mengunggah bukti transfer, status booking adalah "Menunggu Verifikasi Pembayaran".
-* **Post-kondisi**: Status booking disetujui (dikonfirmasi) atau ditolak.
-* **Alur Utama (Basic Flow)**:
-  1. Admin membuka menu "Verifikasi Pembayaran" di dashboard.
-  2. Sistem menampilkan daftar transaksi yang menunggu verifikasi beserta file gambar bukti transfer.
-  3. Admin memeriksa kesesuaian gambar bukti dengan mutasi bank riil.
-  4. Admin mengambil keputusan:
-     * **Terima DP (Extend)**: Admin mengklik tombol "Terima". Sistem memperbarui status transaksi menjadi "Dikonfirmasi" (booking aktif) dan mengirimkan notifikasi WA/Email sukses ke pelanggan.
-     * **Tolak DP (Extend)**: Admin mengklik tombol "Tolak", lalu memasukkan alasan penolakan (misal: gambar buram/nominal tidak sesuai). Sistem mengubah status kembali ke "Pembayaran Ditolak/Menunggu Pembayaran Ulang" atau "Dibatalkan" dan mengirim notifikasi ke pelanggan agar melakukan upload ulang.
+### UC-14 Mengelola Driver
 
----
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Mengelola Driver |
+| **Aktor** | Admin |
+| **Deskripsi** | Admin mengelola data driver beserta akun yang digunakan untuk login ke sistem. |
+| **Kondisi Awal** | Admin membuka menu Master Data Driver. |
+| **Kondisi Akhir** | Akun pengguna (role: driver) dan data profil pengemudinya diperbarui atau dibuat. |
+| **Alur Utama** | 1. Admin memilih menambah atau mengubah driver.<br>2. Admin mengisi kredensial login (email, sandi), informasi identitas diri sopir, dan armada bawaan yang ditugaskan (opsional).<br>3. Admin menekan tombol "Simpan".<br>4. Sistem menjalankan transaksi DB: mencatat tabel *User*, dan tabel profil *Driver*.<br>5. Sistem memberitahu hasil sukses tindakan admin. |
+| **Alur Alternatif** | Saat pembuatan baru, bila email yang diregistrasikan sudah dipakai oleh pelanggan atau admin lain, sistem langsung menolak dan meminta email lain. |
 
-## 4. Use Case Aktor: Driver
+### UC-15 Mengelola Jadwal Keberangkatan
 
-### Use Case 20: Lihat Data Trip & Manifest Penumpang
-* **Aktor Utama**: Driver
-* **Deskripsi**: Driver melihat jadwal tugas perjalanannya (trip) untuk hari ini atau esok beserta detail manifes penumpang yang harus dijemput.
-* **Pre-kondisi**: Driver sudah login ke aplikasi dan admin telah menugaskan driver tersebut pada sebuah trip.
-* **Post-kondisi**: Driver mendapatkan informasi navigasi dan daftar penumpang lengkap.
-* **Alur Utama (Basic Flow)**:
-  1. Driver masuk ke halaman "Daftar Trip Saya" di dashboard driver.
-  2. Sistem menampilkan daftar trip yang sedang aktif ditugaskan kepadanya.
-  3. Driver memilih salah satu trip aktif.
-  4. Sistem menyajikan informasi detail: Kota Asal & Tujuan, Armada, Tanggal/Jam Keberangkatan, serta daftar manifest penumpang (Nama, Nomor Telepon, Nomor Kursi, Status Penjemputan, Alamat Penjemputan, dan Peta Lokasi).
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Mengelola Jadwal Keberangkatan |
+| **Aktor** | Admin |
+| **Deskripsi** | Admin mengelola jadwal keberangkatan, termasuk penambahan, perubahan, pengaktifan, dan penghapusan jadwal. |
+| **Kondisi Awal** | Admin berada di modul Jadwal Travel. |
+| **Kondisi Akhir** | Katalog jadwal (shift, jam keberangkatan, kapasitas sisa, dan rute) berhasil diperbarui. |
+| **Alur Utama** | 1. Admin memilih aksi kelola (tambah, edit, atau ganti status aktif).<br>2. Admin mengisi kriteria operasional jadwal pada form.<br>3. Saat ditekan "Simpan", sistem memvalidasi pergerakan kapasitas dan parameter jadwal.<br>4. Sistem menyimpan ke database dan menayangkan jadwal baru tersebut di aplikasi publik. |
+| **Alur Alternatif** | Pada aksi update, apabila admin merendahkan kuota di bawah jumlah penumpang terpesan yang aktif hari ini, sistem menampilkan pesan peringatan kapasitas tak valid dan menggagalkan simpanan. |
 
-### Use Case 21: Mengonfirmasi Status Penjemputan (Pickup/Dropoff)
-* **Aktor Utama**: Driver
-* **Deskripsi**: Driver melakukan pembaharuan status penumpang secara bertahap saat menjemput di lokasi jemput (pickup) dan menurunkan di lokasi tujuan (dropoff).
-* **Pre-kondisi**: Driver sedang menjalankan trip aktif dan telah berada di titik penjemputan penumpang.
-* **Post-kondisi**: Status penumpang berubah menjadi "Dijemput" (Dalam Perjalanan) lalu berubah lagi menjadi "Selesai" (Sampai Tujuan).
-* **Alur Utama (Basic Flow)**:
-  1. Driver membuka lembar manifest penumpang pada trip berjalan.
-  2. Ketika tiba di lokasi penjemputan pelanggan dan pelanggan naik ke mobil, Driver menekan tombol "Konfirmasi Penjemputan" (Pickup). Sistem mencatat status penumpang menjadi "Dijemput".
-  3. Ketika tiba di lokasi pengantaran tujuan pelanggan, Driver menekan tombol "Konfirmasi Sampai Tujuan" (Dropoff). Sistem mencatat status penumpang menjadi "Sampai Tujuan".
+### UC-16 Mengelola Booking
 
-### Use Case 22: Mengonfirmasi Pelunasan Tunai Penumpang
-* **Aktor Utama**: Driver
-* **Deskripsi**: Driver mengonfirmasi penerimaan pembayaran sisa biaya perjalanan yang dibayarkan pelanggan secara tunai (cash) langsung kepada driver.
-* **Pre-kondisi**: Penumpang dalam status "Dikonfirmasi" tetapi memiliki sisa pembayaran yang belum lunas (baru bayar DP).
-* **Post-kondisi**: Sisa pembayaran penumpang dicatat lunas di sistem.
-* **Alur Utama (Basic Flow)**:
-  1. Penumpang menyerahkan uang tunai sisa pembayaran tiket kepada driver.
-  2. Driver menghitung kesesuaian uang tunai dengan nominal sisa bayar yang tertera pada manifest aplikasi.
-  3. Driver mengklik tombol "Konfirmasi Lunas Tunai" pada baris nama penumpang tersebut di sistem.
-  4. Sistem menyimpan catatan pelunasan tersebut dan mengubah status pembayaran booking terkait menjadi "Lunas".
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Mengelola Booking |
+| **Aktor** | Admin |
+| **Deskripsi** | Admin memantau, mengelola, dan memperbarui status seluruh booking pelanggan (misalnya pembatalan sepihak karena alasan spesifik). |
+| **Kondisi Awal** | Admin membuka daftar manajemen seluruh pemesanan. |
+| **Kondisi Akhir** | Status transaksi pemesanan berubah dan memicu penyesuaian kuota sistem. |
+| **Alur Utama** | 1. Admin melihat informasi rinci dari daftar transaksi booking tertentu.<br>2. Admin melakukan aksi intervensi administratif (misal: "Batalkan Pesanan").<br>3. Admin mengisi catatan pembenaran pembatalan.<br>4. Sistem me-*rollback* status pemesanan tersebut jadi *Cancelled*, lalu secara otomatis memanggil algoritma kalkulasi pembebasan kursi (mengembalikan kuota sisa) pada jadwal keberangkatan terkait. |
+| **Alur Alternatif** | Apabila admin tidak memasukkan alasan pembatalan pada sistem form, validasi gagal dan aksi tak dapat dilanjutkan. |
 
-### Use Case 23: Menyelesaikan Status Perjalanan Trip
-* **Aktor Utama**: Driver
-* **Deskripsi**: Driver menutup status perjalanan trip secara keseluruhan apabila tugas mengantar semua penumpang telah rampung dan seluruh administrasi sisa pembayaran telah selesai dikonfirmasi.
-* **Pre-kondisi**: Semua penumpang dalam manifest trip telah dikonfirmasi sampai tujuan (Dropoff) dan sisa pembayaran mereka telah lunas.
-* **Post-kondisi**: Status trip berubah menjadi "Selesai" (Completed) dan status driver/armada menjadi kosong (available) kembali.
-* **Alur Utama (Basic Flow)**:
-  1. Driver memastikan semua penumpang di manifest berstatus "Sampai Tujuan" dan berstatus pembayaran "Lunas".
-  2. Driver menekan tombol "Selesaikan Trip".
-  3. Sistem memverifikasi kondisi tersebut.
-  4. Sistem mengubah status trip menjadi "Selesai", mencatat waktu trip berakhir, serta melepaskan driver dan armada dari penugasan aktif agar siap digunakan untuk trip selanjutnya.
+### UC-17 Membentuk Trip
+
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Membentuk Trip |
+| **Aktor** | Admin |
+| **Deskripsi** | Admin membuat trip operasional berdasarkan jadwal keberangkatan yang tersedia. |
+| **Kondisi Awal** | Sistem mempunyai jadwal aktif dan daftar pemesanan dari pelanggan. |
+| **Kondisi Akhir** | Dokumen operasional perjalanan (*Trip Manifest*) berhasil diterbitkan di sistem. |
+| **Alur Utama** | 1. Admin memasuki modul Manajemen Trip dan menekan buat trip baru.<br>2. Admin memilih tanggal jalan dan merelasikannya dengan template Jadwal keberangkatan.<br>3. Sistem menyusun instansi log *Trip* pada periode berjalan dengan status *"Menunggu / Ready"*.<br>4. Admin mendapat halaman notifikasi pembuatan trip sukses. |
+| **Alur Alternatif** | - |
+
+### UC-18 Menugaskan Driver dan Armada ke Trip
+
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Menugaskan Driver dan Armada ke Trip |
+| **Aktor** | Admin |
+| **Deskripsi** | Admin menetapkan driver dan armada pada trip yang telah dibuat. |
+| **Kondisi Awal** | Trip yang ada berstatus kosong armada maupun drivernya. |
+| **Kondisi Akhir** | Manifest/Trip mengikat identitas pengemudi beserta data fisik mobil (armada). |
+| **Alur Utama** | 1. Admin meninjau data Trip lalu masuk ke opsi "Assign Driver".<br>2. Sistem memuat daftar menu *dropdown* driver dan armada.<br>3. Admin menyeleksi armada serta pengemudi yang layak.<br>4. Sistem merelasikan *(update ID relasi)* database trip ke data master armada dan driver. |
+| **Alur Alternatif** | - |
+
+### UC-19 Memasukkan Booking ke Trip
+
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Memasukkan Booking ke Trip |
+| **Aktor** | Admin |
+| **Deskripsi** | Admin memasukkan booking pelanggan yang telah terverifikasi ke dalam manifest trip sesuai kapasitas armada. |
+| **Kondisi Awal** | Telah terbentuk trip (dan assigned driver) yang memiliki kapasitas kosong di sistem. |
+| **Kondisi Akhir** | Penumpang-penumpang terkonfirmasi pindah alur dari *"Daftar Tunggu Keberangkatan"* ke daftar *Detail Manifest* di kendaraan tertentu. |
+| **Alur Utama** | 1. Admin melihat rincian manifest sebuah trip.<br>2. Admin memilih sekumpulan booking penumpang berstatus DP divalidasi yang jalurnya sepadan.<br>3. Admin mengonfirmasi inisiasi pemindahan data tersebut.<br>4. Sistem menciptakan baris-baris *Detail Trip* per tiket dan menaikkan status pemesanan ke tingkat Assigned/Penugasan.<br>5. Informasi manifest di dasbor pengemudi otomatis termutakhirkan. |
+| **Alur Alternatif** | Apabila sistem menemukan kalkulasi *overcapacity* dari total daftar transferan dengan sisa kapasitas aktual armada, sistem memberikan error validasi peringatan pencegahan penumpang belebih. |
+
+### UC-20 Melihat Trip Hari Ini
+
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Melihat Trip Hari Ini |
+| **Aktor** | Driver |
+| **Deskripsi** | Driver melihat daftar trip yang ditugaskan pada hari berjalan. |
+| **Kondisi Awal** | Supir/driver melakukan otentikasi login masuk aplikasi. |
+| **Kondisi Akhir** | Dashboard memuat kartu perjalanan yang segera harus digawangi hari itu. |
+| **Alur Utama** | 1. Driver mengunjungi halaman muka portal (home) atau Daftar Tugas.<br>2. Sistem melangsungkan query data tabel Trip menggunakan identifikasi UserID pengemudi dan tanggal hari ini (Current Date).<br>3. Sistem menampilkan ringkasan informasi *pickup* armada, shift waktu, jam keberangkatan, rute, dan kode Trip. |
+| **Alur Alternatif** | Sistem memberikan luaran kalimat ramah ("Anda sedang istirahat. Tidak ada jadwal tugas Anda per hari ini.") bila hasil kueri bernilai NULL. |
+
+### UC-21 Melihat Manifest Penumpang
+
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Melihat Manifest Penumpang |
+| **Aktor** | Driver |
+| **Deskripsi** | Driver melihat daftar penumpang beserta informasi perjalanan pada trip yang ditugaskan. |
+| **Kondisi Awal** | Driver membuka tugas (Trip Hari Ini). |
+| **Kondisi Akhir** | Tabel lembaran penumpang beserta titik lokasi jemputan dan data penagihan tampil detil. |
+| **Alur Utama** | 1. Driver menekan tombol/menu lihat detail penumpang dari tugas trip-nya.<br>2. Sistem membongkar kueri JOIN tabel Detail Trip ke Booking, Pelanggan, Pembayaran.<br>3. Sistem memproyeksikan deretan tabel penumpang, posisi letak duduk kursi, instruksi titik jemput dan jumlah tagihan biaya tunai yang belum lunas tertagih. |
+| **Alur Alternatif** | - |
+
+### UC-22 Melihat Lokasi Jemput
+
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Melihat Lokasi Jemput |
+| **Aktor** | Driver |
+| **Deskripsi** | Driver melihat lokasi penjemputan pelanggan melalui peta digital sebagai panduan perjalanan. |
+| **Kondisi Awal** | Driver melihat rincian manifest seorang penumpang. |
+| **Kondisi Akhir** | Antarmuka memunculkan visualisasi peta digital dengan petunjuk arah penjemputan penumpang. |
+| **Alur Utama** | 1. Driver menekan ikon GPS/Peta di samping alamat pelanggan pada manifes.<br>2. Sistem mencomot nilai koordinat geografis pelanggan (Latitude/Longitude).<br>3. Sistem me-render modul Peta Interaktif di atas modal antarmuka layar untuk memberi pengemudi kejelasan visibilitas jalur.<br>4. Supir mengikuti titik pada layar. |
+| **Alur Alternatif** | Dalam kasus ekstrim koordinat absen (0.0 / tidak diisi pelanggan saat pemesanan), sistem akan mengandalkan string alamat murni sebagai output layar. |
+
+### UC-23 Mengonfirmasi Pickup dan Drop-off Penumpang
+
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Mengonfirmasi Pickup dan Drop-off Penumpang |
+| **Aktor** | Driver |
+| **Deskripsi** | Driver memperbarui status penjemputan dan penurunan setiap penumpang selama perjalanan berlangsung. |
+| **Kondisi Awal** | Supir mendatangi alamat pemesan. |
+| **Kondisi Akhir** | Progress bar layanan tercatat maju sebagai pelacakan histori waktu. |
+| **Alur Utama** | 1. Supir menekan aksi "Konfirmasi Jemput (Pickup)" tatkala penumpang sah duduk di mobil.<br>2. Sistem merubah status pelacakan penumpang ke tahap "Dalam Perjalanan".<br>3. Di ujung destinasi pengantaran rute, Supir menekan aksi "Drop-off".<br>4. Sistem memfinalisasi progres penjalanan pelanggan ke jenjang "Telah Sampai Tujuan". |
+| **Alur Alternatif** | - |
+
+### UC-24 Memperbarui Status Trip
+
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Memperbarui Status Trip |
+| **Aktor** | Driver |
+| **Deskripsi** | Driver memperbarui status perjalanan mulai dari berangkat hingga selesai. |
+| **Kondisi Awal** | Mobil sedang berada pada pangkalan dan semua persiapan penumpang usai (tugas berstatus 'Ready'). |
+| **Kondisi Akhir** | Logistika tugas log menjadi 'On Trip' dan ditutup menjadi 'Completed' di akhirnya. |
+| **Alur Utama** | 1. Saat pedal diinjak awal perjalanan, pengemudi menekan "Mulai Perjalanan Trip".<br>2. Sistem membukukan status "On Trip".<br>3. Saat operasi berakhir tuntas, pengemudi menekan "Akhiri/Selesaikan Trip".<br>4. Sistem membukukan kondisi perjalanan ke tahap tertutup ("Completed"). |
+| **Alur Alternatif** | - |
+
+### UC-25 Mengonfirmasi Pelunasan Pembayaran
+
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Mengonfirmasi Pelunasan Pembayaran |
+| **Aktor** | Driver |
+| **Deskripsi** | Driver mengonfirmasi pelunasan sisa pembayaran pelanggan setelah pembayaran diterima. |
+| **Kondisi Awal** | Terdapat sisa kekurangan dana tunai tagihan di detail manifest (misal: Tagihan 250rb - DP Bank 50rb = Tunggakan 200rb). |
+| **Kondisi Akhir** | Tunggakan penumpang tercatat lunas nihil (0). |
+| **Alur Utama** | 1. Supir mendagihkan nominal sisa ke pelanggan saat menaikkannya.<br>2. Pelanggan membayar uang tunai tersebut secara perorangan langsung ke supir.<br>3. Supir menekan tombol "Set Status Lunas" pada manifest.<br>4. Sistem menyesuaikan baris buku pencatatan pembayaran transaksi menjadi berlabel "Lunas" total dan menampung log penyetor. |
+| **Alur Alternatif** | - |
+
+### UC-26 Melihat Riwayat Booking
+
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Melihat Riwayat Booking |
+| **Aktor** | Pelanggan |
+| **Deskripsi** | Pelanggan melihat riwayat pemesanan dan status perjalanan yang pernah dilakukan. |
+| **Kondisi Awal** | Pelanggan login. |
+| **Kondisi Akhir** | Jejak langkah histori terdahulu dimuat di layar riwayat. |
+| **Alur Utama** | 1. Pelanggan mengakses menu Histori / Riwayat Transaksi Booking.<br>2. Sistem mengambil data transaksi di seluruh siklus waktu milik Pelanggan tersebut (misal perjalanan bulan-bulan sebelumnya).<br>3. Sistem mendistribusikan data historis (termasuk yg Batal atau Tuntas) pada layar daftar historikal. |
+| **Alur Alternatif** | - |
+
+### UC-27 Melihat Riwayat Trip Driver
+
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Melihat Riwayat Trip Driver |
+| **Aktor** | Driver |
+| **Deskripsi** | Driver melihat riwayat perjalanan yang pernah diselesaikan. |
+| **Kondisi Awal** | Driver login. |
+| **Kondisi Akhir** | Log pencapaian/rekap historikal perjalanan Supir tersebut tertampil. |
+| **Alur Utama** | 1. Supir mampir ke laman Menu Histori / Trip Lalu.<br>2. Sistem membongkar gudang database trip yang statusnya telah usai/Completed berdasarkan identifier Supir itu.<br>3. Supir dapat merunut balik perjalanan-perjalanan kerja yang dia telah pertanggungjawabkan kepada perusahaan. |
+| **Alur Alternatif** | - |
+
+### UC-28 Melihat Laporan Booking
+
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Melihat Laporan Booking |
+| **Aktor** | Admin |
+| **Deskripsi** | Admin melihat laporan data booking berdasarkan periode tertentu. |
+| **Kondisi Awal** | Admin berada dalam Dasbor bagian Pelaporan. |
+| **Kondisi Akhir** | Rekap analitik penyajian tabel rekap booking ditampilkan untuk diekstrak. |
+| **Alur Utama** | 1. Admin beranjak pada panel menu cetak Laporan Booking.<br>2. Admin menginjeksi filter batas awal waktu (Start Date) dan batas penghujung waktu (End Date).<br>3. Sistem menyarikan tren hasil agregasi volume booking tiket dan memuntahkannya jadi tabel pelaporan statistik siap ekspor (PDF/Excel) dan cetak (Print). |
+| **Alur Alternatif** | - |
+
+### UC-29 Melihat Laporan Trip
+
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Melihat Laporan Trip |
+| **Aktor** | Admin |
+| **Deskripsi** | Admin melihat laporan operasional perjalanan (trip) berdasarkan periode tertentu. |
+| **Kondisi Awal** | Admin berada dalam Dasbor bagian Pelaporan. |
+| **Kondisi Akhir** | Rekap data evaluasi pergerakan lalu lintas trip muncul. |
+| **Alur Utama** | 1. Admin mencetus pilihan cetak Laporan Operasional Trip.<br>2. Sistem menyediakan opsi filtrasi kurun penanggalan yang dimau.<br>3. Sistem merumuskan tabel-tabel data mobil, supir yang sering bertugas, relasi log jalan, lalu memberikannya sebagai umpan ekspor (Print Out/Softcopy). |
+| **Alur Alternatif** | - |
+
+### UC-30 Melihat Laporan Pendapatan
+
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Melihat Laporan Pendapatan |
+| **Aktor** | Admin |
+| **Deskripsi** | Admin melihat laporan pendapatan yang berasal dari pembayaran DP maupun pelunasan pelanggan. |
+| **Kondisi Awal** | Admin menekan Laporan Pendapatan Finansial Kas. |
+| **Kondisi Akhir** | Data omset (baik dari aliran dana rekening Bank DP dan tunai Supir) dikonsolidasikan. |
+| **Alur Utama** | 1. Admin menyusuri menu pelaporan omzet Kas.<br>2. Sistem membaca arus uang tunai dan verifikasi yang sukses disahkan sepanjang siklus tenggang waktu inputan Admin.<br>3. Laporan mengalkulasikan neraca total uang masuk yang berhasil lalu memperlihatkannya ke Admin sebagai bahan cetakan laporan. |
+| **Alur Alternatif** | - |
+
+### UC-31 Mengirim Notifikasi WhatsApp
+
+| Atribut | Keterangan |
+| --- | --- |
+| **Nama Use Case** | Mengirim Notifikasi WhatsApp |
+| **Aktor** | Sistem (Otomatis) |
+| **Deskripsi** | Sistem mengirimkan notifikasi otomatis kepada pelanggan melalui Fonnte API pada kondisi tertentu, seperti verifikasi DP atau pengingat keberangkatan. |
+| **Kondisi Awal** | Diberlakukannya sebuah trigger dari controller atau observer di belakang layar (pembatalan booking / sukses verifikasi admin). |
+| **Kondisi Akhir** | Pengiriman instruksi request HTTP dikirim ke pihak ke-3 untuk disampaikan ke gawai (HP) Pelanggan. |
+| **Alur Utama** | 1. Algoritma observer (e.g., BookingObserver) merekam guncangan perubahaan nilai state valid di database.<br>2. Algoritma mengkompilasi templat redaksional teks pemberitahuan berbasis string variabel pengguna.<br>3. Algoritma menghantam injeksi request (HTTP POST Payload) ke server Fonnte Service / Webhook WhatsApp pihak ke-3 memuat Nomer HP Pelanggan/Sopir.<br>4. Webhook merutekan pesan, menembak langsung ke chat wa target aktor. |
+| **Alur Alternatif** | Bila Webhook (Fonnte API) jatuh alias down time/Error 500 koneksi tak bertuan, Sistem akan mengabaikan eksekusi gagal itu (*fire-and-forget* logic) tanpa membuat aplikasi travelnya ikut tumbang crash 500 error page. |

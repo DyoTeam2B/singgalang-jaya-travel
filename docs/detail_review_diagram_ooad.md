@@ -1,4 +1,4 @@
-# Laporan Detail Review Perbaikan Diagram OOAD: Singgalang Jaya Travel
+x# Laporan Detail Review Perbaikan Diagram OOAD: Singgalang Jaya Travel
 
 Laporan ini memuat panduan perbaikan rinci untuk 5 Activity Diagram (AD) dan 5 Sequence Diagram (SD) master data dan booking pada proyek **Sistem Informasi Singgalang Jaya Travel** sesuai dengan implementasi aktual Laravel MVC.
 
