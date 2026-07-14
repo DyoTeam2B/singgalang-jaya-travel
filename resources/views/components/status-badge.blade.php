@@ -32,6 +32,9 @@
         'tersedia' => ['label' => 'Tersedia', 'classes' => 'bg-emerald-50 text-emerald-700 border-emerald-200'],
         'sedang_bertugas' => ['label' => 'Sedang Bertugas', 'classes' => 'bg-blue-50 text-blue-700 border-blue-200'],
         'tidak_aktif' => ['label' => 'Tidak Aktif', 'classes' => 'bg-slate-100 text-slate-600 border-slate-200'],
+        'istirahat' => ['label' => 'Istirahat', 'classes' => 'bg-blue-50 text-blue-700 border-blue-200'],
+        'pending' => ['label' => 'Pending', 'classes' => 'bg-amber-50 text-amber-700 border-amber-200'],
+        'ada_kendala' => ['label' => 'Ada Kendala', 'classes' => 'bg-rose-50 text-rose-700 border-rose-200'],
 
         // Pickup / Dropoff Status
         'belum' => ['label' => 'Belum', 'classes' => 'bg-slate-100 text-slate-600 border-slate-200'],

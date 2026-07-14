@@ -121,12 +121,12 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-50/50 border-b border-slate-100">
-                            <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">ID Booking</th>
-                            <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pelanggan</th>
-                            <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tipe</th>
-                            <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nominal</th>
-                            <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status Bukti</th>
-                            <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status Verifikasi</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-wider">ID Booking</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-wider">Pelanggan</th>
+                            <th class="px-6 py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-wider">Tipe</th>
+                            <th class="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-wider">Nominal</th>
+                            <th class="px-6 py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-wider">Status Bukti</th>
+                            <th class="px-6 py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-wider">Status Verifikasi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100/60">
@@ -136,28 +136,28 @@
                             @endphp
                             <tr 
                                 wire:click="selectPayment({{ $p->id }})"
-                                class="transition-colors cursor-pointer group {{ $isSelected ? 'bg-blue-50/20' : 'hover:bg-slate-50/40' }}"
+                                class="transition-all duration-200 cursor-pointer group {{ $isSelected ? 'bg-slate-50' : 'hover:bg-slate-50/50' }}"
                             >
-                                <td class="px-6 py-4 text-xs font-black text-slate-900 whitespace-nowrap relative">
+                                <td class="px-6 py-5 text-xs font-bold text-slate-900 whitespace-nowrap relative">
                                     @if ($isSelected)
                                         <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r-full"></div>
                                     @endif
                                     {{ $p->booking->kode_booking ?? 'N/A' }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-5 whitespace-nowrap">
                                     <p class="text-xs font-bold text-slate-800">{{ $p->booking->pelanggan->nama ?? 'N/A' }}</p>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="text-[10px] font-black {{ $p->jenis_pembayaran === 'dp' ? 'text-blue-600' : 'text-emerald-600' }} uppercase">
+                                <td class="px-6 py-5 whitespace-nowrap text-center">
+                                    <span class="text-[10px] font-medium {{ $p->jenis_pembayaran === 'dp' ? 'text-blue-600' : 'text-emerald-600' }} uppercase">
                                         {{ $p->jenis_pembayaran === 'dp' ? 'DP (Flat Rp50.000)' : 'Pelunasan' }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-xs font-black text-slate-900">
+                                <td class="px-6 py-5 whitespace-nowrap text-xs font-medium text-slate-650 text-right">
                                     Rp {{ number_format($p->jumlah_bayar, 0, ',', '.') }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-5 whitespace-nowrap text-center">
                                     @if ($p->bukti_pembayaran)
-                                        <div class="flex items-center gap-1.5 text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100/50 w-fit">
+                                        <div class="inline-flex items-center gap-1.5 text-[10px] font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100/50 w-fit mx-auto">
                                             <!-- Image Icon -->
                                             <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -165,24 +165,22 @@
                                             Sudah Unggah
                                         </div>
                                     @else
-                                        <div class="flex items-center gap-1.5 text-[10px] font-black text-slate-400 bg-slate-50 px-2 py-1 rounded-md border border-slate-200/40 w-fit">
+                                        <div class="inline-flex items-center gap-1.5 text-[10px] font-normal text-slate-400 bg-slate-50 px-2 py-1 rounded-md border border-slate-200/40 w-fit mx-auto">
                                             Belum Unggah
                                         </div>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-5 whitespace-nowrap text-center">
                                     <x-status-badge :status="$p->status_pembayaran" class="text-[9px] uppercase tracking-widest py-1" />
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-12 text-center">
-                                    <div class="max-w-xs mx-auto">
-                                        <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                        </svg>
-                                        <p class="text-sm font-bold text-slate-400">Tidak ada data pembayaran.</p>
-                                    </div>
+                                <td colspan="6" class="px-6 py-16 text-center text-slate-400 font-medium">
+                                    <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                    </svg>
+                                    Belum ada data pembayaran.
                                 </td>
                             </tr>
                         @endforelse

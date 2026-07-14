@@ -79,4 +79,21 @@ class Pembayaran extends Model
     {
         return $this->belongsTo(Booking::class, 'booking_id');
     }
+
+    protected static function booted()
+    {
+        static::updated(function ($pembayaran) {
+            if ($pembayaran->isDirty('status_pembayaran') && 
+                $pembayaran->status_pembayaran === self::STATUS_TERVERIFIKASI && 
+                $pembayaran->jenis_pembayaran === self::JENIS_DP) {
+                
+                $pembayaran->loadMissing('booking');
+                \App\Models\ActivityLog::create([
+                    'title' => 'Pembayaran DP Diverifikasi',
+                    'description' => 'Pembayaran DP untuk booking ' . ($pembayaran->booking->kode_booking ?? '') . ' sebesar Rp ' . number_format($pembayaran->jumlah_bayar, 0, ',', '.') . ' telah diverifikasi.',
+                    'type' => 'payment_dp',
+                ]);
+            }
+        });
+    }
 }

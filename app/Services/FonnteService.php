@@ -61,41 +61,51 @@ class FonnteService
             return true;
         }
 
-        try {
-            // 2. Make the HTTP Request
-            $response = Http::withHeaders([
-                'Authorization' => $token,
-            ])->asForm()->post($url, [
-                'target' => $normalizedTarget,
-                'message' => $message,
-                'countryCode' => config('services.fonnte.country_code', '62'),
-                'connectOnly' => $connectOnly ? 'true' : 'false',
-            ]);
+        $executeCall = function () use ($notification, $token, $url, $normalizedTarget, $message, $connectOnly) {
+            try {
+                // 2. Make the HTTP Request
+                $response = Http::withHeaders([
+                    'Authorization' => $token,
+                ])->asForm()->post($url, [
+                    'target' => $normalizedTarget,
+                    'message' => $message,
+                    'countryCode' => config('services.fonnte.country_code', '62'),
+                    'connectOnly' => $connectOnly ? 'true' : 'false',
+                ]);
 
-            $body = $response->json();
-            $responseBodyString = $response->body();
+                $body = $response->json();
+                $responseBodyString = $response->body();
 
-            $isAccepted = is_array($body) && isset($body['status']) && $body['status'] === true;
+                $isAccepted = is_array($body) && isset($body['status']) && $body['status'] === true;
 
-            $notification->update([
-                'status' => $this->resolveNotificationStatus(is_array($body) ? $body : []),
-                'response' => $responseBodyString,
-            ]);
+                $notification->update([
+                    'status' => $this->resolveNotificationStatus(is_array($body) ? $body : []),
+                    'response' => $responseBodyString,
+                ]);
 
-            return $isAccepted;
-        } catch (\Exception $e) {
-            Log::error("Fonnte Service Error sending to {$normalizedTarget}: " . $e->getMessage());
+                return $isAccepted;
+            } catch (\Exception $e) {
+                Log::error("Fonnte Service Error sending to {$normalizedTarget}: " . $e->getMessage());
 
-            $notification->update([
-                'status' => WhatsappNotification::STATUS_FAILED,
-                'response' => json_encode([
-                    'status' => false,
-                    'error' => $e->getMessage(),
-                ]),
-            ]);
+                $notification->update([
+                    'status' => WhatsappNotification::STATUS_FAILED,
+                    'response' => json_encode([
+                        'status' => false,
+                        'error' => $e->getMessage(),
+                    ]),
+                ]);
 
-            return false;
+                return false;
+            }
+        };
+
+        if (app()->runningUnitTests()) {
+            return $executeCall();
         }
+
+        dispatch($executeCall)->afterResponse();
+
+        return true;
     }
 
     private function normalizeTarget(string $target): string

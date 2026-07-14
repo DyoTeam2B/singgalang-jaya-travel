@@ -108,26 +108,26 @@
                             $isMorning = Str::lower($schedule->shift) === 'pagi';
                         @endphp
                         
-                        <div class="bg-white rounded-[2rem] border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 p-6 flex flex-col relative overflow-hidden group">
-                            <div class="absolute top-0 right-0 w-64 h-64 {{ $isMorning ? 'bg-blue-50/50' : 'bg-slate-100/60' }} rounded-full blur-3xl -z-0 pointer-events-none transition-colors"></div>
+                        <div class="{{ $isMorning ? 'bg-white border-slate-200/60' : 'bg-slate-900 border-slate-800 text-white' }} rounded-[2rem] border shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 p-6 flex flex-col relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 w-64 h-64 {{ $isMorning ? 'bg-blue-50/50' : 'bg-blue-900/10' }} rounded-full blur-3xl -z-0 pointer-events-none transition-colors"></div>
 
                             <div class="relative z-10 flex-grow flex flex-col">
                                 <!-- Top: Route and Shift -->
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                                     <div class="flex items-center flex-wrap gap-2 md:gap-3">
                                         <div class="flex items-center gap-2">
-                                            <span class="w-2.5 h-2.5 rounded-full {{ $isMorning ? 'bg-blue-600 shadow-[0_0_0_4px_rgb(37,99,235,0.1)]' : 'bg-slate-900 shadow-[0_0_0_4px_rgb(15,23,42,0.1)]' }}"></span>
-                                            <span class="text-slate-900 font-bold text-lg md:text-xl tracking-tight">{{ $schedule->rute->asal }}</span>
+                                            <span class="w-2.5 h-2.5 rounded-full {{ $isMorning ? 'bg-blue-600 shadow-[0_0_0_4px_rgb(37,99,235,0.1)]' : 'bg-indigo-400 shadow-[0_0_0_4px_rgb(129,140,248,0.1)]' }}"></span>
+                                            <span class="{{ $isMorning ? 'text-slate-900' : 'text-white' }} font-bold text-lg md:text-xl tracking-tight">{{ $schedule->rute->asal }}</span>
                                         </div>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
                                         </svg>
                                         <div class="flex items-center gap-2">
                                             <span class="w-2.5 h-2.5 rounded-full border-2 border-slate-400 bg-white"></span>
-                                            <span class="text-slate-900 font-bold text-lg md:text-xl tracking-tight">{{ $schedule->rute->tujuan }}</span>
+                                            <span class="{{ $isMorning ? 'text-slate-900' : 'text-white' }} font-bold text-lg md:text-xl tracking-tight">{{ $schedule->rute->tujuan }}</span>
                                         </div>
                                     </div>
-                                    <div class="{{ $isMorning ? 'bg-blue-50 text-blue-700 border-blue-100/50' : 'bg-slate-900 text-white border-transparent' }} px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2 border w-fit">
+                                    <div class="{{ $isMorning ? 'bg-blue-50 text-blue-700 border-blue-100/50' : 'bg-indigo-950 text-indigo-300 border-indigo-900/50' }} px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2 border w-fit">
                                         @if($isMorning)
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/>
@@ -145,7 +145,7 @@
                                 <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-6">
                                     <div>
                                         <p class="text-slate-500 text-xs font-semibold mb-1 uppercase tracking-wider">Jam Keberangkatan</p>
-                                        <h3 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tighter">
+                                        <h3 class="text-4xl md:text-5xl font-extrabold {{ $isMorning ? 'text-slate-900' : 'text-white' }} tracking-tighter">
                                             {{ $schedule->jam_berangkat->format('H.i') }}
                                         </h3>
                                         <p class="text-slate-400 text-xs font-bold mt-1">
@@ -153,15 +153,15 @@
                                         </p>
                                     </div>
                                     
-                                    <div class="w-full sm:w-48 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                    <div class="w-full sm:w-48 {{ $isMorning ? 'bg-slate-50 border-slate-100' : 'bg-slate-800 border-slate-700' }} p-4 rounded-2xl border">
                                         <div class="flex justify-between items-end mb-2">
-                                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">Sisa Kursi</span>
-                                            <span class="text-xl font-extrabold {{ $sisaKursi > 0 ? 'text-blue-600' : 'text-red-600' }} leading-none">{{ $sisaKursi }}</span>
+                                            <span class="text-xs font-bold {{ $isMorning ? 'text-slate-500' : 'text-slate-450' }} uppercase tracking-wide">Sisa Kursi</span>
+                                            <span class="text-xl font-extrabold {{ $sisaKursi > 0 ? ($isMorning ? 'text-blue-600' : 'text-indigo-400') : 'text-red-500' }} leading-none">{{ $sisaKursi }}</span>
                                         </div>
-                                        <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                                        <div class="w-full h-2 {{ $isMorning ? 'bg-slate-200' : 'bg-slate-700' }} rounded-full overflow-hidden">
                                             <div class="h-full {{ $sisaKursi > 0 ? 'bg-blue-600' : 'bg-red-600' }} rounded-full" style="width: {{ $fillPercentage }}%"></div>
                                         </div>
-                                        <p class="text-[10px] text-slate-400 font-semibold mt-1.5 text-right">Kapasitas: {{ $schedule->kuota }}</p>
+                                        <p class="text-[10px] {{ $isMorning ? 'text-slate-400' : 'text-slate-500' }} font-semibold mt-1.5 text-right">Kapasitas: {{ $schedule->kuota }}</p>
                                     </div>
                                 </div>
 
@@ -169,30 +169,30 @@
                                 <div class="relative -mx-6 my-6">
                                     <div class="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-slate-50 rounded-full border-r border-slate-200/60 z-20"></div>
                                     <div class="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-slate-50 rounded-full border-l border-slate-200/60 z-20"></div>
-                                    <div class="border-t-2 border-dashed border-slate-200 w-full relative z-10"></div>
+                                    <div class="border-t-2 border-dashed {{ $isMorning ? 'border-slate-200' : 'border-slate-800' }} w-full relative z-10"></div>
                                 </div>
 
                                 <!-- Vehicle & Price -->
                                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-auto">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100 shrink-0">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <div class="w-12 h-12 {{ $isMorning ? 'bg-slate-50 border-slate-100' : 'bg-slate-800 border-slate-700' }} rounded-xl flex items-center justify-center border shrink-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 {{ $isMorning ? 'text-slate-700' : 'text-indigo-400' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M13 17H9"/>
                                             </svg>
                                         </div>
                                         <div>
                                             <div class="flex items-center gap-2">
-                                                <p class="text-slate-900 font-bold text-sm">Toyota Avanza</p>
+                                                <p class="{{ $isMorning ? 'text-slate-900' : 'text-white' }} font-bold text-sm">Toyota Avanza</p>
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
                                                 </svg>
                                             </div>
-                                            <p class="text-slate-500 text-xs font-medium">Maks. {{ $schedule->kuota }} Penumpang</p>
+                                            <p class="{{ $isMorning ? 'text-slate-500' : 'text-slate-400' }} text-xs font-medium">Maks. {{ $schedule->kuota }} Penumpang</p>
                                         </div>
                                     </div>
                                     <div>
                                         <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Harga per kursi</p>
-                                        <p class="text-slate-900 font-extrabold text-xl tracking-tight">Rp {{ number_format($schedule->rute->tarif, 0, ',', '.') }}</p>
+                                        <p class="{{ $isMorning ? 'text-slate-900' : 'text-white' }} font-extrabold text-xl tracking-tight">Rp {{ number_format($schedule->rute->tarif, 0, ',', '.') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -204,7 +204,7 @@
                                         Pilih Jadwal
                                     </a>
                                 @else
-                                    <a href="{{ Route::has('booking.create') ? route('booking.create', ['jadwal_id' => $schedule->id]) : '#' }}" class="w-full h-12 mt-6 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold transition-all shadow-lg shadow-slate-900/15 active:scale-[0.98] flex justify-center items-center relative z-10">
+                                    <a href="{{ Route::has('booking.create') ? route('booking.create', ['jadwal_id' => $schedule->id]) : '#' }}" class="w-full h-12 mt-6 {{ $isMorning ? 'bg-slate-900 hover:bg-slate-800' : 'bg-indigo-600 hover:bg-indigo-750' }} text-white rounded-xl font-bold transition-all shadow-lg shadow-slate-900/15 active:scale-[0.98] flex justify-center items-center relative z-10">
                                         Booking Sekarang
                                     </a>
                                 @endif

@@ -69,7 +69,7 @@ class DriverController extends Controller
             $selectedDriver = Driver::with(['user', 'trips.jadwal.rute', 'armada'])->find($drivers->first()->id);
         }
 
-        $armadas = \App\Models\Armada::where('status_armada', 'aktif')->get();
+        $armadas = \App\Models\Armada::where('status_armada', 'aktif')->with('driver')->get();
 
         return view('admin.drivers.index', compact('drivers', 'search', 'statusFilter', 'selectedDriver', 'armadas'));
     }

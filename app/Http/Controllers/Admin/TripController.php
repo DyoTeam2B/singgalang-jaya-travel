@@ -114,13 +114,26 @@ class TripController extends Controller
         return view('admin.trips.index', compact('trips', 'bookings', 'status', 'search', 'counts'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(Request $request)
     {
-        // Fetch active schedules
-        $schedules = Jadwal::aktif()
+        // Fetch bookings that are confirmed and not yet assigned to a trip
+        $bookings = Booking::where('status_booking', Booking::STATUS_DIKONFIRMASI)
+            ->whereHas('jadwal', function ($q) {
+                $q->whereDate('tanggal_keberangkatan', '>=', now()->toDateString());
+            })
+            ->with(['jadwal.rute', 'pelanggan'])
+            ->latest()
+            ->get();
+
+        // Fetch active and full schedules
+        $schedules = Jadwal::whereIn('status_jadwal', [Jadwal::STATUS_AKTIF, Jadwal::STATUS_PENUH])
+            ->where(function ($q) {
+                $q->where('tanggal_keberangkatan', '>', now()->toDateString())
+                  ->orWhere(function ($q2) {
+                      $q2->where('tanggal_keberangkatan', '=', now()->toDateString())
+                         ->where('jam_berangkat', '>', now()->toTimeString());
+                  });
+            })
             ->with('rute')
             ->latest()
             ->get();
@@ -132,13 +145,18 @@ class TripController extends Controller
             ->latest()
             ->get();
 
-        return view('admin.trips.create', compact('schedules', 'drivers'));
+        $preselectedBookingId = $request->query('booking_id');
+
+        return view('admin.trips.create', compact('schedules', 'drivers', 'bookings', 'preselectedBookingId'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTripRequest $request)
+    public function store(
+        StoreTripRequest $request,
+        BookingWhatsappNotificationService $whatsappNotificationService
+    )
     {
         $driver = Driver::with('armada')->findOrFail($request->validated()['driver_id']);
 
@@ -148,6 +166,20 @@ class TripController extends Controller
             'armada_id' => $driver->armada_id,
             'status_trip' => Trip::STATUS_NEW,
         ]);
+
+        if ($request->has('booking_id') && $request->booking_id) {
+            $booking = Booking::findOrFail($request->booking_id);
+            $trip->detailTrips()->create([
+                'booking_id' => $booking->id,
+                'status_jemput' => 'belum',
+                'status_antar' => 'belum',
+            ]);
+
+            $booking->load(['pelanggan', 'jadwal.rute']);
+            $trip->load(['driver', 'armada', 'jadwal.rute']);
+            $whatsappNotificationService->sendTripAssignedToCustomer($booking, $trip);
+            $whatsappNotificationService->sendTripAssignedToDriver($booking, $trip);
+        }
 
         return redirect()
             ->route('admin.trips.index')
@@ -179,9 +211,11 @@ class TripController extends Controller
             ->latest()
             ->get();
 
-        // Fetch bookings for the same schedule (jadwal_id) that have status 'dikonfirmasi'
         $availableBookings = Booking::where('status_booking', Booking::STATUS_DIKONFIRMASI)
             ->where('jadwal_id', $trip->jadwal_id)
+            ->whereHas('jadwal', function ($q) {
+                $q->whereDate('tanggal_keberangkatan', '>=', now()->toDateString());
+            })
             ->with('pelanggan')
             ->latest()
             ->get();

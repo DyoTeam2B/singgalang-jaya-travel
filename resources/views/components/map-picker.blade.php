@@ -10,8 +10,19 @@
     map: null,
     
     geocodeAddress(address) {
-        if (!address || address.trim().length < 3) return;
+        if (!address || address.trim().length < 3) {
+            alert('Silakan masukkan alamat penjemputan yang lebih lengkap.');
+            return;
+        }
         
+        const btn = document.getElementById('btn-cari-lokasi');
+        const btnText = document.getElementById('text-cari-lokasi');
+        if (btn && btnText) {
+            btn.disabled = true;
+            btnText.textContent = 'Mencari Lokasi...';
+            btn.classList.add('opacity-70', 'cursor-wait');
+        }
+
         let query = address;
         if (!address.toLowerCase().includes('indonesia')) {
             query += ', Indonesia';
@@ -26,24 +37,49 @@
                     
                     this.latJemput = lat;
                     this.lngJemput = lon;
-                    if (this.markerJemput) {
-                        this.markerJemput.setLatLng([lat, lon]).bindPopup('<b>Titik Jemput (Biru)</b>').openPopup();
+                    
+                    const blueIcon = new L.Icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    });
+
+                    if (!this.markerJemput) {
+                        this.markerJemput = L.marker([lat, lon], { icon: blueIcon, draggable: true }).addTo(this.map);
+                        this.markerJemput.bindPopup('<b>Titik Jemput (Biru)</b>');
+                        this.markerJemput.on('dragend', () => {
+                            const pos = this.markerJemput.getLatLng();
+                            this.latJemput = pos.lat;
+                            this.lngJemput = pos.lng;
+                        });
+                    } else {
+                        this.markerJemput.setLatLng([lat, lon]);
                     }
-                    if (this.map) {
-                        this.map.setView([lat, lon], 14);
-                    }
+                    
+                    this.markerJemput.openPopup();
+                    this.map.setView([lat, lon], 16);
                 } else {
-                    alert('Alamat tidak ditemukan di peta. Silakan cari dengan nama jalan/kota yang lebih spesifik atau geser pin secara manual.');
+                    alert('Alamat tidak ditemukan di peta. Silakan cari dengan nama jalan/kota yang lebih spesifik.');
                 }
             })
             .catch(err => {
                 console.error('Geocoding error:', err);
-                alert('Gagal menghubungi layanan peta. Silakan geser pin secara manual.');
+                alert('Gagal menghubungi layanan peta. Silakan coba lagi.');
+            })
+            .finally(() => {
+                if (btn && btnText) {
+                    btn.disabled = false;
+                    btnText.textContent = 'Cari Lokasi';
+                    btn.classList.remove('opacity-70', 'cursor-wait');
+                }
             });
     },
 
     initMap() {
-        // Default coordinates for Padang Panjang
+        // Default coordinates for Padang Panjang (Singgalang Jaya Travel area)
         let initialLatJ = this.latJemput || -0.4669;
         let initialLngJ = this.lngJemput || 100.3986;
 
@@ -63,42 +99,48 @@
             shadowSize: [41, 41]
         });
 
-        let markerJemput = L.marker([initialLatJ, initialLngJ], { icon: blueIcon, draggable: true }).addTo(map);
-        markerJemput.bindPopup('<b>Titik Jemput (Biru)</b>');
-        this.markerJemput = markerJemput;
-
-        // Set initial values in Alpine/Livewire if not set
-        if (!this.latJemput) {
-            this.latJemput = initialLatJ;
-            this.lngJemput = initialLngJ;
+        // Initialize marker if it already exists (e.g. validation error re-render)
+        if (this.latJemput && this.lngJemput) {
+            this.markerJemput = L.marker([this.latJemput, this.lngJemput], { icon: blueIcon, draggable: true }).addTo(map);
+            this.markerJemput.bindPopup('<b>Titik Jemput (Biru)</b>');
+            this.markerJemput.on('dragend', () => {
+                const pos = this.markerJemput.getLatLng();
+                this.latJemput = pos.lat;
+                this.lngJemput = pos.lng;
+            });
         }
 
-        // Update function
-        const updateCoords = () => {
-            const posJ = markerJemput.getLatLng();
-            this.latJemput = posJ.lat;
-            this.lngJemput = posJ.lng;
-        };
-
-        markerJemput.on('dragend', updateCoords);
-
-        // Click to place
+        // Click on map to place marker
         map.on('click', (e) => {
-            markerJemput.setLatLng(e.latlng);
-            markerJemput.bindPopup('<b>Titik Jemput (Biru)</b>').openPopup();
-            updateCoords();
+            const lat = e.latlng.lat;
+            const lng = e.latlng.lng;
+            this.latJemput = lat;
+            this.lngJemput = lng;
+
+            if (!this.markerJemput) {
+                this.markerJemput = L.marker([lat, lng], { icon: blueIcon, draggable: true }).addTo(map);
+                this.markerJemput.bindPopup('<b>Titik Jemput (Biru)</b>');
+                this.markerJemput.on('dragend', () => {
+                    const pos = this.markerJemput.getLatLng();
+                    this.latJemput = pos.lat;
+                    this.lngJemput = pos.lng;
+                });
+            } else {
+                this.markerJemput.setLatLng(e.latlng);
+            }
+            this.markerJemput.openPopup();
         });
         
-        // Listen to livewire changes (e.g. if pre-loaded or set by code)
+        // Listen to livewire coordinate changes
         this.$watch('latJemput', value => {
-            if (value && value !== markerJemput.getLatLng().lat) {
-                markerJemput.setLatLng([value, this.lngJemput]);
+            if (value && this.markerJemput && value !== this.markerJemput.getLatLng().lat) {
+                this.markerJemput.setLatLng([value, this.lngJemput]);
                 map.setView([value, this.lngJemput], map.getZoom());
             }
         });
         this.$watch('lngJemput', value => {
-            if (value && value !== markerJemput.getLatLng().lng) {
-                markerJemput.setLatLng([this.latJemput, value]);
+            if (value && this.markerJemput && value !== this.markerJemput.getLatLng().lng) {
+                this.markerJemput.setLatLng([this.latJemput, value]);
                 map.setView([this.latJemput, value], map.getZoom());
             }
         });
@@ -113,8 +155,15 @@
     geocodeAddress($event.detail.address);
 "
 x-init="initMap()" class="w-full">
-    <div class="mb-2 flex flex-col md:flex-row gap-2 text-xs font-semibold justify-between bg-slate-100 p-3 rounded-xl text-slate-600">
+    <!-- Info banner shown when marker is not placed -->
+    <div x-show="!latJemput" class="mb-2 flex flex-col md:flex-row gap-2 text-xs font-semibold justify-between bg-amber-50 p-3 rounded-xl border border-amber-200 text-amber-800">
+        <span class="flex items-center gap-1">⚠️ Silakan isi alamat jemput kemudian klik tombol Cari Lokasi.</span>
+    </div>
+    
+    <!-- Info banner shown when marker is placed -->
+    <div x-show="latJemput" class="mb-2 flex flex-col md:flex-row gap-2 text-xs font-semibold justify-between bg-slate-100 p-3 rounded-xl text-slate-600" style="display: none;">
         <span class="flex items-center gap-1">🔵 Geser Pin Biru atau Klik di Peta untuk Lokasi Jemput</span>
     </div>
+    
     <div id="leaflet-map-picker" wire:ignore class="h-80 w-full rounded-2xl border border-slate-200 shadow-sm z-10"></div>
 </div>

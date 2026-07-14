@@ -17,6 +17,18 @@ class StoreTripRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        if ($this->has('booking_id') && $this->booking_id) {
+            $booking = \App\Models\Booking::find($this->booking_id);
+            if ($booking) {
+                $this->merge([
+                    'jadwal_id' => $booking->jadwal_id,
+                ]);
+            }
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -25,6 +37,7 @@ class StoreTripRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'booking_id' => ['nullable', 'exists:bookings,id'],
             'jadwal_id' => ['required', 'exists:jadwal,id'],
             'driver_id' => [
                 'required',

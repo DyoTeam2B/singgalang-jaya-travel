@@ -60,4 +60,27 @@ class Trip extends Model
     {
         return $this->hasMany(DetailTrip::class);
     }
+
+    protected static function booted()
+    {
+        static::updated(function ($trip) {
+            if ($trip->isDirty('status_trip')) {
+                if ($trip->status_trip === self::STATUS_ON_TRIP) {
+                    $trip->loadMissing(['driver', 'jadwal.rute']);
+                    \App\Models\ActivityLog::create([
+                        'title' => 'Trip Dimulai',
+                        'description' => 'Driver ' . ($trip->driver->nama_driver ?? 'N/A') . ' memulai perjalanan Rute: ' . ($trip->jadwal->rute->asal ?? '') . ' -> ' . ($trip->jadwal->rute->tujuan ?? '') . ' (TRP-' . str_pad($trip->id, 3, '0', STR_PAD_LEFT) . ')',
+                        'type' => 'trip_started',
+                    ]);
+                } elseif ($trip->status_trip === self::STATUS_COMPLETED) {
+                    $trip->loadMissing('driver');
+                    \App\Models\ActivityLog::create([
+                        'title' => 'Trip Selesai',
+                        'description' => 'Driver ' . ($trip->driver->nama_driver ?? 'N/A') . ' telah menyelesaikan perjalanan TRP-' . str_pad($trip->id, 3, '0', STR_PAD_LEFT),
+                        'type' => 'trip_completed',
+                    ]);
+                }
+            }
+        });
+    }
 }

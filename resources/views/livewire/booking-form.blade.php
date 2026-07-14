@@ -152,6 +152,18 @@
                         <textarea id="alamat_jemput" wire:model.defer="alamat_jemput" rows="2" class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10 transition-all placeholder:text-slate-400 resize-none" placeholder="Masukkan alamat lengkap penjemputan..."></textarea>
                     </div>
                     
+                    <div>
+                        <button type="button" 
+                                id="btn-cari-lokasi"
+                                onclick="window.dispatchEvent(new CustomEvent('search-and-set-marker', { detail: { address: document.getElementById('alamat_jemput').value } }))" 
+                                class="inline-flex items-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-600/10">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            <span id="text-cari-lokasi">Cari Lokasi</span>
+                        </button>
+                    </div>
+
                     @error('alamat_jemput')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror

@@ -60,6 +60,21 @@
 
         <!-- Filter & List Area -->
         <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden w-full">
+            <!-- Filter Toolbar -->
+            <div class="p-6 border-b border-slate-100 bg-slate-50/20">
+                <form method="GET" action="{{ route('driver.trips.index') }}" class="flex items-center gap-3">
+                    <span class="text-xs font-black text-slate-500 uppercase tracking-widest">Filter Status:</span>
+                    <select name="status" onchange="this.form.submit()" 
+                            class="px-4 py-2.5 bg-white border border-slate-200/80 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all cursor-pointer">
+                        <option value="semua" {{ $statusFilter === 'semua' ? 'selected' : '' }}>Semua Status</option>
+                        <option value="ready" {{ $statusFilter === 'ready' ? 'selected' : '' }}>Ready</option>
+                        <option value="on_trip" {{ $statusFilter === 'on_trip' ? 'selected' : '' }}>On Trip</option>
+                        <option value="completed" {{ $statusFilter === 'completed' ? 'selected' : '' }}>Completed</option>
+                        <option value="cancelled" {{ $statusFilter === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                    </select>
+                </form>
+            </div>
+
             <!-- Mobile Cards View -->
             <div class="grid grid-cols-1 gap-4 md:hidden p-6 bg-slate-50/50">
                 @forelse($trips as $trip)

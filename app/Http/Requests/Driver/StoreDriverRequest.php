@@ -24,7 +24,7 @@ class StoreDriverRequest extends FormRequest
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
             'no_hp' => ['required', 'string', 'max:20'],
-            'armada_id' => ['required', 'exists:armada,id'],
+            'armada_id' => ['required', 'exists:armada,id', 'unique:drivers,armada_id'],
             'status_driver' => ['required', 'in:aktif,nonaktif'],
         ];
     }
@@ -48,6 +48,7 @@ class StoreDriverRequest extends FormRequest
             'no_hp.max' => 'Nomor HP tidak boleh lebih dari 20 karakter.',
             'armada_id.required' => 'Armada wajib dipilih.',
             'armada_id.exists' => 'Armada yang dipilih tidak valid.',
+            'armada_id.unique' => 'Armada yang dipilih sudah digunakan oleh driver lain.',
             'status_driver.required' => 'Status driver wajib dipilih.',
             'status_driver.in' => 'Status driver tidak valid.',
         ];

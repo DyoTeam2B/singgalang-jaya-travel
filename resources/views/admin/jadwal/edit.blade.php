@@ -93,7 +93,9 @@
                             class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all cursor-pointer">
                         <option value="aktif" {{ old('status_jadwal', $jadwal->status_jadwal) == 'aktif' ? 'selected' : '' }}>Aktif</option>
                         <option value="nonaktif" {{ old('status_jadwal', $jadwal->status_jadwal) == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
-                        <option value="penuh" {{ old('status_jadwal', $jadwal->status_jadwal) == 'penuh' ? 'selected' : '' }}>Penuh</option>
+                        @if(old('status_jadwal', $jadwal->status_jadwal) == 'penuh')
+                            <option value="penuh" selected>Penuh (Otomatis)</option>
+                        @endif
                     </select>
                     @error('status_jadwal')
                         <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>

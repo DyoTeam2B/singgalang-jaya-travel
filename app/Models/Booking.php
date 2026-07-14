@@ -141,4 +141,26 @@ class Booking extends Model
     {
         return $this->hasOne(Rating::class, 'booking_id');
     }
+
+    protected static function booted()
+    {
+        static::created(function ($booking) {
+            $booking->loadMissing('pelanggan');
+            \App\Models\ActivityLog::create([
+                'title' => 'Booking Baru',
+                'description' => 'Pelanggan ' . ($booking->pelanggan->nama ?? 'N/A') . ' melakukan booking ' . $booking->kode_booking,
+                'type' => 'booking_created',
+            ]);
+        });
+
+        static::updated(function ($booking) {
+            if ($booking->isDirty('status_booking') && $booking->status_booking === self::STATUS_CANCELLED) {
+                \App\Models\ActivityLog::create([
+                    'title' => 'Booking Dibatalkan',
+                    'description' => 'Booking ' . $booking->kode_booking . ' telah dibatalkan.',
+                    'type' => 'booking_cancelled',
+                ]);
+            }
+        });
+    }
 }

@@ -120,28 +120,28 @@
                     <tr class="bg-slate-50 border-b border-slate-200/60 text-[10px] font-black uppercase tracking-wider text-slate-400">
                         <th class="px-6 py-4">Pelanggan</th>
                         <th class="px-6 py-4">Booking / Rute</th>
-                        <th class="px-6 py-4">Rating</th>
+                        <th class="px-6 py-4 text-center">Rating</th>
                         <th class="px-6 py-4">Ulasan</th>
-                        <th class="px-6 py-4">Tanggal Perjalanan</th>
-                        <th class="px-6 py-4">Status</th>
-                        <th class="px-6 py-4 text-right">Aksi</th>
+                        <th class="px-6 py-4 text-center">Tanggal Perjalanan</th>
+                        <th class="px-6 py-4 text-center">Status</th>
+                        <th class="px-6 py-4 text-center">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 text-xs font-medium text-slate-600">
+                <tbody class="divide-y divide-slate-100 text-xs font-medium text-slate-650">
                     @forelse($ratings as $ratingItem)
-                        <tr class="hover:bg-slate-50/55 transition-colors">
-                            <td class="px-6 py-4">
-                                <span class="font-extrabold text-slate-800 block">{{ $ratingItem->pelanggan->nama }}</span>
+                        <tr class="hover:bg-slate-50/60 transition-all duration-200">
+                            <td class="px-6 py-5">
+                                <span class="font-bold text-slate-800 block">{{ $ratingItem->pelanggan->nama }}</span>
                                 <span class="text-[10px] text-slate-400 block mt-0.5">{{ $ratingItem->pelanggan->no_hp }}</span>
                             </td>
-                            <td class="px-6 py-4">
-                                <span class="font-mono font-bold text-blue-600 block">{{ $ratingItem->booking->kode_booking }}</span>
-                                <span class="text-[10px] text-slate-400 block mt-0.5">
+                            <td class="px-6 py-5">
+                                <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-md border border-blue-100/40 w-fit inline-block mb-1">{{ $ratingItem->booking->kode_booking }}</span>
+                                <span class="text-[10px] text-slate-400 block">
                                     {{ $ratingItem->booking->jadwal->rute->asal }} &rarr; {{ $ratingItem->booking->jadwal->rute->tujuan }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-0.5">
+                            <td class="px-6 py-5 text-center">
+                                <div class="flex items-center justify-center gap-0.5">
                                     @for($i = 1; $i <= 5; $i++)
                                         <svg class="w-4 h-4 {{ $i <= $ratingItem->rating ? 'text-amber-400 fill-amber-400' : 'text-slate-200' }}" fill="currentColor" viewBox="0 0 20 20">
                                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
@@ -149,14 +149,14 @@
                                     @endfor
                                 </div>
                             </td>
-                            <td class="px-6 py-4 max-w-xs truncate">
-                                <span class="text-slate-700 italic">"{{ $ratingItem->ulasan }}"</span>
+                            <td class="px-6 py-5 max-w-xs truncate">
+                                <span class="text-slate-600 italic">"{{ $ratingItem->ulasan }}"</span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="font-semibold text-slate-700">{{ $ratingItem->booking->jadwal->tanggal_keberangkatan->format('d M Y') }}</span>
+                            <td class="px-6 py-5 text-center whitespace-nowrap">
+                                <span class="font-medium text-slate-700">{{ $ratingItem->booking->jadwal->tanggal_keberangkatan->format('d M Y') }}</span>
                                 <span class="text-[10px] text-slate-400 block mt-0.5">Shift {{ ucfirst($ratingItem->booking->jadwal->shift) }}</span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-6 py-5 text-center whitespace-nowrap">
                                 @php
                                     $badgeClasses = match($ratingItem->status) {
                                         'published' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
@@ -169,34 +169,37 @@
                                         default => 'Waiting',
                                     };
                                 @endphp
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border {{ $badgeClasses }}">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border {{ $badgeClasses }}">
                                     {{ $statusLabel }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right">
-                                <div class="flex items-center justify-end gap-2">
+                            <td class="px-6 py-5 text-center whitespace-nowrap">
+                                <div class="flex items-center justify-center gap-2">
                                     @if($ratingItem->status !== 'published')
                                         <form action="{{ route('admin.rating.publish', $ratingItem->id) }}" method="POST" class="inline">
                                             @csrf
                                             @method('PUT')
-                                            <button type="submit" class="bg-emerald-50 hover:bg-emerald-100 border border-emerald-250 text-emerald-700 font-bold px-2.5 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors">Publish</button>
+                                            <button type="submit" class="bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 text-emerald-600 px-2.5 py-1.5 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-all shadow-sm active:scale-95">Publish</button>
                                         </form>
                                     @endif
                                     @if($ratingItem->status !== 'hidden')
                                         <form action="{{ route('admin.rating.hide', $ratingItem->id) }}" method="POST" class="inline">
                                             @csrf
                                             @method('PUT')
-                                            <button type="submit" class="bg-rose-50 hover:bg-rose-100 border border-rose-250 text-rose-700 font-bold px-2.5 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors">Hide</button>
+                                            <button type="submit" class="bg-rose-50 hover:bg-rose-100/80 border border-rose-200 text-rose-600 px-2.5 py-1.5 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-all shadow-sm active:scale-95">Hide</button>
                                         </form>
                                     @endif
-                                    <a href="{{ route('admin.rating.show', $ratingItem->id) }}" class="bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold px-2.5 py-1.5 rounded-lg text-[9px] uppercase tracking-wider transition-colors">Detail</a>
+                                    <a href="{{ route('admin.rating.show', $ratingItem->id) }}" class="bg-blue-50 hover:bg-blue-100/80 border border-blue-200 text-blue-600 px-2.5 py-1.5 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-all shadow-sm active:scale-95">Detail</a>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-12 text-center text-slate-400">
-                                Belum ada data ulasan rating ditemukan.
+                            <td colspan="7" class="px-6 py-16 text-center text-slate-400 font-medium">
+                                <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 11.518 1.397l-.518-.396m-.041.02a.75.75 0 11-.518-1.397l.518.396zm0 0V9m-6 3a9 9 0 1118 0 9 9 0 01-18 0z" />
+                                </svg>
+                                Belum ada data ulasan.
                             </td>
                         </tr>
                     @endforelse

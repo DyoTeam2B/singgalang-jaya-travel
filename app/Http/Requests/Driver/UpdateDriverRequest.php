@@ -20,14 +20,18 @@ class UpdateDriverRequest extends FormRequest
     public function rules(): array
     {
         $driver = $this->route('driver');
-        $userId = $driver instanceof \App\Models\Driver ? $driver->user_id : $driver;
+        $driverId = $driver instanceof \App\Models\Driver ? $driver->id : $driver;
+        $userId = $driver instanceof \App\Models\Driver ? $driver->user_id : null;
+        if (!$userId && $driverId) {
+            $userId = \App\Models\Driver::find($driverId)?->user_id;
+        }
 
         return [
             'nama_driver' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $userId],
             'password' => ['nullable', 'string', 'min:8'],
             'no_hp' => ['required', 'string', 'max:20'],
-            'armada_id' => ['required', 'exists:armada,id'],
+            'armada_id' => ['required', 'exists:armada,id', 'unique:drivers,armada_id,' . $driverId],
             'status_driver' => ['required', 'in:aktif,nonaktif'],
         ];
     }
@@ -50,6 +54,7 @@ class UpdateDriverRequest extends FormRequest
             'no_hp.max' => 'Nomor HP tidak boleh lebih dari 20 karakter.',
             'armada_id.required' => 'Armada wajib dipilih.',
             'armada_id.exists' => 'Armada yang dipilih tidak valid.',
+            'armada_id.unique' => 'Armada yang dipilih sudah digunakan oleh driver lain.',
             'status_driver.required' => 'Status driver wajib dipilih.',
             'status_driver.in' => 'Status driver tidak valid.',
         ];

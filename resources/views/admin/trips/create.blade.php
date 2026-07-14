@@ -2,8 +2,20 @@
 
 @section('content')
     <div x-data="{
+        bookingId: '{{ old('booking_id', request('booking_id', $preselectedBookingId ?? '')) }}',
         scheduleId: '{{ old('jadwal_id', request('jadwal_id')) }}',
         driverId: '{{ old('driver_id') }}',
+        bookings: {{ $bookings->map(fn ($b) => [
+            'id' => $b->id,
+            'code' => $b->kode_booking,
+            'customer' => $b->pelanggan->nama,
+            'pax' => $b->jumlah_penumpang,
+            'jadwal_id' => $b->jadwal_id,
+            'route' => $b->jadwal->rute->asal . ' -> ' . $b->jadwal->rute->tujuan,
+            'date' => $b->jadwal->tanggal_keberangkatan->format('d M Y'),
+            'shift' => ucwords($b->jadwal->shift),
+            'time' => $b->jadwal->jam_berangkat instanceof \DateTime ? $b->jadwal->jam_berangkat->format('H:i') : \Carbon\Carbon::parse($b->jadwal->jam_berangkat)->format('H:i'),
+        ])->toJson() }},
         schedules: {{ $schedules->map(fn ($schedule) => [
             'id' => $schedule->id,
             'date' => $schedule->tanggal_keberangkatan->format('d M Y'),
@@ -19,11 +31,32 @@
             'armada_plate' => $driver->armada->nomor_plat ?? '-',
             'armada_capacity' => $driver->armada->kapasitas ?? '-',
         ])->toJson() }},
+        get selectedBooking() {
+            return this.bookings.find((b) => b.id == this.bookingId);
+        },
         get selectedSchedule() {
             return this.schedules.find((schedule) => schedule.id == this.scheduleId);
         },
         get selectedDriver() {
             return this.drivers.find((driver) => driver.id == this.driverId);
+        },
+        init() {
+            this.$watch('bookingId', (val) => {
+                if (val) {
+                    const b = this.bookings.find((x) => x.id == val);
+                    if (b) {
+                        this.scheduleId = b.jadwal_id;
+                    }
+                } else {
+                    this.scheduleId = '';
+                }
+            });
+            if (this.bookingId) {
+                const b = this.bookings.find((x) => x.id == this.bookingId);
+                if (b) {
+                    this.scheduleId = b.jadwal_id;
+                }
+            }
         }
     }" class="space-y-8 font-poppins max-w-4xl mx-auto py-6">
 
@@ -31,7 +64,7 @@
             <div>
                 <p class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-2">Operasional Trip</p>
                 <h1 class="text-3xl font-black text-slate-900 tracking-tight">Buat Trip Baru</h1>
-                <p class="text-sm font-bold text-slate-400 mt-1">Pilih jadwal dan driver. Armada otomatis mengikuti armada milik driver.</p>
+                <p class="text-sm font-bold text-slate-400 mt-1">Pilih booking pelanggan atau tentukan jadwal manual untuk membuat trip baru.</p>
             </div>
             <a href="{{ route('admin.trips.index') }}"
                class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 px-5 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all active:scale-95 shadow-sm">
@@ -48,12 +81,31 @@
             <form action="{{ route('admin.trips.store') }}" method="POST" class="space-y-6">
                 @csrf
 
+                <!-- Booking Dropdown (Optional) -->
                 <div class="space-y-2">
+                    <div class="flex items-center justify-between mb-1">
+                        <label for="booking_id" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Booking Pelanggan (Menentukan Jadwal Otomatis)</label>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase" x-text="bookings.length + ' booking menunggu trip'"></span>
+                    </div>
+                    <select id="booking_id" name="booking_id" x-model="bookingId"
+                            class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all cursor-pointer">
+                        <option value="">Pilih Booking Pelanggan (Opsional)...</option>
+                        <template x-for="b in bookings" :key="b.id">
+                            <option :value="b.id" x-text="b.code + ' · ' + b.customer + ' (' + b.pax + ' Pax) · ' + b.route + ' (' + b.date + ')'"></option>
+                        </template>
+                    </select>
+                    @error('booking_id')
+                        <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Schedule Select (Manual) -->
+                <div class="space-y-2" x-show="!bookingId">
                     <div class="flex items-center justify-between mb-1">
                         <label for="jadwal_id" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block px-1">Jadwal Keberangkatan</label>
                         <span class="text-[9px] font-bold text-slate-400 uppercase" x-text="schedules.length + ' jadwal aktif tersedia'"></span>
                     </div>
-                    <select id="jadwal_id" name="jadwal_id" x-model="scheduleId" required
+                    <select id="jadwal_id" name="jadwal_id" x-model="scheduleId" :required="!bookingId"
                             class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all cursor-pointer">
                         <option value="">Pilih Jadwal Aktif...</option>
                         @foreach($schedules as $schedule)
@@ -66,6 +118,28 @@
                         <p class="text-xs text-rose-500 font-bold mt-1 px-1">{{ $message }}</p>
                     @enderror
                 </div>
+
+                <!-- Automated Schedule Display -->
+                <template x-if="bookingId && selectedBooking">
+                    <div class="p-5 bg-blue-50/50 border border-blue-100 rounded-[1.5rem] space-y-2 animate-in fade-in duration-300">
+                        <p class="text-[10px] font-black text-blue-700 uppercase tracking-widest">Jadwal Keberangkatan Terpilih (Otomatis)</p>
+                        <input type="hidden" name="jadwal_id" :value="scheduleId">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-bold text-slate-600">
+                            <div>
+                                <p class="text-[10px] font-black text-slate-400 uppercase">Rute</p>
+                                <p class="text-slate-900 font-black mt-0.5" x-text="selectedBooking.route"></p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-black text-slate-400 uppercase">Tanggal</p>
+                                <p class="text-slate-900 font-black mt-0.5" x-text="selectedBooking.date"></p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-black text-slate-400 uppercase">Shift / Waktu</p>
+                                <p class="text-slate-900 font-black mt-0.5" x-text="selectedBooking.shift + ' - ' + selectedBooking.time"></p>
+                            </div>
+                        </div>
+                    </div>
+                </template>
 
                 <div class="space-y-2">
                     <div class="flex items-center justify-between mb-1">
@@ -86,7 +160,7 @@
                     @enderror
                 </div>
 
-                <template x-if="selectedSchedule">
+                <template x-if="selectedSchedule && !bookingId">
                     <div class="p-5 bg-slate-50 border border-slate-200/60 rounded-[1.5rem] space-y-2 animate-in fade-in duration-300">
                         <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Detail Rencana Keberangkatan</p>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-bold text-slate-600">

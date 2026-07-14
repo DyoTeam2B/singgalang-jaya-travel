@@ -74,12 +74,12 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="border-b border-slate-100 bg-slate-50/50">
-                                <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Armada</th>
-                                <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Plat Nomor</th>
-                                <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Kapasitas</th>
-                                <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Driver Terkait</th>
-                                <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-                                <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Aksi</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Armada</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Plat Nomor</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Kapasitas</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Driver Terkait</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
@@ -91,7 +91,7 @@
                                     onclick="window.location.href='{{ route('admin.armada.index', ['selected_id' => $armada->id, 'search' => $search, 'status' => $statusFilter, 'page' => $armadas->currentPage()]) }}'"
                                     class="transition-all cursor-pointer group {{ $isSelected ? 'bg-slate-50' : 'hover:bg-slate-50/50' }}"
                                 >
-                                    <td class="px-8 py-6 whitespace-nowrap">
+                                    <td class="px-8 py-5 whitespace-nowrap">
                                         <div class="flex items-center gap-4">
                                             <div class="w-10 h-10 rounded-2xl bg-blue-50 border border-slate-100 shadow-sm flex items-center justify-center text-blue-600">
                                                 <!-- Car SVG icon -->
@@ -100,33 +100,33 @@
                                                 </svg>
                                             </div>
                                             <div>
-                                                <p class="text-xs font-black text-slate-900">{{ $armada->nama_mobil }}</p>
+                                                <p class="text-xs font-bold text-slate-900">{{ $armada->nama_mobil }}</p>
                                                 <p class="text-[10px] font-bold text-slate-400 uppercase">ARM-{{ str_pad($armada->id, 3, '0', STR_PAD_LEFT) }}</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-8 py-6 whitespace-nowrap text-xs font-black text-slate-700 uppercase">
+                                    <td class="px-8 py-5 whitespace-nowrap text-xs font-medium text-slate-600 uppercase text-center">
                                         {{ $armada->nomor_plat }}
                                     </td>
-                                    <td class="px-8 py-6 whitespace-nowrap text-xs font-bold text-slate-600">
+                                    <td class="px-8 py-5 whitespace-nowrap text-xs font-medium text-slate-600 text-center">
                                         {{ $armada->kapasitas }} Kursi
                                     </td>
-                                    <td class="px-8 py-6 whitespace-nowrap text-xs text-slate-600">
+                                    <td class="px-8 py-5 whitespace-nowrap text-xs text-slate-600">
                                         @if($armada->driver)
                                             <span class="font-bold text-slate-900">{{ $armada->driver->nama_driver }}</span>
                                         @else
                                             <span class="text-slate-400 italic">Belum ditautkan</span>
                                         @endif
                                     </td>
-                                    <td class="px-8 py-6 whitespace-nowrap">
+                                    <td class="px-8 py-5 whitespace-nowrap text-center">
                                         <x-status-badge status="{{ $armada->status_armada }}" />
                                     </td>
-                                    <td class="px-8 py-6 whitespace-nowrap text-right" onclick="event.stopPropagation()">
-                                        <div class="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <td class="px-8 py-5 whitespace-nowrap text-center" onclick="event.stopPropagation()">
+                                        <div class="flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <!-- Edit Trigger -->
                                             <button 
                                                 @click="isEditModalOpen = true"
-                                                class="p-2.5 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-blue-600 transition-colors shadow-sm active:scale-95"
+                                                class="p-2 bg-amber-50 border border-amber-200 text-amber-600 hover:bg-amber-100/80 hover:text-amber-700 rounded-xl transition-all shadow-sm active:scale-95"
                                                 title="Edit Armada"
                                             >
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -138,11 +138,11 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-8 py-16 text-center text-slate-400 font-bold">
+                                    <td colspan="6" class="px-8 py-16 text-center text-slate-400 font-medium">
                                         <svg class="w-12 h-12 mx-auto text-slate-300 mb-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
                                         </svg>
-                                        Tidak ada data armada ditemukan.
+                                        Belum ada data armada.
                                     </td>
                                 </tr>
                             @endforelse

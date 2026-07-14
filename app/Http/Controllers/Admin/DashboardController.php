@@ -22,12 +22,15 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        $recentActivities = \App\Models\ActivityLog::latest()->take(10)->get();
+
         return view('admin.dashboard', compact(
             'totalBookings',
             'pendingVerification',
             'activeTrips',
             'totalRevenue',
-            'recentBookings'
+            'recentBookings',
+            'recentActivities'
         ));
     }
 }

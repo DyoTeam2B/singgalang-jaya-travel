@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'nama_driver',
     'no_hp',
     'status_driver',
+    'status_kerja',
 ])]
 class Driver extends Model
 {

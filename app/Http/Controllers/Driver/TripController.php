@@ -15,7 +15,7 @@ class TripController extends Controller
     /**
      * Display a listing of the completed / past trips.
      */
-    public function index()
+    public function index(Request $request)
     {
         $driver = Auth::user()->driver;
 
@@ -23,8 +23,13 @@ class TripController extends Controller
             return redirect()->route('driver.dashboard')->with('error', 'Profil driver belum dilengkapi.');
         }
 
+        $statusFilter = $request->get('status', 'semua');
+
         $trips = Trip::where('driver_id', $driver->id)
             ->with(['jadwal.rute', 'detailTrips.booking.pelanggan', 'armada'])
+            ->when($statusFilter !== 'semua', function ($query) use ($statusFilter) {
+                $query->where('status_trip', $statusFilter);
+            })
             ->latest()
             ->paginate(10);
 
@@ -60,7 +65,7 @@ class TripController extends Controller
             'total_revenue' => $totalRevenue
         ];
 
-        return view('driver.trips.index', compact('trips', 'stats'));
+        return view('driver.trips.index', compact('trips', 'stats', 'statusFilter'));
     }
 
     /**

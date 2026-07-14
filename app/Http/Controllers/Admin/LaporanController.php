@@ -9,6 +9,7 @@ use App\Models\Pembayaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class LaporanController extends Controller
 {
@@ -82,85 +83,53 @@ class LaporanController extends Controller
         $endDate = $dateRange['end'];
 
         $bookingQuery = $this->baseBookingQuery($startDate, $endDate, $shift);
-        $tripQuery = $this->baseTripQuery($startDate, $endDate, $shift);
-        $dailyReports = $this->buildDailyReports($startDate, $endDate, $shift);
         $tripSummary = $this->buildTripSummary($startDate, $endDate, $shift);
         $periodLabel = $this->getPeriodLabel($period, $request);
 
-        $summary = [
-            'total_bookings' => (clone $bookingQuery)->count(),
-            'total_passengers' => (clone $bookingQuery)->sum('jumlah_penumpang'),
-            'total_revenue' => (clone $bookingQuery)->where('status_booking', Booking::STATUS_COMPLETED)->sum('total_harga'),
-            'total_trips' => (clone $tripQuery)->count(),
-            'completed_trips' => (clone $tripQuery)->where('status_trip', Trip::STATUS_COMPLETED)->count(),
-            'avg_occupancy' => $this->calculateAverageOccupancy($tripQuery),
-        ];
+        $bookings = Booking::with(['pelanggan', 'jadwal.rute', 'pembayaran'])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->when($shift !== 'semua', function ($query) use ($shift) {
+                $query->whereHas('jadwal', fn($jadwalQuery) => $jadwalQuery->where('shift', $shift));
+            })
+            ->latest()
+            ->get();
 
-        $filename = 'laporan-keuangan-'.now()->format('Ymd-His').'.csv';
+        $totalDp = (int) Pembayaran::where('jenis_pembayaran', Pembayaran::JENIS_DP)
+            ->where('status_pembayaran', Pembayaran::STATUS_TERVERIFIKASI)
+            ->whereHas('booking', function ($query) use ($startDate, $endDate, $shift) {
+                $query->whereBetween('created_at', [$startDate, $endDate])
+                    ->when($shift !== 'semua', function ($bookingQuery) use ($shift) {
+                        $bookingQuery->whereHas('jadwal', fn($jadwalQuery) => $jadwalQuery->where('shift', $shift));
+                    });
+            })
+            ->sum('jumlah_bayar');
 
-        return response()->streamDownload(function () use ($periodLabel, $shift, $startDate, $endDate, $summary, $dailyReports, $tripSummary) {
-            $handle = fopen('php://output', 'w');
+        $totalPelunasan = (int) Pembayaran::where('jenis_pembayaran', Pembayaran::JENIS_PELUNASAN)
+            ->where('status_pembayaran', Pembayaran::STATUS_TERVERIFIKASI)
+            ->whereHas('booking', function ($query) use ($startDate, $endDate, $shift) {
+                $query->whereBetween('created_at', [$startDate, $endDate])
+                    ->when($shift !== 'semua', function ($bookingQuery) use ($shift) {
+                        $bookingQuery->whereHas('jadwal', fn($jadwalQuery) => $jadwalQuery->where('shift', $shift));
+                    });
+            })
+            ->sum('jumlah_bayar');
 
-            fwrite($handle, "\xEF\xBB\xBF");
-            fputcsv($handle, ['Laporan Keuangan Singgalang Jaya Travel']);
-            fputcsv($handle, ['Periode', $periodLabel]);
-            fputcsv($handle, ['Tanggal Mulai', $startDate->format('Y-m-d')]);
-            fputcsv($handle, ['Tanggal Akhir', $endDate->format('Y-m-d')]);
-            fputcsv($handle, ['Shift', $shift === 'semua' ? 'Semua Shift' : ucfirst($shift)]);
-            fputcsv($handle, ['Diexport Pada', now()->format('Y-m-d H:i:s')]);
-            fwrite($handle, "\n");
+        $totalRevenue = (clone $bookingQuery)
+            ->where('status_booking', Booking::STATUS_COMPLETED)
+            ->sum('total_harga');
 
-            fputcsv($handle, ['Ringkasan']);
-            fputcsv($handle, ['Total Booking', $summary['total_bookings']]);
-            fputcsv($handle, ['Total Penumpang', $summary['total_passengers']]);
-            fputcsv($handle, ['Total Pendapatan Completed', $summary['total_revenue']]);
-            fputcsv($handle, ['Total Trip', $summary['total_trips']]);
-            fputcsv($handle, ['Trip Selesai', $summary['completed_trips']]);
-            fputcsv($handle, ['Okupansi Rata-rata (%)', $summary['avg_occupancy']]);
-            fwrite($handle, "\n");
+        $pdf = Pdf::loadView('admin.laporan.pdf', compact(
+            'periodLabel',
+            'shift',
+            'totalDp',
+            'totalPelunasan',
+            'totalRevenue',
+            'bookings',
+            'tripSummary'
+        ));
 
-            fputcsv($handle, ['Rincian Harian']);
-            fputcsv($handle, ['Tanggal', 'Booking', 'Penumpang', 'Trip', 'Pendapatan', 'DP Terverifikasi', 'Pelunasan Terverifikasi', 'Booking Batal']);
-
-            foreach ($dailyReports as $report) {
-                fputcsv($handle, [
-                    $report->report_date,
-                    $report->total_booking,
-                    $report->total_passengers ?? 0,
-                    $report->total_trip,
-                    $report->revenue,
-                    $report->dp_revenue,
-                    $report->pelunasan_revenue,
-                    $report->cancelled,
-                ]);
-            }
-
-            fwrite($handle, "\n");
-            fputcsv($handle, ['Rangkuman Trip']);
-            fputcsv($handle, ['Trip', 'Tanggal', 'Jam', 'Rute', 'Shift', 'Driver', 'Armada', 'Pax Manifest', 'Status']);
-
-            foreach ($tripSummary as $trip) {
-                $jadwal = $trip->jadwal;
-                $rute = $jadwal?->rute;
-                $armada = $trip->armada;
-
-                fputcsv($handle, [
-                    'TRP-'.str_pad((string) $trip->id, 3, '0', STR_PAD_LEFT),
-                    $jadwal?->tanggal_keberangkatan?->format('Y-m-d') ?? '-',
-                    $jadwal?->jam_berangkat?->format('H:i') ?? '-',
-                    $rute ? "{$rute->asal} -> {$rute->tujuan}" : '-',
-                    $jadwal?->shift ? ucfirst($jadwal->shift) : '-',
-                    $trip->driver?->nama_driver ?? '-',
-                    $armada ? "{$armada->nama_mobil} ({$armada->nomor_plat})" : '-',
-                    $trip->detailTrips->count(),
-                    $trip->status_trip,
-                ]);
-            }
-
-            fclose($handle);
-        }, $filename, [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-        ]);
+        $filename = 'laporan-keuangan-'.now()->format('Ymd-His').'.pdf';
+        return $pdf->download($filename);
     }
 
     private function baseBookingQuery(Carbon $startDate, Carbon $endDate, string $shift)

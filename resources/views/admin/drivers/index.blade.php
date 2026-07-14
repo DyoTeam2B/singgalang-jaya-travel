@@ -103,7 +103,12 @@
                                     <p class="text-[10px] font-bold text-slate-400 uppercase">DRV-{{ str_pad($driver->id, 3, '0', STR_PAD_LEFT) }}</p>
                                 </div>
                             </div>
-                            <x-status-badge status="{{ $dynamicStatus }}" />
+                            <div class="flex flex-col items-end gap-1">
+                                <x-status-badge status="{{ $dynamicStatus }}" />
+                                @if($driver->status_kerja && $driver->status_kerja !== 'tersedia')
+                                    <x-status-badge status="{{ $driver->status_kerja }}" />
+                                @endif
+                            </div>
                         </div>
 
                         <!-- Details Grid -->
@@ -148,9 +153,7 @@
                                     <input type="hidden" name="nama_driver" value="{{ $driver->nama_driver }}">
                                     <input type="hidden" name="email" value="{{ $driver->user->email }}">
                                     <input type="hidden" name="no_hp" value="{{ $driver->no_hp }}">
-                                    <input type="hidden" name="nama_mobil" value="{{ $driver->nama_mobil }}">
-                                    <input type="hidden" name="nomor_plat" value="{{ $driver->nomor_plat }}">
-                                    <input type="hidden" name="kapasitas_mobil" value="{{ $driver->kapasitas_mobil }}">
+                                    <input type="hidden" name="armada_id" value="{{ $driver->armada_id }}">
                                     <input type="hidden" name="status_driver" value="nonaktif">
                                     <button 
                                         type="submit"
@@ -170,9 +173,7 @@
                                     <input type="hidden" name="nama_driver" value="{{ $driver->nama_driver }}">
                                     <input type="hidden" name="email" value="{{ $driver->user->email }}">
                                     <input type="hidden" name="no_hp" value="{{ $driver->no_hp }}">
-                                    <input type="hidden" name="nama_mobil" value="{{ $driver->nama_mobil }}">
-                                    <input type="hidden" name="nomor_plat" value="{{ $driver->nomor_plat }}">
-                                    <input type="hidden" name="kapasitas_mobil" value="{{ $driver->kapasitas_mobil }}">
+                                    <input type="hidden" name="armada_id" value="{{ $driver->armada_id }}">
                                     <input type="hidden" name="status_driver" value="aktif">
                                     <button 
                                         type="submit"
@@ -200,11 +201,11 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="border-b border-slate-50 bg-slate-50/50">
-                                <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Driver</th>
-                                <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Kontak</th>
-                                <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Assigned Trip</th>
-                                <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-                                <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Aksi</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Driver</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Kontak</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Assigned Trip</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
+                                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
@@ -218,45 +219,50 @@
                                     onclick="window.location.href='{{ route('admin.drivers.index', ['selected_id' => $driver->id, 'search' => $search, 'status' => $statusFilter, 'page' => $drivers->currentPage()]) }}'"
                                     class="transition-all cursor-pointer group {{ $isSelected ? 'bg-slate-50' : 'hover:bg-slate-50/50' }}"
                                 >
-                                    <td class="px-8 py-6 whitespace-nowrap">
+                                    <td class="px-8 py-5 whitespace-nowrap">
                                         <div class="flex items-center gap-4">
                                             <!-- Avatar Silhouette / Initials -->
                                             <div class="w-10 h-10 rounded-2xl bg-blue-50 border border-slate-100 shadow-sm flex items-center justify-center text-blue-600 text-xs font-black uppercase">
                                                 {{ substr($driver->nama_driver, 0, 2) }}
                                             </div>
                                             <div>
-                                                <p class="text-xs font-black text-slate-900">{{ $driver->nama_driver }}</p>
+                                                <p class="text-xs font-bold text-slate-900">{{ $driver->nama_driver }}</p>
                                                 <p class="text-[10px] font-bold text-slate-400 uppercase">DRV-{{ str_pad($driver->id, 3, '0', STR_PAD_LEFT) }}</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-8 py-6 whitespace-nowrap">
-                                        <div class="text-[11px] font-bold text-slate-600">{{ $driver->no_hp }}</div>
-                                        <div class="text-[10px] font-medium text-slate-400">{{ $driver->user->email }}</div>
+                                    <td class="px-8 py-5 whitespace-nowrap">
+                                        <div class="text-[11px] font-medium text-slate-600">{{ $driver->no_hp }}</div>
+                                        <div class="text-[10px] font-normal text-slate-500">{{ $driver->user->email }}</div>
                                     </td>
-                                    <td class="px-8 py-6 whitespace-nowrap">
+                                    <td class="px-8 py-5 whitespace-nowrap text-center">
                                         @if($activeTrip)
-                                            <div class="flex items-center gap-2 text-blue-600">
+                                            <div class="inline-flex items-center gap-2 text-blue-600 bg-blue-50/50 px-2.5 py-1 rounded-xl border border-blue-150">
                                                 <!-- Map Icon -->
                                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1115 0z"></path>
                                                 </svg>
-                                                <span class="text-xs font-black">TRP-{{ str_pad($activeTrip->id, 3, '0', STR_PAD_LEFT) }}</span>
+                                                <span class="text-xs font-bold">TRP-{{ str_pad($activeTrip->id, 3, '0', STR_PAD_LEFT) }}</span>
                                             </div>
                                         @else
-                                            <span class="text-[10px] font-bold text-slate-300 uppercase italic">Standby</span>
+                                            <span class="text-[10px] font-medium text-slate-400 uppercase italic">Standby</span>
                                         @endif
                                     </td>
-                                    <td class="px-8 py-6 whitespace-nowrap">
-                                        <x-status-badge status="{{ $dynamicStatus }}" />
+                                    <td class="px-8 py-5 whitespace-nowrap text-center">
+                                        <div class="inline-flex flex-col items-center gap-1">
+                                            <x-status-badge status="{{ $dynamicStatus }}" />
+                                            @if($driver->status_kerja && $driver->status_kerja !== 'tersedia')
+                                                <x-status-badge status="{{ $driver->status_kerja }}" />
+                                            @endif
+                                        </div>
                                     </td>
-                                    <td class="px-8 py-6 whitespace-nowrap text-right" onclick="event.stopPropagation()">
-                                        <div class="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <td class="px-8 py-5 whitespace-nowrap text-center" onclick="event.stopPropagation()">
+                                        <div class="flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <!-- Edit Profil Trigger -->
                                             <button 
                                                 @click="isEditModalOpen = true"
-                                                class="p-2.5 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-blue-600 transition-colors shadow-sm active:scale-95"
+                                                class="p-2 bg-amber-50 border border-amber-200 text-amber-600 hover:bg-amber-100/80 hover:text-amber-700 rounded-xl transition-all shadow-sm active:scale-95"
                                                 title="Edit Profil"
                                             >
                                                 <!-- Edit Icon -->
@@ -273,14 +279,12 @@
                                                     <input type="hidden" name="nama_driver" value="{{ $driver->nama_driver }}">
                                                     <input type="hidden" name="email" value="{{ $driver->user->email }}">
                                                     <input type="hidden" name="no_hp" value="{{ $driver->no_hp }}">
-                                                    <input type="hidden" name="nama_mobil" value="{{ $driver->nama_mobil }}">
-                                                    <input type="hidden" name="nomor_plat" value="{{ $driver->nomor_plat }}">
-                                                    <input type="hidden" name="kapasitas_mobil" value="{{ $driver->kapasitas_mobil }}">
+                                                    <input type="hidden" name="armada_id" value="{{ $driver->armada_id }}">
                                                     <input type="hidden" name="status_driver" value="nonaktif">
                                                     
                                                     <button 
                                                         type="submit"
-                                                        class="p-2.5 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-rose-500 transition-colors shadow-sm active:scale-95"
+                                                        class="p-2 bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100/80 hover:text-rose-700 rounded-xl transition-all shadow-sm active:scale-95"
                                                         title="Nonaktifkan Driver"
                                                         onclick="return confirm('Apakah Anda yakin ingin menonaktifkan driver {{ $driver->nama_driver }}?');"
                                                     >
@@ -298,14 +302,12 @@
                                                     <input type="hidden" name="nama_driver" value="{{ $driver->nama_driver }}">
                                                     <input type="hidden" name="email" value="{{ $driver->user->email }}">
                                                     <input type="hidden" name="no_hp" value="{{ $driver->no_hp }}">
-                                                    <input type="hidden" name="nama_mobil" value="{{ $driver->nama_mobil }}">
-                                                    <input type="hidden" name="nomor_plat" value="{{ $driver->nomor_plat }}">
-                                                    <input type="hidden" name="kapasitas_mobil" value="{{ $driver->kapasitas_mobil }}">
+                                                    <input type="hidden" name="armada_id" value="{{ $driver->armada_id }}">
                                                     <input type="hidden" name="status_driver" value="aktif">
                                                     
                                                     <button 
                                                         type="submit"
-                                                        class="p-2.5 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-emerald-500 transition-colors shadow-sm active:scale-95"
+                                                        class="p-2 bg-emerald-50 border border-emerald-200 text-emerald-600 hover:bg-emerald-100/80 hover:text-emerald-700 rounded-xl transition-all shadow-sm active:scale-95"
                                                         title="Aktifkan Driver"
                                                     >
                                                         <!-- Power Icon (green when inactive, click to activate) -->
@@ -320,12 +322,12 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-8 py-16 text-center text-slate-400 font-bold">
+                                    <td colspan="5" class="px-8 py-16 text-center text-slate-400 font-medium">
                                         <!-- AlertCircle Icon -->
                                         <svg class="w-12 h-12 mx-auto text-slate-300 mb-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
                                         </svg>
-                                        Tidak ada data driver ditemukan.
+                                        Belum ada data driver.
                                     </td>
                                 </tr>
                             @endforelse
@@ -372,7 +374,12 @@
                                 {{ substr($selectedDriver->nama_driver, 0, 2) }}
                             </div>
                             <h3 class="text-lg font-black text-slate-900 leading-tight mb-2">{{ $selectedDriver->nama_driver }}</h3>
-                            <x-status-badge status="{{ $selectedDriver->dynamic_status }}" />
+                            <div class="flex flex-wrap justify-center gap-1.5">
+                                <x-status-badge status="{{ $selectedDriver->dynamic_status }}" />
+                                @if($selectedDriver->status_kerja)
+                                    <x-status-badge status="{{ $selectedDriver->status_kerja }}" />
+                                @endif
+                            </div>
                         </div>
 
                         <!-- Details Card -->
@@ -631,7 +638,7 @@
                             class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all cursor-pointer @error('armada_id') ring-2 ring-red-500 @enderror"
                         >
                             <option value="">Pilih Armada...</option>
-                            @foreach($armadas as $armada)
+                            @foreach($armadas->filter(fn($a) => !$a->driver) as $armada)
                                 <option value="{{ $armada->id }}" {{ (old('action_type') === 'create' ? old('armada_id') : '') == $armada->id ? 'selected' : '' }}>
                                     {{ $armada->nama_mobil }} · {{ $armada->nomor_plat }} (Kapasitas: {{ $armada->kapasitas }} Pax)
                                 </option>
@@ -824,7 +831,7 @@
                                 class="w-full px-5 py-4 bg-slate-50 border border-slate-200/60 rounded-2xl text-xs font-bold text-slate-900 focus:outline-none focus:ring-4 focus:ring-blue-600/10 focus:border-blue-500/30 transition-all cursor-pointer @error('armada_id') ring-2 ring-red-500 @enderror"
                             >
                                 <option value="">Pilih Armada...</option>
-                                @foreach($armadas as $armada)
+                                @foreach($armadas->filter(fn($a) => !$a->driver || $a->driver->id === $selectedDriver->id) as $armada)
                                     <option value="{{ $armada->id }}" {{ (old('action_type') === 'edit' ? old('armada_id') : $selectedDriver->armada_id) == $armada->id ? 'selected' : '' }}>
                                         {{ $armada->nama_mobil }} · {{ $armada->nomor_plat }} (Kapasitas: {{ $armada->kapasitas }} Pax)
                                     </option>

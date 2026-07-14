@@ -62,44 +62,44 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-50 border-b border-slate-200">
-                            <th class="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">ID Rute</th>
-                            <th class="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Asal & Tujuan</th>
-                            <th class="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tarif Tetap</th>
-                            <th class="px-8 py-5 text-right text-[10px] font-bold text-slate-400 uppercase tracking-widest">Aksi</th>
+                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">ID Rute</th>
+                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Asal & Tujuan</th>
+                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Tarif Tetap</th>
+                            <th class="px-8 py-5 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         @forelse($rute as $index => $item)
-                            <tr class="hover:bg-slate-50/50 transition-colors group">
+                            <tr class="hover:bg-slate-50/60 transition-all duration-200 group">
                                 <td class="px-8 py-5 text-xs font-bold text-slate-900">
                                     RTE-{{ str_pad($item->id, 3, '0', STR_PAD_LEFT) }}
                                 </td>
                                 <td class="px-8 py-5">
                                     <div class="flex items-center gap-3">
                                         <div class="flex flex-col">
-                                            <span class="text-sm font-bold text-slate-900">{{ $item->asal }}</span>
+                                            <span class="text-xs font-bold text-slate-900">{{ $item->asal }}</span>
                                             <div class="flex items-center gap-2 my-1">
                                                 <div class="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
                                                 <div class="w-8 h-px bg-slate-200"></div>
                                                 <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
                                             </div>
-                                            <span class="text-sm font-bold text-slate-900">{{ $item->tujuan }}</span>
+                                            <span class="text-xs font-bold text-slate-900">{{ $item->tujuan }}</span>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-8 py-5">
-                                    <div class="flex items-center gap-2 text-slate-900 text-sm font-bold">
+                                <td class="px-8 py-5 text-right">
+                                    <div class="flex items-center justify-end gap-2 text-slate-600 text-xs font-medium">
                                         <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.281m5.94 2.28l-2.28 5.941"></path>
                                         </svg>
                                         Rp {{ number_format($item->tarif, 0, ',', '.') }}
                                     </div>
                                 </td>
-                                <td class="px-8 py-5 whitespace-nowrap text-right">
-                                    <div class="flex items-center justify-end gap-3">
+                                <td class="px-8 py-5 whitespace-nowrap text-center">
+                                    <div class="flex items-center justify-center gap-3">
                                         <!-- Edit button -->
                                         <a href="{{ route('admin.rute.edit', $item->id) }}"
-                                           class="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-colors shadow-sm"
+                                           class="p-2 bg-amber-50 border border-amber-200 text-amber-600 hover:bg-amber-100/80 hover:text-amber-700 rounded-xl transition-all shadow-sm active:scale-95"
                                            title="Edit Rute">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"></path>
@@ -113,7 +113,7 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"
-                                                    class="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-rose-600 hover:border-rose-200 transition-colors shadow-sm"
+                                                    class="p-2 bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100/80 hover:text-rose-700 rounded-xl transition-all shadow-sm active:scale-95"
                                                     title="Hapus Rute">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path>
@@ -129,7 +129,7 @@
                                     <svg class="w-12 h-12 mx-auto text-slate-300 mb-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"></path>
                                     </svg>
-                                    Tidak ada rute perjalanan ditemukan.
+                                    Belum ada data rute.
                                 </td>
                             </tr>
                         @endforelse

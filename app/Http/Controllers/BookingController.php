@@ -101,6 +101,14 @@ class BookingController extends Controller
             ])
             ->where('pelanggan_id', $pelangganId)
             ->whereIn('status_booking', $activeStatuses)
+            ->where(function ($query) {
+                $query->whereHas('jadwal', function ($q) {
+                    $q->whereDate('tanggal_keberangkatan', '>=', now()->toDateString());
+                })->orWhereIn('status_booking', [
+                    Booking::STATUS_ASSIGNED_TO_TRIP,
+                    Booking::STATUS_ON_TRIP,
+                ]);
+            })
             ->latest()
             ->get();
 
@@ -111,7 +119,19 @@ class BookingController extends Controller
                 'detailTrips.trip.armada',
             ])
             ->where('pelanggan_id', $pelangganId)
-            ->whereIn('status_booking', $historyStatuses)
+            ->where(function ($query) use ($historyStatuses, $activeStatuses) {
+                $query->whereIn('status_booking', $historyStatuses)
+                    ->orWhere(function ($q) use ($activeStatuses) {
+                        $q->whereIn('status_booking', $activeStatuses)
+                            ->whereHas('jadwal', function ($sq) {
+                                $sq->whereDate('tanggal_keberangkatan', '<', now()->toDateString());
+                            })
+                            ->whereNotIn('status_booking', [
+                                Booking::STATUS_ASSIGNED_TO_TRIP,
+                                Booking::STATUS_ON_TRIP,
+                            ]);
+                    });
+            })
             ->latest()
             ->paginate(10, ['*'], 'history_page');
 

@@ -91,24 +91,6 @@
                 </form>
             @endif
 
-            @if($trip->status_trip === 'on_trip')
-                <!-- Form Selesaikan Trip -->
-                <form action="{{ route('admin.trips.update', $trip->id) }}" method="POST" class="inline">
-                    @csrf
-                    @method('PUT')
-                    <input type="hidden" name="status_trip" value="completed">
-                    <button type="submit" 
-                            onclick="return confirm('Apakah Anda yakin ingin menyelesaikan trip ini? Status seluruh booking akan diubah menjadi Selesai.')"
-                            class="flex items-center gap-2 px-6 py-3.5 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-600/10">
-                        <!-- Check Circle Icon -->
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        Selesaikan Trip
-                    </button>
-                </form>
-            @endif
-
             @if($trip->status_trip === 'new')
                 <!-- Form Setujui Trip -->
                 <form action="{{ route('admin.trips.update', $trip->id) }}" method="POST" class="inline">
@@ -133,35 +115,6 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
                             </svg>
                             Setujui Trip
-                        </button>
-                    @endif
-                </form>
-            @endif
-
-            @if($trip->status_trip === 'ready')
-                <!-- Form Mulai Trip (Transisi ke On Trip oleh Admin jika diperlukan) -->
-                <form action="{{ route('admin.trips.update', $trip->id) }}" method="POST" class="inline">
-                    @csrf
-                    @method('PUT')
-                    <input type="hidden" name="status_trip" value="on_trip">
-                    @if($totalPax < 3)
-                        <button type="button" 
-                                title="Trip belum dapat dijalankan karena minimal 3 penumpang belum terpenuhi."
-                                class="flex items-center gap-2 px-6 py-3.5 bg-slate-100 text-slate-400 border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest cursor-not-allowed shadow-none">
-                            <!-- Play Icon -->
-                            <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"></path>
-                            </svg>
-                            Mulai Perjalanan (On Trip)
-                        </button>
-                    @else
-                        <button type="submit" 
-                                class="flex items-center gap-2 px-6 py-3.5 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-600/10">
-                            <!-- Play Icon -->
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"></path>
-                            </svg>
-                            Mulai Perjalanan (On Trip)
                         </button>
                     @endif
                 </form>
@@ -370,30 +323,30 @@
             <table class="w-full">
                 <thead>
                     <tr class="bg-slate-50/50 border-b border-slate-200">
-                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest font-semibold">Penumpang</th>
-                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest font-semibold">Kontak</th>
-                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest font-semibold">Titik Jemput &amp; Tujuan</th>
-                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest font-semibold">Pax</th>
-                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest font-semibold">Total Biaya</th>
-                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest font-semibold">Status Bayar</th>
+                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Penumpang</th>
+                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Kontak</th>
+                        <th class="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Titik Jemput &amp; Tujuan</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">Pax</th>
+                        <th class="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Biaya</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">Status Bayar</th>
                         @if($trip->status_trip !== 'completed' && $trip->status_trip !== 'cancelled')
-                            <th class="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest font-semibold">Aksi</th>
+                            <th class="px-6 py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">Aksi</th>
                         @endif
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     @forelse($trip->detailTrips as $detail)
                         @if($detail->booking)
-                            <tr class="hover:bg-slate-50/50 transition-colors group">
+                            <tr class="hover:bg-slate-50/60 transition-all duration-200 group">
                                 <td class="px-6 py-5">
                                     <div>
-                                        <p class="text-sm font-black text-slate-800 mb-0.5">{{ $detail->booking->pelanggan->nama }}</p>
-                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ $detail->booking->kode_booking }}</span>
-                                        <p class="text-[10px] font-black text-blue-700 mt-1">Berangkat: {{ $trip->jadwal->tanggal_keberangkatan->format('d M Y') }} - {{ ucfirst($trip->jadwal->shift) }} {{ $trip->jadwal->jam_berangkat->format('H:i') }} WIB</p>
+                                        <p class="text-sm font-bold text-slate-800 mb-0.5">{{ $detail->booking->pelanggan->nama }}</p>
+                                        <span class="text-[10px] font-medium text-slate-400 uppercase tracking-widest">{{ $detail->booking->kode_booking }}</span>
+                                        <p class="text-[10px] font-medium text-blue-700 mt-1">Berangkat: {{ $trip->jadwal->tanggal_keberangkatan->format('d M Y') }} - {{ ucfirst($trip->jadwal->shift) }} {{ $trip->jadwal->jam_berangkat->format('H:i') }} WIB</p>
                                     </div>
                                 </td>
                                 <td class="px-6 py-5">
-                                    <div class="flex items-center gap-2 text-slate-600 text-xs font-semibold">
+                                    <div class="flex items-center gap-2 text-slate-600 text-xs font-medium">
                                         <!-- Phone Icon -->
                                         <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.387a20.373 20.373 0 01-9.357-9.357c-.155-.44-.01-1.29.387-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"></path>
@@ -413,25 +366,25 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-5">
-                                    <span class="text-xs font-black text-slate-800">{{ $detail->booking->jumlah_penumpang }} PAX</span>
+                                <td class="px-6 py-5 text-center">
+                                    <span class="text-xs font-medium text-slate-600">{{ $detail->booking->jumlah_penumpang }} PAX</span>
                                 </td>
-                                <td class="px-6 py-5">
-                                    <span class="text-xs font-black text-slate-800">Rp {{ number_format($detail->booking->total_harga, 0, ',', '.') }}</span>
+                                <td class="px-6 py-5 text-right">
+                                    <span class="text-xs font-medium text-slate-600">Rp {{ number_format($detail->booking->total_harga, 0, ',', '.') }}</span>
                                 </td>
-                                <td class="px-6 py-5">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase border bg-green-50 text-green-700 border-green-200">
+                                <td class="px-6 py-5 text-center">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-[9px] font-bold uppercase border bg-green-50 text-green-700 border-green-200">
                                         DP Lunas
                                     </span>
                                 </td>
                                 @if($trip->status_trip !== 'completed' && $trip->status_trip !== 'cancelled')
-                                    <td class="px-6 py-5 text-right">
+                                    <td class="px-6 py-5 text-center">
                                         <form action="{{ route('admin.trips.remove', [$trip->id, $detail->id]) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" 
                                                     onclick="return confirm('Keluarkan penumpang ini dari trip?')"
-                                                    class="text-red-500 hover:text-red-700 text-[10px] font-black uppercase tracking-widest hover:underline transition-all">
+                                                    class="px-2.5 py-1 bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100/80 hover:text-rose-700 rounded-xl text-[9px] font-bold uppercase tracking-widest transition-all shadow-sm active:scale-95">
                                                 Lepaskan
                                             </button>
                                         </form>
@@ -441,14 +394,14 @@
                         @endif
                     @empty
                         <tr>
-                            <td colspan="7" class="py-12 text-center text-slate-400 bg-slate-50/10">
+                            <td colspan="7" class="py-16 text-center text-slate-400 bg-slate-50/10 font-medium">
                                 <div class="max-w-md mx-auto space-y-2">
                                     <!-- Users Outline Icon -->
                                     <svg class="w-10 h-10 mx-auto text-slate-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5m15 6l-7.5 7.5-7.5-7.5"></path>
                                     </svg>
-                                    <p class="text-[10px] font-black uppercase tracking-widest">Belum ada manifes penumpang</p>
-                                    <p class="text-xs text-slate-400">Gunakan tombol "Tugaskan Penumpang" di atas untuk menambahkan penumpang dari antrean booking.</p>
+                                    <p class="text-[10px] font-bold uppercase tracking-widest">Belum ada manifes penumpang</p>
+                                    <p class="text-xs text-slate-400 font-normal">Gunakan tombol "Tugaskan Penumpang" di atas untuk menambahkan penumpang dari antrean booking.</p>
                                 </div>
                             </td>
                         </tr>

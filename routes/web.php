@@ -84,6 +84,7 @@ Route::middleware('auth')->group(function () {
          ->name('driver.')
          ->group(function () {
              Route::get('/dashboard', [\App\Http\Controllers\Driver\DashboardController::class, 'index'])->name('dashboard');
+             Route::put('/profile/status', [\App\Http\Controllers\Driver\DashboardController::class, 'updateStatus'])->name('profile.status');
              Route::get('/trips', [\App\Http\Controllers\Driver\TripController::class, 'index'])->name('trips.index');
              Route::get('/trips/{trip}', [\App\Http\Controllers\Driver\TripController::class, 'show'])->name('trips.show');
              Route::put('/trips/{trip}/start', [\App\Http\Controllers\Driver\TripController::class, 'start'])->name('trips.start');

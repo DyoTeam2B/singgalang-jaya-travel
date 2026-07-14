@@ -72,4 +72,26 @@ class DashboardController extends Controller
 
         return view('driver.dashboard', compact('driver', 'activeTrip', 'stats'));
     }
+
+    /**
+     * Update the driver's current quick status.
+     */
+    public function updateStatus(\Illuminate\Http\Request $request)
+    {
+        $request->validate([
+            'status_kerja' => 'required|in:tersedia,istirahat,pending,ada_kendala',
+        ]);
+
+        $driver = auth()->user()->driver;
+
+        if (!$driver) {
+            return redirect()->back()->with('error', 'Profil driver belum dikonfigurasi.');
+        }
+
+        $driver->update([
+            'status_kerja' => $request->status_kerja,
+        ]);
+
+        return redirect()->back()->with('success', 'Status Anda berhasil diubah menjadi: ' . ucfirst(str_replace('_', ' ', $request->status_kerja)));
+    }
 }

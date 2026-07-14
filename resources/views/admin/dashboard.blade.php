@@ -171,56 +171,37 @@
                     </div>
 
                     <div class="space-y-6">
-                        <!-- Log 1 -->
-                        <div class="flex gap-4 relative">
-                            <div class="absolute top-8 left-[11px] w-px h-full bg-slate-100 -bottom-6"></div>
-                            <div class="relative z-10 w-6 h-6 rounded-full bg-blue-50 border-2 border-white flex items-center justify-center shrink-0 shadow-sm">
-                                <span class="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
+                        @forelse($recentActivities as $activity)
+                            <div class="flex gap-4 relative">
+                                @if(!$loop->last)
+                                    <div class="absolute top-8 left-[11px] w-px h-full bg-slate-100 -bottom-6"></div>
+                                @endif
+                                <div class="relative z-10 w-6 h-6 rounded-full {{ 
+                                    $activity->type === 'booking_created' ? 'bg-blue-50' : (
+                                    $activity->type === 'booking_cancelled' ? 'bg-rose-50' : (
+                                    $activity->type === 'payment_dp' ? 'bg-emerald-50' : (
+                                    $activity->type === 'trip_started' ? 'bg-indigo-50' : 'bg-slate-100'
+                                    )))
+                                }} border-2 border-white flex items-center justify-center shrink-0 shadow-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full {{ 
+                                        $activity->type === 'booking_created' ? 'bg-blue-600' : (
+                                        $activity->type === 'booking_cancelled' ? 'bg-rose-600' : (
+                                        $activity->type === 'payment_dp' ? 'bg-emerald-500' : (
+                                        $activity->type === 'trip_started' ? 'bg-indigo-500' : 'bg-slate-400'
+                                        )))
+                                    }}"></span>
+                                </div>
+                                <div class="pt-0.5">
+                                    <p class="text-xs font-black text-slate-900 mb-0.5">{{ $activity->title }}</p>
+                                    <p class="text-[11px] font-semibold text-slate-500 leading-snug mb-1">{{ $activity->description }}</p>
+                                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-wider">{{ $activity->created_at->diffForHumans() }}</p>
+                                </div>
                             </div>
-                            <div class="pt-0.5">
-                                <p class="text-xs font-black text-slate-900 mb-0.5">Booking Baru Diterima</p>
-                                <p class="text-[11px] font-semibold text-slate-500 leading-snug mb-1">Budi Santoso memesan 2 kursi (Shift Pagi)</p>
-                                <p class="text-[9px] font-black text-slate-400 uppercase tracking-wider">10 menit yang lalu</p>
+                        @empty
+                            <div class="text-center text-slate-400 font-bold italic py-8 text-xs">
+                                Belum ada log aktivitas terbaru.
                             </div>
-                        </div>
-
-                        <!-- Log 2 -->
-                        <div class="flex gap-4 relative">
-                            <div class="absolute top-8 left-[11px] w-px h-full bg-slate-100 -bottom-6"></div>
-                            <div class="relative z-10 w-6 h-6 rounded-full bg-emerald-50 border-2 border-white flex items-center justify-center shrink-0 shadow-sm">
-                                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-                            </div>
-                            <div class="pt-0.5">
-                                <p class="text-xs font-black text-slate-900 mb-0.5">Pembayaran Diverifikasi</p>
-                                <p class="text-[11px] font-semibold text-slate-500 leading-snug mb-1">Bukti transfer BKG-1028 telah diverifikasi oleh sistem</p>
-                                <p class="text-[9px] font-black text-slate-400 uppercase tracking-wider">25 menit yang lalu</p>
-                            </div>
-                        </div>
-
-                        <!-- Log 3 -->
-                        <div class="flex gap-4 relative">
-                            <div class="absolute top-8 left-[11px] w-px h-full bg-slate-100 -bottom-6"></div>
-                            <div class="relative z-10 w-6 h-6 rounded-full bg-indigo-50 border-2 border-white flex items-center justify-center shrink-0 shadow-sm">
-                                <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
-                            </div>
-                            <div class="pt-0.5">
-                                <p class="text-xs font-black text-slate-900 mb-0.5">Trip Telah Ditugaskan</p>
-                                <p class="text-[11px] font-semibold text-slate-500 leading-snug mb-1">Driver Hendra ditugaskan untuk Trip #8821</p>
-                                <p class="text-[9px] font-black text-slate-400 uppercase tracking-wider">1 jam yang lalu</p>
-                            </div>
-                        </div>
-
-                        <!-- Log 4 -->
-                        <div class="flex gap-4">
-                            <div class="relative z-10 w-6 h-6 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center shrink-0 shadow-sm">
-                                <span class="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>
-                            </div>
-                            <div class="pt-0.5">
-                                <p class="text-xs font-black text-slate-900 mb-0.5">Trip Selesai</p>
-                                <p class="text-[11px] font-semibold text-slate-500 leading-snug mb-1">Driver Ahmad (Shift Malam) tiba di tujuan</p>
-                                <p class="text-[9px] font-black text-slate-400 uppercase tracking-wider">2 jam yang lalu</p>
-                            </div>
-                        </div>
+                        @endforelse
                     </div>
                 </div>
 

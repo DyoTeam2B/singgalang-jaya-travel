@@ -53,7 +53,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                     </svg>
-                    Export CSV
+                    Export PDF
                 </button>
 
                 {{-- Export Modal --}}
@@ -219,17 +219,17 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-200">
-                        <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Tanggal</th>
-                        <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Booking & Trip</th>
-                        <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Pendapatan</th>
-                        <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Cancelled</th>
-                        <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Aksi</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Tanggal</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Booking & Trip</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest text-right">Pendapatan</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Cancelled</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     @forelse($dailyReports as $index => $report)
-                        <tr class="hover:bg-slate-50 transition-colors group">
-                            <td class="px-6 py-4 whitespace-nowrap">
+                        <tr class="hover:bg-slate-50/60 transition-all duration-200 group">
+                            <td class="px-6 py-5 whitespace-nowrap">
                                 <div class="flex items-center gap-3">
                                     <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 group-hover:scale-110 transition-transform">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -238,37 +238,37 @@
                                     </div>
                                     <div>
                                         <p class="text-sm font-bold text-slate-900">{{ \Carbon\Carbon::parse($report->report_date)->translatedFormat('d M Y') }}</p>
-                                        <p class="text-[10px] font-medium text-slate-400">{{ \Carbon\Carbon::parse($report->report_date)->translatedFormat('l') }}</p>
+                                        <p class="text-[10px] font-normal text-slate-400">{{ \Carbon\Carbon::parse($report->report_date)->translatedFormat('l') }}</p>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
+                            <td class="px-6 py-5 whitespace-nowrap">
                                 <div class="flex items-center gap-3">
                                     <div class="flex flex-col">
-                                        <p class="text-sm font-bold text-slate-900">{{ $report->total_booking }}</p>
-                                        <p class="text-[10px] font-semibold text-slate-400 uppercase">Booking</p>
+                                        <p class="text-sm font-medium text-slate-700">{{ $report->total_booking }}</p>
+                                        <p class="text-[10px] font-normal text-slate-400 uppercase">Booking</p>
                                     </div>
                                     <div class="w-px h-6 bg-slate-200"></div>
                                     <div class="flex flex-col">
-                                        <p class="text-sm font-bold text-slate-900">{{ $report->total_trip }}</p>
-                                        <p class="text-[10px] font-semibold text-slate-400 uppercase">Trip</p>
+                                        <p class="text-sm font-medium text-slate-700">{{ $report->total_trip }}</p>
+                                        <p class="text-[10px] font-normal text-slate-400 uppercase">Trip</p>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <p class="text-sm font-bold text-slate-900">Rp {{ number_format($report->revenue, 0, ',', '.') }}</p>
-                                <p class="text-[10px] font-semibold text-emerald-600 uppercase">Net Revenue</p>
+                            <td class="px-6 py-5 whitespace-nowrap text-right">
+                                <p class="text-sm font-medium text-slate-700">Rp {{ number_format($report->revenue, 0, ',', '.') }}</p>
+                                <p class="text-[10px] font-normal text-emerald-600 uppercase">Net Revenue</p>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                            <td class="px-6 py-5 whitespace-nowrap text-center">
                                 @if($report->cancelled > 0)
-                                    <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-50 text-rose-600 border border-rose-100">
                                         {{ $report->cancelled }}
                                     </span>
                                 @else
                                     <span class="text-sm text-slate-300">—</span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right">
+                            <td class="px-6 py-5 whitespace-nowrap text-center">
                                 <button
                                     @click="selectedReport = {
                                         date: '{{ \Carbon\Carbon::parse($report->report_date)->translatedFormat('d M Y') }}',
@@ -281,8 +281,8 @@
                                         pelunasanRevenue: {{ $report->pelunasan_revenue }},
                                         cancelled: {{ $report->cancelled }}
                                     }"
-                                    class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-650 bg-white border border-slate-200 hover:bg-slate-50 active:scale-95 transition-all shadow-sm">
-                                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-widest text-blue-600 bg-blue-50 border border-blue-200 hover:bg-blue-100 hover:text-blue-700 active:scale-95 transition-all shadow-sm">
+                                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                     </svg>
@@ -292,12 +292,12 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center">
+                            <td colspan="5" class="px-6 py-16 text-center text-slate-400 font-medium">
                                 <div class="flex flex-col items-center">
                                     <svg class="w-12 h-12 text-slate-300 mb-3" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"></path>
                                     </svg>
-                                    <p class="text-sm font-medium text-slate-400">Belum ada data laporan untuk periode ini.</p>
+                                    <p class="text-sm font-medium text-slate-400">Belum ada data laporan.</p>
                                 </div>
                             </td>
                         </tr>
@@ -406,19 +406,19 @@
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left">
                                     <thead>
-                                        <tr class="bg-slate-50 border-b border-slate-100">
-                                            <th class="px-5 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">Trip & Rute</th>
-                                            <th class="px-5 py-3 text-xs font-black text-slate-400 uppercase tracking-widest">Driver & Armada</th>
-                                            <th class="px-5 py-3 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Pax</th>
-                                            <th class="px-5 py-3 text-xs font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
+                                        <tr class="bg-slate-50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                            <th class="px-5 py-4">Trip & Rute</th>
+                                            <th class="px-5 py-4">Driver & Armada</th>
+                                            <th class="px-5 py-4 text-center">Pax</th>
+                                            <th class="px-5 py-4 text-center">Status</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-slate-100">
+                                    <tbody class="divide-y divide-slate-100 text-xs font-medium text-slate-600">
                                         @foreach($tripSummary as $trip)
-                                            <tr class="hover:bg-slate-50 transition-colors">
-                                                <td class="px-5 py-3">
+                                            <tr class="hover:bg-slate-50/60 transition-all duration-200">
+                                                <td class="px-5 py-4">
                                                     <p class="text-sm font-bold text-slate-900">Trip #{{ $trip->id }}</p>
-                                                    <p class="text-[10px] font-medium text-slate-400">
+                                                    <p class="text-[10px] font-normal text-slate-400 mt-0.5">
                                                         @if($trip->jadwal && $trip->jadwal->rute)
                                                             {{ $trip->jadwal->rute->asal }} → {{ $trip->jadwal->rute->tujuan }}
                                                             ({{ ucfirst($trip->jadwal->shift) }})
@@ -427,9 +427,9 @@
                                                         @endif
                                                     </p>
                                                 </td>
-                                                <td class="px-5 py-3">
-                                                    <p class="text-sm font-bold text-slate-900">{{ $trip->driver->nama_driver ?? '-' }}</p>
-                                                    <p class="text-[10px] font-medium text-slate-400 uppercase">
+                                                <td class="px-5 py-4">
+                                                    <p class="text-sm font-medium text-slate-900">{{ $trip->driver->nama_driver ?? '-' }}</p>
+                                                    <p class="text-[10px] font-normal text-slate-400 uppercase mt-0.5">
                                                         @if($trip->armada)
                                                             {{ $trip->armada->nama_mobil }} ({{ $trip->armada->nomor_plat }})
                                                         @else
@@ -437,10 +437,10 @@
                                                         @endif
                                                     </p>
                                                 </td>
-                                                <td class="px-5 py-3 text-center">
-                                                    <span class="text-sm font-bold text-slate-900">{{ $trip->detailTrips->count() }}</span>
+                                                <td class="px-5 py-4 text-center">
+                                                    <span class="text-sm font-medium text-slate-700">{{ $trip->detailTrips->count() }}</span>
                                                 </td>
-                                                <td class="px-5 py-3 text-center">
+                                                <td class="px-5 py-4 text-center">
                                                     <x-status-badge status="{{ $trip->status_trip }}" />
                                                 </td>
                                             </tr>

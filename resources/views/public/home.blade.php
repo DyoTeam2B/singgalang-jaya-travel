@@ -316,26 +316,26 @@
                             $isFull = $sisaKursi <= 0;
                         @endphp
                         
-                        <div class="bg-white rounded-2xl border border-slate-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_45px_rgb(37,99,235,0.08)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col p-6 sm:p-8 {{ $isFull ? 'opacity-80' : '' }}">
-                            <div class="absolute top-0 right-0 w-64 h-64 {{ $isMorning ? 'bg-blue-50/60' : 'bg-indigo-50/60' }} rounded-full blur-3xl -z-0 pointer-events-none transition-colors"></div>
+                        <div class="{{ $isMorning ? 'bg-white border-slate-200/60' : 'bg-slate-900 border-slate-800 text-white' }} rounded-2xl border shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-[0_20px_45px_rgb(37,99,235,0.08)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden flex flex-col p-6 sm:p-8 {{ $isFull ? 'opacity-80' : '' }}">
+                            <div class="absolute top-0 right-0 w-64 h-64 {{ $isMorning ? 'bg-blue-50/60' : 'bg-blue-900/10' }} rounded-full blur-3xl -z-0 pointer-events-none transition-colors"></div>
 
                             <div class="relative z-10 flex-1 flex flex-col">
                                 <!-- Route & Badge -->
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                                     <div class="flex items-center flex-wrap gap-2 md:gap-3">
                                         <div class="flex items-center gap-2">
-                                            <span class="w-2.5 h-2.5 rounded-full {{ $isMorning ? 'bg-blue-600 shadow-[0_0_0_4px_rgb(37,99,235,0.12)]' : 'bg-indigo-600 shadow-[0_0_0_4px_rgb(79,70,229,0.12)]' }}"></span>
-                                            <span class="text-slate-900 font-extrabold text-lg tracking-tight">{{ $schedule->rute->asal }}</span>
+                                            <span class="w-2.5 h-2.5 rounded-full {{ $isMorning ? 'bg-blue-600 shadow-[0_0_0_4px_rgb(37,99,235,0.12)]' : 'bg-indigo-400 shadow-[0_0_0_4px_rgb(129,140,248,0.12)]' }}"></span>
+                                            <span class="{{ $isMorning ? 'text-slate-900' : 'text-white' }} font-extrabold text-lg tracking-tight">{{ $schedule->rute->asal }}</span>
                                         </div>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
                                         </svg>
                                         <div class="flex items-center gap-2">
                                             <span class="w-2.5 h-2.5 rounded-full border-2 border-slate-400 bg-white"></span>
-                                            <span class="text-slate-900 font-extrabold text-lg tracking-tight">{{ $schedule->rute->tujuan }}</span>
+                                            <span class="{{ $isMorning ? 'text-slate-900' : 'text-white' }} font-extrabold text-lg tracking-tight">{{ $schedule->rute->tujuan }}</span>
                                         </div>
                                     </div>
-                                    <div class="{{ $isMorning ? 'bg-blue-50 text-blue-700 border-blue-100/50' : 'bg-indigo-50 text-indigo-700 border-indigo-100/50' }} px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-2 border w-fit">
+                                    <div class="{{ $isMorning ? 'bg-blue-50 text-blue-700 border-blue-100/50' : 'bg-indigo-950 text-indigo-300 border-indigo-900/50' }} px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-2 border w-fit">
                                         @if($isMorning)
                                             <!-- Sun icon -->
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -343,8 +343,8 @@
                                             </svg>
                                         @else
                                             <!-- Moon icon -->
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.009c-.13-.08-.28-.1-.42-.05a8.775 8.775 0 01-11.48-11.48c.05-.14.03-.29-.05-.42a.501.501 0 00-.77-.08 10.25 10.25 0 1012.8 12.8.501.501 0 00-.08-.77z"></path>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
                                             </svg>
                                         @endif
                                         Shift {{ $schedule->shift }}
@@ -355,23 +355,23 @@
                                 <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-4">
                                     <div>
                                         <p class="text-slate-400 text-[10px] font-bold mb-2 uppercase tracking-widest">Waktu Keberangkatan</p>
-                                        <h3 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tighter">
+                                        <h3 class="text-4xl md:text-5xl font-extrabold {{ $isMorning ? 'text-slate-900' : 'text-white' }} tracking-tighter">
                                             {{ $schedule->jam_berangkat instanceof \DateTime ? $schedule->jam_berangkat->format('H:i') : \Carbon\Carbon::parse($schedule->jam_berangkat)->format('H:i') }}
                                         </h3>
                                     </div>
                                     
-                                    <div class="w-full sm:w-56 bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                                    <div class="w-full sm:w-56 {{ $isMorning ? 'bg-slate-50 border-slate-100' : 'bg-slate-800/80 border-slate-700' }} p-5 rounded-2xl border">
                                         <div class="flex justify-between items-end mb-3">
-                                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Sisa Kursi</span>
-                                            <span class="text-xl font-extrabold leading-none {{ $sisaKursi <= 1 ? 'text-rose-500' : 'text-blue-600' }}">{{ $sisaKursi }}</span>
+                                            <span class="text-[10px] font-bold {{ $isMorning ? 'text-slate-500' : 'text-slate-450' }} uppercase tracking-widest">Sisa Kursi</span>
+                                            <span class="text-xl font-extrabold leading-none {{ $sisaKursi <= 1 ? 'text-rose-500' : ($isMorning ? 'text-blue-600' : 'text-indigo-400') }}">{{ $sisaKursi }}</span>
                                         </div>
                                         <!-- Progress Bar -->
-                                        <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                                        <div class="w-full h-2.5 {{ $isMorning ? 'bg-slate-200' : 'bg-slate-700' }} rounded-full overflow-hidden">
                                             <div class="h-full transition-all duration-1000 rounded-full {{ $isFull ? 'bg-rose-500' : 'bg-gradient-to-r from-blue-600 to-indigo-600' }}" style="width: {{ $fillPercentage }}%"></div>
                                         </div>
                                         <div class="flex justify-between mt-2">
-                                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ $schedule->tanggal_keberangkatan->format('d M Y') }}</p>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Kap: {{ $schedule->kuota }}</p>
+                                            <p class="text-[10px] {{ $isMorning ? 'text-slate-400' : 'text-slate-500' }} font-bold uppercase tracking-widest">{{ $schedule->tanggal_keberangkatan->format('d M Y') }}</p>
+                                            <p class="text-[10px] {{ $isMorning ? 'text-slate-400' : 'text-slate-500' }} font-bold uppercase tracking-widest">Kap: {{ $schedule->kuota }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -380,34 +380,34 @@
                                 <div class="relative -mx-6 sm:-mx-8 my-8">
                                     <div class="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-slate-50 rounded-full border border-slate-200/60 z-20"></div>
                                     <div class="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-slate-50 rounded-full border border-slate-200/60 z-20"></div>
-                                    <div class="border-t-2 border-dashed border-slate-200 w-full relative z-10"></div>
+                                    <div class="border-t-2 border-dashed {{ $isMorning ? 'border-slate-200' : 'border-slate-800' }} w-full relative z-10"></div>
                                 </div>
 
                                 <!-- Vehicle & Price Area -->
                                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                                     <div class="flex items-center gap-4">
-                                        <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100 shrink-0">
+                                        <div class="w-14 h-14 {{ $isMorning ? 'bg-blue-50 border-blue-100' : 'bg-slate-800 border-slate-700' }} rounded-2xl flex items-center justify-center border shrink-0">
                                             <!-- Car Icon -->
-                                            <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <svg class="w-7 h-7 {{ $isMorning ? 'text-blue-600' : 'text-indigo-400' }}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.129-1.125V11.25c0-.447-.266-.852-.676-1.03l-2.222-.962V5.25a2.25 2.25 0 00-2.25-2.25h-5.25a2.25 2.25 0 00-2.25 2.25v2.607L6.216 9.19a1.125 1.125 0 00-.676 1.03v4.5c0 .621.504 1.125 1.125 1.125h1.125m9.75 0v-4.5M6.75 14.25h12m-.75-3.75h-10.5M12 3v3.75M9.75 6.75H12"></path>
                                             </svg>
                                         </div>
                                         <div>
                                             <div class="flex items-center gap-2 mb-0.5">
-                                                <p class="text-slate-900 font-extrabold text-sm">Toyota Avanza</p>
+                                                <p class="{{ $isMorning ? 'text-slate-900' : 'text-white' }} font-extrabold text-sm">Toyota Avanza</p>
                                                 <!-- CheckCircle2 icon -->
                                                 <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                 </svg>
                                             </div>
-                                            <p class="text-slate-500 text-[11px] font-semibold flex items-center gap-1.5">
-                                                Full AC • Door-to-Door
+                                            <p class="{{ $isMorning ? 'text-slate-500' : 'text-slate-400' }} text-[11px] font-semibold flex items-center gap-1.5">
+                                                Layanan Door-to-Door
                                             </p>
                                         </div>
                                     </div>
                                     <div>
                                         <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Harga per kursi</p>
-                                        <p class="text-slate-900 font-extrabold text-2xl tracking-tight">Rp {{ number_format($schedule->rute->tarif, 0, ',', '.') }}</p>
+                                        <p class="{{ $isMorning ? 'text-slate-900' : 'text-white' }} font-extrabold text-2xl tracking-tight">Rp {{ number_format($schedule->rute->tarif, 0, ',', '.') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -521,16 +521,14 @@
                         </div>
 
                         <!-- Footer -->
-                        <div class="mx-3 border-t border-dashed border-slate-200 pt-4 mt-1 mb-2 flex items-center gap-2 text-slate-500">
-                            <!-- Route icon -->
-                            <svg class="w-4 h-4 text-indigo-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75h3.75a8.25 8.25 0 018.25 8.25v3.75m-18 0V15a8.25 8.25 0 018.25-8.25M2.25 10.5h3.75a3.75 3.75 0 013.75 3.75v3.75m10.5-12h3.75M2.25 15h3.75m0-4.5h3.75"></path>
-                            </svg>
-                            <span class="text-xs font-semibold truncate">{{ $car['route'] }}</span>
-                            <!-- ShieldCheck icon -->
-                            <svg class="w-4 h-4 text-emerald-500 ml-auto shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
+                        <div class="mx-3 border-t border-dashed border-slate-200 pt-4 mt-1 mb-2 flex items-center text-slate-500">
+                            <span class="text-xs font-semibold text-emerald-600 flex items-center gap-1">
+                                <!-- ShieldCheck icon -->
+                                <svg class="w-4 h-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Armada Aktif & Terverifikasi
+                            </span>
                         </div>
                     </div>
                 @endforeach
